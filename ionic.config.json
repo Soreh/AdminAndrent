@@ -1,0 +1,8 @@
+{
+  "name": "blank",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular",
+  "pro_id": "a4984b35"
+}
