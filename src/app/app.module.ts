@@ -6,13 +6,13 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 //import { HomePage } from '../pages/home/home';
-import { RentalServiceProvider } from '../providers/rental-service/rental-service';
+import { RentalServiceProvider } from '../providers/rentals/rental-service/rental-service';
 // import { RentalsPage } from "../pages/rentals/rentals";
 
 import { PipesModule } from "../pipes/pipes.module";
-import { UserServiceProvider } from '../providers/user-service/user-service';
-import { ModulesProvider } from '../providers/modules/modules';
-import { StructureServiceProvider } from '../providers/structure-service/structure-service';
+import { UserServiceProvider } from '../providers/global/user-service/user-service';
+import { ModulesProvider } from '../providers/global/modules/modules';
+import { StructureServiceProvider } from '../providers/global/structure-service/structure-service';
 // import { ComponentsModule } from "../components/components.module";
 // import { RentalComponentsModule } from "../components/rentals/rental.components.module";
 

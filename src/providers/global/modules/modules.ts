@@ -18,7 +18,9 @@ export class ModulesProvider {
   getModulesToLoadList(structure : Structure)  {
     this.modulesToLoad = [];
     structure.modules.forEach(m => {
-      this.modulesToLoad.push(MODULES.filter(module => module.key === m.module_key)[0]);
+      let module = MODULES.filter(module => module.key === m.module_key)[0];
+      module.config_key = m.config_key;
+      this.modulesToLoad.push(module);
     });
     return this.modulesToLoad;
   }
@@ -37,21 +39,25 @@ export const MODULES = [
     key : MODULES_KEYS.location,
     name : 'Locations', // Traduction ?
     page : 'RentalsPage',
+    config_key : '',
   },
   {
     key : MODULES_KEYS.contracts,
     name : 'Contrats', // Traduction ?
     page : 'RentalsPage',
+    config_key : '',
   },
   {
     key : MODULES_KEYS.invoices,
     name : 'Factures', // Traduction ?
     page : 'RentalsPage',
+    config_key : '',
   },
   {
     key : MODULES_KEYS.accountability,
     name : 'Compta', // Traduction ?
     page : 'RentalsPage',
+    config_key : '',
   },
 ]
 

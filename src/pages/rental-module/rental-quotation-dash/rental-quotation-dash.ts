@@ -80,7 +80,8 @@ export class RentalQuotationDashPage {
   ionViewWillLoad() {
     console.log('ionViewWillLoad RentalQuotationDashPage');
     if(this.navParams.get('data')){
-      if(!this.navParams.get('data').config_key)
+      let key = this.navParams.get('data').config_key;
+      if(!key)
       {
         console.error('ERREUR : config_key manquante');
         this.navCtrl.setRoot('ConnectPage');
