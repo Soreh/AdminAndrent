@@ -1,0 +1,35 @@
+<!--
+  Generated template for the ConnectPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<!-- <ion-header>
+
+  <ion-navbar>
+    <ion-title>Connect</ion-title>
+  </ion-navbar>
+
+</ion-header> -->
+
+
+<ion-content padding>
+  <ion-grid style="height:100%;">
+    <ion-row style="min-height:100%;" justify-content-center align-items-center>
+      <ion-col col-auto text-center>
+        <img src="assets/imgs/logo.png" width="300px">
+        <h1 text-center>Rent & Admin</h1>
+        <ion-item text-center no-padding margin-vertical>
+          <ion-input text-center [(ngModel)]="username" placeholder="nom d'utilisateur"></ion-input>
+        </ion-item>
+        <ion-item text-center no-padding margin-vertical>
+          <ion-input text-center [(ngModel)]="password" placeholder="mot de passe"></ion-input>
+        </ion-item>
+        <div padding>
+          <button class="square-button small" ion-button (click)="connect()">entrer</button>
+          <p style="height:25px;"><span *ngIf="errorMsg" color="danger">{{errorMsg}}</span></p>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

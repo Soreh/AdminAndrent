@@ -1,0 +1,25 @@
+page-start {
+
+    .adress p, .options-ctrl p {
+        margin: 0px;
+        padding: 0px;
+        font-size: 20px;
+        font-weight: 600;
+        color : #ADADAD;
+    }
+    .adress {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        line-height: 1;
+        p {
+            color : color($colors, primary);
+        }
+    }
+
+    .options-ctrl p {
+        text-transform: lowercase;
+        span:hover {
+            cursor: pointer;
+        }
+    }
+}

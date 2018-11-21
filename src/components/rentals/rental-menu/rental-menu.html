@@ -1,0 +1,8 @@
+<!-- Generated template for the RentalMenuComponent component -->
+  <ion-buttons>
+    <button ion-button icon-only *ngIf="navCtrl.canGoBack()" (click)="goBack()"><ion-icon name="arrow-back"></ion-icon></button>
+    <button *ngFor="let page of pages" ion-button (click)="goToPage(page.page, page.data)">
+      {{page.label}}
+    </button>
+    <button ion-button (click)="disconnect()">Se déconnecter</button>
+  </ion-buttons>

@@ -14,3 +14,54 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+$side_menu_width : 250px;
+
+.square-button.small {
+    width : 90px;
+    height: 90px;
+}
+
+.square-button.large {
+    width : 300px;
+    height: 300px;
+}
+
+.square-button {
+    margin-left: 10px;
+    margin-right: 10px;
+    .button-inner {
+        font-size: 28px;
+        font-weight: 300;
+        text-transform: lowercase;
+    }
+}
+
+.panel-content, .side-menu-container {
+    display :  inline-block;
+    vertical-align: top;
+}
+
+.panel-content {
+    width : calc(100% - 250px - 16px);
+    position: relative;
+    left : $side_menu_width + $content-padding;
+    min-width: 768px;
+}
+
+.side-menu-container {
+    width: $side_menu_width;
+    height: 100vh;
+    position: fixed;
+    background-color : color($colors, greyback)
+}
+
+// .panel-content {
+//     max-width: 768px;
+//     margin-left: 250px;
+// }
+
+// .left-menu {
+//     width: 250px;
+//     text-align : center;
+// }

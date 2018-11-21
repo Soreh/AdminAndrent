@@ -1,0 +1,91 @@
+<!--
+  Generated template for the StartPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<!-- <ion-header>
+
+  <ion-navbar>
+    <ion-title>Start</ion-title>
+  </ion-navbar>
+
+</ion-header> -->
+
+
+<ion-content padding *ngIf="connectedUser$; else noUser">
+  <ion-grid style="height:100%">
+    <ion-row style="min-height:100%" justify-content-center align-items-center>
+      <ion-col col-auto text-center>
+        <div *ngIf="defaultStructure$; else addStructure">
+          <button ion-button class="square-button large" *ngFor="let module of loadedModules" (click)="goTo(module)">
+              {{module.name}}
+          </button>
+          <div class="adress" text-center>
+            <ion-icon style="font-size:5em;" name="cog"></ion-icon>
+            <p>{{defaultStructure$.name}}</p>
+            <p>{{defaultStructure$.contact.number}}, {{defaultStructure$.contact.street}}</p>
+            <p>{{defaultStructure$.contact.city}}</p>
+          </div>
+          
+        </div>
+        <ng-template #addStructure>
+          <ion-row padding>
+            <ion-col col-4>
+              <p>Vous n'avez aucune structure enregistrée.</p>
+            </ion-col>
+            <ion-col>
+              <form>
+                <ion-item>
+                  <ion-label>nom</ion-label>
+                  <ion-input></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label>rue</ion-label>
+                  <ion-input></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label>numéro</ion-label>
+                  <ion-input></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label>ville</ion-label>
+                  <ion-input></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label>modules</ion-label>
+                  <ion-select multiple="true">
+                    <ion-option>Location</ion-option>
+                    <ion-option>Contrat</ion-option>
+                    <ion-option>Comptabilité</ion-option>
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <button ion-button block outline (click)="createStructure()">Créer une structure</button>
+                </ion-item>
+              </form>
+            </ion-col>
+          </ion-row>
+        </ng-template>
+        <div class="options-ctrl">
+          <p *ngIf="defaultStructure$">
+            <span>
+                Créer une nouvelle struture
+            </span>
+           <span *ngIf="loadedStructure$?.length > 1"> | Charger une structure existante</span></p>
+          <p (click)="disconnect()">
+            <span>
+                Se déconnecter
+            </span>
+          </p>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ng-template #noUser>
+  <ion-content padding>
+    <p>Aucun utilisateur connecté</p>
+    <p (click)="disconnect()">Se connecter</p>
+  </ion-content>
+</ng-template>

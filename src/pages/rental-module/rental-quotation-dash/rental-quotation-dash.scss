@@ -1,0 +1,84 @@
+page-rental-quotation-dash {
+
+    .mn {
+        margin: 0px;
+    }
+
+    .add-option {
+        background-color: color($colors, greyback);
+        width: 95%;
+        margin : 5px auto;
+    }
+    .tab-panel {
+        padding: 25px 0px;
+        // border-top : solid black 1px;
+        border-bottom : solid black 1px;
+        margin-bottom: 5px;
+    }
+
+    .tabs {
+        text-align: center;
+        margin : 0px auto;
+        border-bottom : solid 1px #CBCBCB;
+        width : 90%;
+    }
+
+    .tabs span {
+        display: inline-block;
+        list-style: none;
+        padding : 10px 10px 5px 10px;
+        border : solid 1px #CBCBCB;
+        margin : 0px 2px;;
+        position : relative;
+        bottom: -1px;
+        font-size: 20px;
+        color : #939393;
+        width: 135px;
+        font-weight: 300;
+        border-radius: 10px 10px 0px 0px; 
+    }
+
+    .tabs span:hover {
+        cursor: pointer;
+    }
+    
+    .tabs span.active {
+        background-color: white;
+        border-bottom-color: white;
+        font-weight: 400;
+        -webkit-box-shadow: 0px -2px 5px -3px #adadad;
+        -moz-box-shadow: 0px -2px 5px -3px #adadad;
+        box-shadow: 0px -2px 5px -3px #adadad;
+    }
+
+    #calc .total {
+        text-align: center;
+        padding: 15px;
+        font-size: 2em;
+    }
+
+    #calc .discount-input {
+        text-align: right;
+    }
+
+    .alert {
+        color : red;
+    }
+
+    .green-alert {
+        color : green;
+    }
+
+    input:-moz-read-only { /* For Firefox */
+        background-color: yellow;
+    }
+    
+    input:read-only { 
+        background-color: yellow;
+    }
+
+    .info {
+        padding : 5px;
+        background-color : lightblue;
+    }
+}

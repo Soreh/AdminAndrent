@@ -1,0 +1,14 @@
+page-rentals {
+    .rental-resume-container {
+        rental-resume {
+            width: 40%;
+        }
+        rental-last-log {
+            width: 60%;
+        }
+    }
+
+    rental-resume:hover {
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,34 @@
+<!-- Generated template for the RentalLastLogComponent component -->
+<ion-grid *ngIf="lastLog"class="log-container">
+  <ion-row>
+    <h2>Dernière entrée du journal :</h2>
+  </ion-row>
+  <ion-row>
+    <ion-col col-3 text-right>
+      <span>
+        {{lastLog.author}}
+        </span>
+        <span>
+        {{lastLog.date}}
+      </span>
+    </ion-col>
+    <ion-col class="log">
+      <span [innerHtml]="lastLog.msg"></span>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<ion-grid *ngIf="logs"class="log-container">
+  <ion-row margin-vertical *ngFor="let log of logs">
+    <ion-col col-3 text-right>
+      <span>
+        {{log.author}}
+        </span>
+        <span>
+        {{log.date}}
+      </span>
+    </ion-col>
+    <ion-col class="log">
+      <span [innerHtml]="log.msg"></span>
+    </ion-col>
+  </ion-row>
+</ion-grid>
