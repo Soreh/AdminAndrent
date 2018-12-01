@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
 
-import { User } from "../../models/global/user.interface";
+import { UserProfile } from "../../models/global/user-profile.interface";
 import { ModulesProvider } from '../../providers/global/modules/modules';
 import { StructureServiceProvider } from '../../providers/global/structure-service/structure-service';
 import { Structure } from '../../models/global/structure.interface';
 import { UserServiceProvider } from '../../providers/global/user-service/user-service';
+import { Subscription, Observable } from 'rxjs';
+import { User } from 'firebase';
 
 /**
  * Generated class for the StartPage page.
@@ -23,50 +25,117 @@ export class StartPage {
 
   public structureToCreate : Structure;
   
-  public loadedModules;
+  public modules;
   public structures$;
-  public defaultStructure$;
-  public loadedStructure$;
+  public structure$;
+  public structure;
+  public structKeyToLink;
+  //public loadedStructures;
 
-  public connectedUser$ : User;
+  private authenticatedUSer$ : Subscription;
+  public authUser : User;
+
+  public profileExists : boolean;
+  private userProfile$ : Subscription;
+  public userProfile : UserProfile;
   public otherStructures : any;
+
+  public showAddStruct: boolean;
+  public loading = true;
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
     private modulesService: ModulesProvider, 
     private structService : StructureServiceProvider,
-    private user : UserServiceProvider) {
-
+    private user : UserServiceProvider,
+    private modalCtrl: ModalController) {
+      this.userProfile = this.user.getConnectedUser();
+      console.debug(this.userProfile);
+      // this.authenticatedUSer$ = this.user.getAuthUser().subscribe( 
+      //   (authUser : User) => {
+      //     this.authUser = authUser;
+      //     if ( authUser.uid ) {
+      //       this.userProfile$ = this.user.getProfile(authUser.uid).subscribe(
+      //         (profile : UserProfile) => {
+      //           console.log(profile);
+      //           if (profile) {
+      //             this.profileExists = true;
+      //             console.log(profile);
+      //             if(profile.structures){
+      //               this.structure$ = this.structService.getDefaultStructure(profile).subscribe(
+      //                 (struct : Structure) => {
+      //                   this.structure = struct;
+      //                   this.modules = this.modulesService.getModulesToLoadList(struct);
+      //                 }
+      //               );
+      //             }
+      //             this.userProfile = profile;
+      //           } 
+      //         }
+      //       );
+      //     }
+      //     this.loading = false;
+      //     console.log(this.userProfile);
+      //   }
+      // );
   }
 
   ionViewWillLoad() {
     console.log('ionViewDidLoad StartPage');
-    this.connectedUser$ = this.user.getConnectedUser();
-    if (this.user.getConnectedUser().structures){
-      this.refreshStructures();
+    if(!this.userProfile){
+      console.error('No user connected');
+      this.navCtrl.setRoot('ConnectPage');
+    } else {
+      console.debug(this.userProfile);
     }
-    // if( this.navParams.get('data') ) {
-    //   this.connectedUser$ = this.navParams.get('data').user;
-      
-    //   console.log(this.connectedUser$);
-      
-    //   if (this.connectedUser$.structures){
-    //     this.refreshStructures();
-    //   }
-    // }
   }
 
+  async createProfileAndShowAddStruct() {
+    // Creer le compte utilisateur en DB !
+    if (this.authUser ) {
+      await this.user.saveProfile(this.authUser.uid, this.userProfile).then((fulfilled) => {
+        console.log(fulfilled);
+        this.showAddForm();
+      }, (error) => {
+        console.error(error);
+      }
+      );
+    }
+    // Afficher le formulaire pour ajotuer une structure
+    //this.showAddStruct = true;
+  }
+  
+  showAddForm(){
+    this.showAddStruct = true;
+  }
 
+ async createProfileAndLinkStructure() {
+    console.warn('Il faut vérifier la présence de la structure en base données');
+    this.userProfile.structures = [
+      {
+        key : this.structKeyToLink,
+        isDefault : true,
+      }
+    ]
+    console.warn(this.structKeyToLink);
+    console.warn(this.authUser);
+    console.warn(this.userProfile);
+    
+    if (this.authUser){
+      const result = await this.user.saveProfile(this.authUser.uid, this.userProfile);
+      console.log(result);
+    }
+  }
 
-  createStructure() : void {
+  createStructure(isDefault: boolean = false) : void {
     console.log("In create structure");
     // Create the Structure in the DataBase
     this.structService.addStructure({
       key : 'new_struct',
       users : [
         {
-          user_key : this.connectedUser$.key,
+          user_key : this.userProfile.key,
           isAdmin : true,
         }
       ],
@@ -82,32 +151,28 @@ export class StartPage {
           config_key : 'config_1',
         },
       ]
-    });
-    //this.refreshStructures();
+    }, isDefault);
+    this.navCtrl.setRoot('StartPage');
   }
 
-  private refreshStructures() : void {
-    console.log(this.user.getConnectedUser().structures);
-    this.structService.getStructureByKey(this.user.getConnectedUser().structures.filter(s => s.isDefault)[0].key).subscribe(data => {
-      console.log(data);
-      this.defaultStructure$ = data
-    }
-    );
-    
-    console.log(this.defaultStructure$);
-    
-    this.structService.getStructuresByKeys(this.user.getConnectedUser().structures).subscribe(data => 
-      this.loadedStructure$ = data);
+  private _refreshStructures() : void {
+    //console.log(this.user.getConnectedUser().structures);
+    //this.structure$ = this.structService.getDefaultStructure();
+    console.log(this.structure$);
+    this.structures$ = this.structService.getStructures();
 
-    this.loadedModules = this.modulesService.getModulesToLoadList(this.defaultStructure$);
+    // this.structService.getStructuresByKeys(this.user.getConnectedUser().structures).subscribe(data => 
+    //   this.loadedStructure$ = data);
 
-    console.log(this.loadedModules);
+    this.modules = this.modulesService.getModulesToLoadList(this.structure$);
+
+    console.log(this.modules);
   }
 
   goTo(module): void {
     console.log(module);
-    console.log(this.defaultStructure$.modules);
-    let configKey = this.defaultStructure$.modules.filter(mod =>
+    console.log(this.structure$.modules);
+    let configKey = this.structure$.modules.filter(mod =>
       mod.module_key === module.key)[0].config_key;
       console.log(configKey);
     this.navCtrl.setRoot(module.page, {
@@ -121,6 +186,15 @@ export class StartPage {
 
   disconnect() {
     this.navCtrl.setRoot('ConnectPage');
+  }
+
+  openAddStructureModal(){
+    let modal = this.modalCtrl.create('AddStructureModalPage');
+    modal.present();
+  }
+
+  goToConfig() : void {
+    this.navCtrl.push('ConfigPage');
   }
 
 }

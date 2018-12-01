@@ -56,6 +56,10 @@ export class Status {
                     code : 12,
                     label : "Annulé",
                     color : 'canceled_color',
+                },
+                {
+                    code : 13,
+                    label : "En Cours",
                 }
             ];
         } else {
@@ -91,6 +95,7 @@ export const STATUSCODE = {
     option : 10,
     over : 11,
     canceled : 12,
+    processing : 13,
 }
 
 export const STATUS = new Status();

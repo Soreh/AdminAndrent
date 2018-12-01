@@ -103,79 +103,81 @@
       </ion-grid>
       <!-- Options devis-->
       <div *ngFor="let cat of sortedOptions; index as i">
-        <ion-grid *ngIf="!cat.isPost">
-          <ion-row>
-            <ion-col col-8>
-              <h2>{{cat.name}}</h2>
-            </ion-col>
-            <ion-col col-1>
-              <h3>prix</h3>
-            </ion-col>
-            <ion-col col-1>
-              <h3>coût</h3>
-            </ion-col>
-            <ion-col col-1>
-              <h3>marge</h3>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <ion-grid *ngFor="let option of cat.options">
-          <!-- Config pre-saved options -->
-          <ion-row *ngIf="option.id != 0; else freeOption">
-            <ion-col col-1 offset-1>
-              <ion-item>
-                <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()">
-                </ion-input>>
-              </ion-item>
-            </ion-col>
-            <ion-col col-6>
-              <p>{{option.label}}</p>
-            </ion-col>
-            <ion-col col-1>
-              <p>{{option.amount * option.unit}}€</p>
-            </ion-col>
-            <ion-col col-1>
-              <p>{{option.cost * option.unit}}€</p>
-            </ion-col>
-            <ion-col col-1>
-                <p>{{getBalance(option) * option.unit}}€</p>
-              </ion-col>
-            <ion-col col-1>
-              <button block ion-button (click)="removeOption(option)">supprimer</button>
-            </ion-col>
-          </ion-row>
-          <ng-template #freeOption>
+        <div *ngIf="!cat.isPost">
+          <ion-grid>
             <ion-row>
-              <ion-col col-7 offset-1>
-                <ion-input [(ngModel)]="option.label" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
+              <ion-col col-8>
+                <h2>{{cat.name}}</h2>
               </ion-col>
               <ion-col col-1>
-                  <ion-input [(ngModel)]="option.amount" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input> 
-                </ion-col>
+                <h3>prix</h3>
+              </ion-col>
               <ion-col col-1>
-                  <ion-input [(ngModel)]="option.cost" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
+                <h3>coût</h3>
+              </ion-col>
+              <ion-col col-1>
+                <h3>marge</h3>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <ion-grid *ngFor="let option of cat.options">
+            <!-- Config pre-saved options -->
+            <ion-row *ngIf="option.id != 0; else freeOption">
+              <ion-col col-1 offset-1>
+                <ion-item>
+                  <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()">
+                  </ion-input>>
+                </ion-item>
+              </ion-col>
+              <ion-col col-6>
+                <p>{{option.label}}</p>
+              </ion-col>
+              <ion-col col-1>
+                <p>{{option.amount * option.unit}}€</p>
+              </ion-col>
+              <ion-col col-1>
+                <p>{{option.cost * option.unit}}€</p>
               </ion-col>
               <ion-col col-1>
                   <p>{{getBalance(option) * option.unit}}€</p>
-              </ion-col>
+                </ion-col>
               <ion-col col-1>
                 <button block ion-button (click)="removeOption(option)">supprimer</button>
               </ion-col>
             </ion-row>
-          </ng-template>
-        </ion-grid>
-        <ion-grid>
-          <ion-row>
-            <ion-col col-8>
-              <h2 text-right>
-                Total
-              </h2>
-            </ion-col>
-            <ion-col col-1>
-              <p>{{getCatTotal(i,'amount')}}€</p>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+            <ng-template #freeOption>
+              <ion-row>
+                <ion-col col-7 offset-1>
+                  <ion-input [(ngModel)]="option.label" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
+                </ion-col>
+                <ion-col col-1>
+                    <ion-input [(ngModel)]="option.amount" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input> 
+                  </ion-col>
+                <ion-col col-1>
+                    <ion-input [(ngModel)]="option.cost" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
+                </ion-col>
+                <ion-col col-1>
+                    <p>{{getBalance(option) * option.unit}}€</p>
+                </ion-col>
+                <ion-col col-1>
+                  <button block ion-button (click)="removeOption(option)">supprimer</button>
+                </ion-col>
+              </ion-row>
+            </ng-template>
+          </ion-grid>
+          <ion-grid>
+            <ion-row>
+              <ion-col col-8>
+                <h2 text-right>
+                  Total
+                </h2>
+              </ion-col>
+              <ion-col col-1>
+                <p>{{getCatTotal(i,'amount')}}€</p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
       </div>
       <!-- Quotation Total -->
       <div class="total">
@@ -183,6 +185,7 @@
         <p>Remise max : {{quotation.total.amount-quotation.total.cost}}€ - {{((quotation.total.amount-quotation.total.cost)/quotation.total.amount)*100 | round_percent }}</p>
         <p [ngClass]="checkFinalDiscount()">Remise Appliquée : <input class="discount-input" [(ngModel)]="quotation.discount" size="5" [readonly]="isQuotationApproved()">€ - {{(quotation.discount / quotation.total.amount)*100 | round_percent }}</p>
         <p>Prix après remise {{quotation.total.amount - quotation.discount}}€ | {{quotation.total.cost}}€ | <span [ngClass]="checkFinalBalance()">{{quotation.total.amount - quotation.discount - quotation.total.cost}}€</span></p>
+        
         <button ion-button (click)="computeTotal()">calculer</button>
       </div>
       <!-- Post Quotation Details -->
@@ -228,6 +231,13 @@
       4 / VERBOSE QUOTATION 
     -->
     <div *ngIf="isShown(tabs[3].target)" id="verboseQuotation" class="tab-panel">
+      <div>
+        <ion-item>
+          <ion-select [(ngModel)]="quotation.statusCode">
+            <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
+          </ion-select>
+        </ion-item>
+      </div>
       <div>
         <p>
           <button ion-button (click)="resetVerbose()">Copier</button>

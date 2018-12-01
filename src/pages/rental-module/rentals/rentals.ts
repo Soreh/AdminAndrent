@@ -5,6 +5,8 @@ import { RentalServiceProvider } from "../../../providers/rentals/rental-service
 
 import { Rental } from "../../../models/rentals/rental.interface";
 import { Quotation } from '../../../models/rentals/quotation.class';
+import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
+import { Observable } from 'rxjs/Observable';
 // import { Log } from "../../../models/rentals/log.interface";
 
 /**
@@ -21,31 +23,36 @@ import { Quotation } from '../../../models/rentals/quotation.class';
 })
 export class RentalsPage {
 
-  public configKey;
-  public rentals: Rental[];
+  //public configKey;
+  public rentals$: Observable<Rental[]>;
 
-  constructor(private RentalProvider: RentalServiceProvider, private navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController) {
+  constructor(private rentalProvider: RentalServiceProvider, private navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController, private user : UserServiceProvider) {
   }
 
-  private getRentalsList(struct_key): void {
-    this.RentalProvider.mockGetRentalsInformation(struct_key).subscribe( data => this.rentals = data);
-  }
+  /**
+   * Depracted ? Try to abstract it in the RentalProvider
+   */
+  // private getRentalsList(struct_key): void {
+  //   this.rentalProvider.mockGetRentalsInformation(struct_key).subscribe( data => this.rentals$ = data);
+  // }
 
   ionViewWillLoad() {
     console.log('ionViewWillLoad RentalsPage');
-    if (!this.navParams.get('data'))
+    if (!this.user.isConnected())
     {
-      console.log('Erreur : pas de struct_key reçue');
+      console.error('Erreur : pas d\'utilisteur connecté');
       this.navCtrl.setRoot('ConnectPage');
     } else
     {
-      console.log(this.navParams.get('data'));
-      this.getRentalsList(this.navParams.get('data').struct_key);
-      if (this.navParams.get('data').config_key) {
-        this.configKey = this.navParams.get('data').config_key;
-      } else {
-        console.log ('Erreur : pas de config_key reçue');
-      }
+      //console.log(this.navParams.get('data'));
+      this.rentals$ = this.rentalProvider.getRentals();
+      //this.getRentalsList(this.navParams.get('data').struct_key);
+      
+      // if (this.navParams.get('data').config_key) {
+      //   //this.configKey = this.navParams.get('data').config_key;
+      // } else {
+      //   console.log ('Erreur : pas de config_key reçue');
+      // }
     }
   }
 
@@ -53,11 +60,17 @@ export class RentalsPage {
     console.log('ionViewDidLoad RentalsPage');
   }
 
+  // checkRentals() : boolean {
+  //   if (this.rentals$) {
+  //     if (this.rentals$.length > 0) {
+  //       return true;
+  //     }
+  //   }
+  // }
+
   openNewRentalModal() {
-    var dataToPass = {
-      id: "l'id de la structure ?",
-    }
-    this.modalCtrl.create('NewRentalModalPage', dataToPass).present();
+    let modal = this.modalCtrl.create('NewRentalModalPage');
+    modal.present();
   }
   
   // goHome(): void {
@@ -80,7 +93,6 @@ export class RentalsPage {
     this.navCtrl.push("RentalDetailsPage", 
       {
         id: rentalID, 
-        config_key : this.configKey
       }
     );
   }

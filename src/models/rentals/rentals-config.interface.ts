@@ -10,4 +10,5 @@ export interface RentalConfig {
     locations : Location[];
     chargesTypes : ChargeType[];
     chargesTypeDetails : Charge[];
+    
 }

@@ -7,9 +7,11 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>NewRentalModal</ion-title>
+    <ion-title>Ajouter une location</ion-title>
     <ion-buttons end>
-      <button ion-button (click)="closeModal()">Close</button>
+      <button ion-button icon-only (click)="closeModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 
@@ -17,5 +19,5 @@
 
 
 <ion-content padding>
-  <p>Il faut créer une location pour la structure d'id : {{id}}</p>
+  <rental-add-form [id]="id"></rental-add-form>
 </ion-content>

@@ -4,9 +4,11 @@ import { CategoryDetail } from '../../../models/rentals/category-detail.interfac
 import { RentalConfig } from "../../../models/rentals/rentals-config.interface";
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { QuotationOption, savedOptionByCategory, Charge } from '../../../models/rentals/quotation-option.interface';
-import { Quotation, QuotationDetails } from '../../../models/rentals/quotation.class';
+import { Quotation, QuotationDetails, QuotationArgs } from '../../../models/rentals/quotation.class';
 import { QuotationverboseLine } from "../../../models/rentals/quotation-verbose-interface";
-import { STATUSCODE } from "../../../models/global/status.interface";
+import { STATUSCODE, STATUS, Status } from "../../../models/global/status.interface";
+import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
+import { Console } from '@angular/core/src/console';
 /**
  * Generated class for the RentalQuotationDashPage page.
  *
@@ -47,9 +49,42 @@ export class RentalQuotationDashPage {
       class : "",
     }
   ];
+  public selectedIndex = 0;
+  public status = [
+    {
+      code : STATUSCODE.toDO,
+      label : STATUS.getLabel(STATUSCODE.toDO),
+    },
+    {
+      code : STATUSCODE.processing,
+      label : STATUS.getLabel(STATUSCODE.processing),
+    },
+    {
+      code : STATUSCODE.toBeSend,
+      label : STATUS.getLabel(STATUSCODE.toBeSend),
+    },
+    {
+      code : STATUSCODE.send,
+      label : STATUS.getLabel(STATUSCODE.send),
+    },
+    {
+      code : STATUSCODE.toBePaid,
+      label : STATUS.getLabel(STATUSCODE.toBePaid),
+    },
+    {
+      code : STATUSCODE.paid,
+      label : STATUS.getLabel(STATUSCODE.paid),
+    },
+  ]
+
+  public toBeConfirmedCode = STATUSCODE.toBeConfirmed;
+  
+  public adminCost:number = 150;
+  public rentalId;
   public priceList: CategoryDetail[];
   public config: RentalConfig;
   public linesToAdd : QuotationverboseLine[] = [];
+
   public variousOptionToAdd = {
     units : 1,
     optionID : 0,
@@ -57,15 +92,13 @@ export class RentalQuotationDashPage {
     label : "",
     amount : "",
   }
-
   public variousChargeTypeToAdd : Charge;
   public formErrorMsg : string;
-  public selectedIndex = 0;
 
   public quotation: Quotation;
   public sortedOptions: savedOptionByCategory[];
 
-  constructor(private rentalService: RentalServiceProvider, private navCtrl: NavController, private navParams: NavParams, private alertCtrl : AlertController) {
+  constructor(private rentalService: RentalServiceProvider, private navCtrl: NavController, private navParams: NavParams, private alertCtrl : AlertController, private user : UserServiceProvider) {
   }
   
   showHelp() {
@@ -77,41 +110,104 @@ export class RentalQuotationDashPage {
     help.present();
   }
 
-  ionViewWillLoad() {
-    console.log('ionViewWillLoad RentalQuotationDashPage');
-    if(this.navParams.get('data')){
-      let key = this.navParams.get('data').config_key;
-      if(!key)
-      {
-        console.error('ERREUR : config_key manquante');
-        this.navCtrl.setRoot('ConnectPage');
-      }
-      else
-      {
-        this.rentalService.mockGetOptionsByKey(this.navParams.get('data').config_key).subscribe(config => {
-          console.log(config);
-          this.config = config;
-          this.priceList = this.rentalService.getPriceOptionsList(this.config);
-        });
-        if (!this.navParams.get('data').quotation){
+  ionViewWillLoad() { 
+    console.debug('ionViewWillLoad RentalQuotationDashPage');
+    if (this.user.isConnected()){
+      if (!this.rentalService.getConfig()) {
+        console.error('No config found');
+      } else {
+        this.config = this.rentalService.getConfig();
+        this.priceList = this.rentalService.getSortedByCategoryPriceList();
+        if(this.navParams.get('data')) { // if some data is passed
+          let args = this.navParams.get('data').quotationArgs;
+          let id = this.navParams.get('data').rentalID;
+          if(id) { // If a rental id is passed
+            this.rentalId = id;
+            if(args) { // if there are args, then pass them to to constructor
+              this.quotation = new Quotation(id, args);
+            } else { // otherwise mak a empty and default quotation for the rental of rental id
+              this.quotation = new Quotation(id);
+            }
+          } else {
+            console.error("No rental ID received for the quotation to create.");
+          }
+        } else { //otherwise create a new empty quotation, and with no id, allow to open the page and just calculate
           this.quotation = new Quotation();
-        } else {
-          this.quotation = this.navParams.get('data').quotation;
         }
-        this.sortedOptions = this.quotation.getSortedOptions(this.config);
+        this.sortedOptions = this.quotation.getSortedOptions(this.config); // Could it be a method of the Quotation Class, like Quotation.getSortedDetails() (with no argument)
         if(this.quotation.verbose.categories){
           for (let catLength = 0; catLength < this.quotation.verbose.categories.length; catLength++) {
             this.linesToAdd.push({label:"",amount:0});
           }
         }
-        this.variousChargeTypeToAdd = this.config.chargesTypeDetails[0];
+        this.variousChargeTypeToAdd = this.config.chargesTypeDetails[0]; // Sets a default ChargeType
+        // Ici il faudrait choisir un onglet actif selon le code
       }
     } else {
-      console.error("No params received");
       this.navCtrl.setRoot('ConnectPage');
     }
 
+    
+
+    // if(this.navParams.get('data')){
+    //   let key = this.navParams.get('data').config_key;
+    //   if(!key)
+    //   {
+    //     console.error('ERREUR : config_key manquante');
+    //     this.navCtrl.setRoot('ConnectPage');
+    //   }
+    //   else
+    //   {
+    //     this.rentalService.mockGetOptionsByKey(this.navParams.get('data').config_key).subscribe(config => {
+    //       console.debug(config);
+    //       this.config = config;
+    //       this.priceList = this.rentalService.getPriceOptionsList(this.config);
+    //     });
+    //     if (!this.navParams.get('data').quotation){
+    //       this.quotation = new Quotation();
+    //     } else {
+    //       this.quotation = this.navParams.get('data').quotation;
+    //     }
+    //     this.sortedOptions = this.quotation.getSortedOptions(this.config);
+    //     if(this.quotation.verbose.categories){
+    //       for (let catLength = 0; catLength < this.quotation.verbose.categories.length; catLength++) {
+    //         this.linesToAdd.push({label:"",amount:0});
+    //       }
+    //     }
+    //     this.variousChargeTypeToAdd = this.config.chargesTypeDetails[0];
+    //   }
+    // } else {
+    //   console.error("No params received");
+    //   this.navCtrl.setRoot('ConnectPage');
+    // }
+
   }
+
+  ionViewWillLeave() {
+    if(this.rentalId){ // If a rentalId exists, we are modifying a rental, we thus have to persists the changes in that specific renal
+      // Get the args
+      let args:QuotationArgs = this.quotation.getQuotationArgs();
+      // Retrieve the rental
+      let rental = this.rentalService.getRentalDetails(this.rentalId);
+      let currentArgs = rental.quotation_args;
+      let change = true;
+      console.warn(currentArgs);
+      if (currentArgs){
+        change = this.rentalService.compareQuotationArgs(args, currentArgs);
+      }
+      if( change ) {
+        rental.quotation_args = args;
+        if( rental.quotation_args.statusCode == STATUSCODE.toDO){
+          rental.quotation_args.statusCode = STATUSCODE.processing;
+        }
+        this.rentalService.log(rental, "Devis modifié");
+        console.warn('Devis sauvegardé');
+      } else {
+        console.warn('No chnage made');
+      }
+    }
+  }
+
 
   showTab(target) : void {
     this.tabs.forEach(tab => {
@@ -131,7 +227,7 @@ export class RentalQuotationDashPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad RentalQuotationDashPage');
+    console.debug('ionViewDidLoad RentalQuotationDashPage');
   }
 
   /**
@@ -142,9 +238,9 @@ export class RentalQuotationDashPage {
     this.sortedOptions = this.quotation.getSortedOptions(this.config);
   }
 
-  console(a): void {
-    console.log(a);
-  }
+  // console(a): void {
+  //   console.debug(a);
+  // }
 
   getPostQuotationOptions() {
     var postOptions = [];
@@ -184,7 +280,7 @@ export class RentalQuotationDashPage {
   }
 
   isQuotationApproved() {
-    if (this.quotation.statusCode === STATUSCODE.approved){
+    if (this.quotation.statusCode === STATUSCODE.toBePaid){
       return true;
     }
   }
@@ -233,8 +329,8 @@ export class RentalQuotationDashPage {
    */
 
   removeOption(option: QuotationOption) : void {
-    console.log("in removeOption");
-    console.log(option);
+    console.debug("in removeOption");
+    console.debug(option);
     this.quotation.removeSortedOption(option);
     this.updateSortedoption();
     this.computeTotal();
@@ -261,8 +357,8 @@ export class RentalQuotationDashPage {
     
     if( option ) {
       this.quotation.details.push(option);
-      console.log("Added Option");
-      console.log(option);
+      console.debug("Added Option");
+      console.debug(option);
       this.clearVariousOptionToAdd();
       this.updateSortedoption();
       this.computeTotal();
@@ -294,7 +390,7 @@ export class RentalQuotationDashPage {
       amount: 0,
       cost : 0,
     };
-    //console.log(this.savedOptions);
+    //console.debug(this.savedOptions);
     this.sortedOptions.forEach(options => {
       if(!options.isPost){
         options.options.forEach(option => {
@@ -329,7 +425,7 @@ export class RentalQuotationDashPage {
 
   getChargeUnits(chargeId, total) : number {
     var charge = this.getChargeById(chargeId);
-    //console.log("dans getChargeUnit");
+    //console.debug("dans getChargeUnit");
     if( charge ) {
       if ( charge.cost != 0 ) {
         return total / charge.cost;
@@ -393,7 +489,7 @@ export class RentalQuotationDashPage {
         noPostCatIds.push(cat.id);
       }
     });
-    console.log("ids = " + noPostCatIds);
+    console.debug("ids = " + noPostCatIds);
     let firstCatId = noPostCatIds.shift();
     let optionsOfCat1 = this.config.options.filter(option => option.catId === firstCatId);
     // let otherOptions = this.config.options.filter(option => option.catId != firstCatId)
@@ -401,11 +497,11 @@ export class RentalQuotationDashPage {
     noPostCatIds.forEach(id => {
       otherOptions.push(this.config.options.filter(option => option.catId === id)[0]);
     });
-    // console.log('first cat id : ' + firstCatId);
-    // console.log('option of Cat 1 = ');
-    // console.log(optionsOfCat1);
-    // console.log('other Options = ');
-    // console.log(otherOptions);
+    // console.debug('first cat id : ' + firstCatId);
+    // console.debug('option of Cat 1 = ');
+    // console.debug(optionsOfCat1);
+    // console.debug('other Options = ');
+    // console.debug(otherOptions);
     this.quotation.verbose.discount = this.quotation.discount;
     this.quotation.verbose.categories[0].lines = [];
     this.quotation.verbose.categories[1].lines = [];
@@ -417,14 +513,14 @@ export class RentalQuotationDashPage {
             amount : option.units * configOption.amount,
             label : configOption.label
           });
-          console.log('ajouter line depuis le if de optionOfCat1 ID = ' + option.optionID);
+          console.debug('ajouter line depuis le if de optionOfCat1 ID = ' + option.optionID);
         } else if (option.optionID === 0 && option.variousCatID === firstCatId) 
         {
           this.quotation.verbose.categories[0].lines.push({
             amount : option.variousAmount * option.units,
             label : option.variousLabel,
           });
-          console.log('ajouter line depuis le if else de optionOfCat1 ID = ' + option.optionID);
+          console.debug('ajouter line depuis le if else de optionOfCat1 ID = ' + option.optionID);
         }
       });
     });
@@ -435,13 +531,13 @@ export class RentalQuotationDashPage {
             amount : option.units * configOption.amount,
             label : configOption.label
           });
-          console.log('ajouter line depuis le if de otherOption ID = ' + option.optionID);
+          console.debug('ajouter line depuis le if de otherOption ID = ' + option.optionID);
         } else if (option.optionID === 0 && noPostCatIds.some(id => id === option.variousCatID) ) {
           this.quotation.verbose.categories[1].lines.push({
             amount : option.variousAmount * option.units,
             label : option.variousLabel,
           });
-          console.log('ajouter line depuis le if else de otherOption ID =' + option.optionID);
+          console.debug('ajouter line depuis le if else de otherOption ID =' + option.optionID);
         }
       });
     });
@@ -449,18 +545,19 @@ export class RentalQuotationDashPage {
   }
 
   computeVerboseTotal(): void {
-    console.log("Dans computeVerboseTotal");
+    console.debug("Dans computeVerboseTotal");
     this.quotation.verbose.amount = 0;
     this.quotation.verbose.categories.forEach(cat => {
       cat.lines.forEach(line => {
         this.quotation.verbose.amount += Number(line.amount);
-        console.log(line);
+        console.debug(line);
         }
       );
     });
   }
 
   goToPrint() {
+    this.rentalService.getRentalDetails(this.rentalId).quotation_args.statusCode = STATUSCODE.toBeSend;
     this.navCtrl.push('RentalQuotationPrintPage', {
       quotation : {
         verbose : this.quotation.verbose,

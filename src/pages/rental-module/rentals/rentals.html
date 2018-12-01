@@ -9,19 +9,27 @@
   <div class="side-menu-container">
     <rental-menu></rental-menu>
   </div>
-  <ion-grid padding class="panel-content">
-    <ion-row>
-      <ion-col>
-          <button ion-button (click)="openNewRentalModal()">Nouvelle Location</button>
-      </ion-col>
-    </ion-row>
-    <ion-row *ngFor="let rental of rentals" align-items-center>
-      <ion-col col-6>
-        <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
-      </ion-col>
-      <ion-col>
-        <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div padding class="panel-content">
+    <ion-grid *ngIf="rentals$; else noRentals">
+      <ion-row>
+        <ion-col>
+            <button ion-button (click)="openNewRentalModal()">Nouvelle Location</button>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let rental of rentals$ | async" align-items-center>
+        <ion-col col-6>
+          <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+        </ion-col>
+        <ion-col>
+          <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ng-template #noRentals>
+      <div text-center padding-top margin-top>
+        <h2>Oops, vous n'avez aucune location en cours</h2>
+        <button ion-button outline block (click)="openNewRentalModal()">Créer une nouvelle location</button>
+      </div>
+    </ng-template>
+  </div>
 </ion-content>

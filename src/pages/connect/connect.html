@@ -20,10 +20,10 @@
         <img src="assets/imgs/logo.png" width="300px">
         <h1 text-center>Rent & Admin</h1>
         <ion-item text-center no-padding margin-vertical>
-          <ion-input text-center [(ngModel)]="username" placeholder="nom d'utilisateur"></ion-input>
+          <ion-input text-center [(ngModel)]="email" type="email" placeholder="nom d'utilisateur"></ion-input>
         </ion-item>
         <ion-item text-center no-padding margin-vertical>
-          <ion-input text-center [(ngModel)]="password" placeholder="mot de passe"></ion-input>
+          <ion-input text-center [(ngModel)]="password" placeholder="mot de passe" type="password"></ion-input>
         </ion-item>
         <div padding>
           <button class="square-button small" ion-button (click)="connect()">entrer</button>

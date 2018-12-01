@@ -26,7 +26,11 @@ const structuresList : Structure[] = [
         key : 'struct_2',
         modules : [
             {
-                module_key : 'module_2',
+                module_key : 'module_1',
+                config_key : 'config_2',
+            },
+            {
+                module_key : 'module_3',
                 config_key : 'config_1',
             }
         ],

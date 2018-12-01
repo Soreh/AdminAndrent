@@ -4,6 +4,11 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
+import { AngularFireModule } from "angularfire2";
+import { AngularFireAuthModule } from "angularfire2/auth";
+import { AngularFireDatabaseModule } from "angularfire2/database";
+import { FIREBASE_CONFIG } from "./app.firebase.config";
+
 import { MyApp } from './app.component';
 //import { HomePage } from '../pages/home/home';
 import { RentalServiceProvider } from '../providers/rentals/rental-service/rental-service';
@@ -13,6 +18,7 @@ import { PipesModule } from "../pipes/pipes.module";
 import { UserServiceProvider } from '../providers/global/user-service/user-service';
 import { ModulesProvider } from '../providers/global/modules/modules';
 import { StructureServiceProvider } from '../providers/global/structure-service/structure-service';
+import { LogController } from "../controllers/log.controller";
 // import { ComponentsModule } from "../components/components.module";
 // import { RentalComponentsModule } from "../components/rentals/rental.components.module";
 
@@ -24,6 +30,9 @@ import { StructureServiceProvider } from '../providers/global/structure-service/
     BrowserModule,
     IonicModule.forRoot(MyApp),
     PipesModule,
+    AngularFireModule.initializeApp(FIREBASE_CONFIG),
+    AngularFireAuthModule,
+    AngularFireDatabaseModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -36,7 +45,8 @@ import { StructureServiceProvider } from '../providers/global/structure-service/
     RentalServiceProvider,
     UserServiceProvider,
     ModulesProvider,
-    StructureServiceProvider
+    StructureServiceProvider,
+    LogController
   ]
 })
 export class AppModule {}

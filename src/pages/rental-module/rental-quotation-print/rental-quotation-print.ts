@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Quotation } from '../../../models/rentals/quotation.class';
+import { STATUSCODE } from '../../../models/global/status.interface';
 
 /**
  * Generated class for the RentalQuotationPrintPage page.
@@ -30,6 +31,10 @@ export class RentalQuotationPrintPage {
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad RentalQuotationPrintPage');
+  }
+
+  ionViewWillLeave() {
+    
   }
 
   emptyCat(cat) : boolean {

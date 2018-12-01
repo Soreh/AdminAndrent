@@ -5,7 +5,7 @@ const rentalsList: Rental[] = [
     {
         struct_key  : "struct_1",
         id          : 'mock1',
-        name        : "Ecole de Danse de Grimbergen",
+        name        : "Ecole de Danse de Grimbergen Seb",
         contact     : [
             {
                 name: "Pierre", 
@@ -45,6 +45,12 @@ const rentalsList: Rental[] = [
         ],
         date_label  : "23/11/18 à 14h55",
         quotation_args   : {
+            statusCode  : STATUSCODE.toBeSend,
+            total : { 
+                amount : 1135,
+                cost : 489
+            },
+            discount : 180,
             details     : [
                 {
                     units : 2,
@@ -75,13 +81,10 @@ const rentalsList: Rental[] = [
                     variousChargeId : 2,
                 },   
             ],
-            statusCode  : STATUSCODE.toBeSend,
-            rentalId    : 'mock1',
-            total : { 
-                amount : 1135,
-                cost : 489
-            },
-            discount : 180,
+            
+            //rentalId    : 'mock1',
+            
+            
             verbose : {
                 amount : 1175,
                 discount : 180,
@@ -135,7 +138,7 @@ const rentalsList: Rental[] = [
     {
         struct_key  : "struct_1",
         id          : 'mock2',
-        name        : "Conférence Maison Médicale",
+        name        : "Conférence Maison Médicale Seb",
         contact     : [
             {
                 name: "Pierre", 
@@ -164,7 +167,7 @@ const rentalsList: Rental[] = [
     {
         struct_key  : "struct_2",
         id          : 'mock3',
-        name        : "Conférence Maison Médicale",
+        name        : "Conférence Maison Médicale Zabou",
         contact     : [
             {
                 name: "Pierre", 

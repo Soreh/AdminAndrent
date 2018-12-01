@@ -4,169 +4,170 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-content *ngIf="rental">
+<ion-content *ngIf="rental$">
   <div class="side-menu-container">
     <rental-menu></rental-menu>
   </div>
-  <ion-grid padding class="panel-content">
-    <ion-row>
-      <ion-col padding>
-        <div>
-          <ion-grid>
-            <ion-row>
-              <ion-col col-6>
-                <rental-resume [(rental)]="rental"></rental-resume>
-              </ion-col>
-              <ion-col col-4>
-                <textarea [(ngModel)]="logMsg"></textarea>
-              </ion-col>
-              <ion-col>
-                <button ion-button (click)="saveAndLog()">Enregistrer</button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-          <ion-grid *ngIf="!showDetails">
-            <ion-row justify-content-center>
-              <ion-col col-2 text-center>
-                <button ion-button (click)="toggleDetails()" icon-only color="greyback">
-                  <ion-icon name="arrow-dropdown"></ion-icon>
+  <div padding class="panel-content">
+        
+        <ion-grid>
+          <ion-row>
+            <ion-col col-6>
+              <button ion-button icon-only outline (click)="deleteRental()">
+                <ion-icon name="trash"></ion-icon>
+              </button>
+              <rental-resume [(rental)]="rental$"></rental-resume>
+            </ion-col>
+            <ion-col col-4>
+              <textarea [(ngModel)]="logMsg"></textarea>
+            </ion-col>
+            <ion-col>
+              <button ion-button (click)="saveAndLog()">Enregistrer</button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid *ngIf="!showDetails">
+          <ion-row justify-content-center>
+            <ion-col col-2 text-center>
+              <button ion-button (click)="toggleDetails()" icon-only color="greyback">
+                <ion-icon name="arrow-dropdown"></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid *ngIf="showDetails" id="config-panel">
+          <ion-row justify-content-center>
+            <ion-col col-2 text-center>
+                <button ion-button (click)="toggleDetails()" color="greyback" icon-only outline>
+                  <ion-icon name="arrow-dropup"></ion-icon>
                 </button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-          <ion-grid *ngIf="showDetails" id="config-panel">
-            <ion-row justify-content-center>
-              <ion-col col-2 text-center>
-                  <button ion-button (click)="toggleDetails()" color="greyback" icon-only outline>
-                    <ion-icon name="arrow-dropup"></ion-icon>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Nom</ion-label>
+                <ion-input [(ngModel)]="rental$.name"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Convention</ion-label>
+                <ion-input value="A implémenter"></ion-input>
+              </ion-item>  
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Statut</ion-label>
+                <ion-select [(ngModel)]="rental$.status">
+                  <ion-option *ngFor="let option of rentalStatuses" [value]="option.code">{{option.label}}</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col col-6>
+              <ion-item>
+                  <ion-icon name="logo-euro" item-start color="danger"></ion-icon>
+                  <ion-label>{{outputQuotationStatus()}}</ion-label>
+                  <button ion-button icon-only outline item-end (click)="goToQuotationDash()">
+                    <ion-icon name="cog"></ion-icon>
                   </button>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Nom</ion-label>
-                  <ion-input [(ngModel)]="rental.name"></ion-input>
-                </ion-item>
-              </ion-col>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Convention</ion-label>
-                  <ion-input value="A implémenter"></ion-input>
-                </ion-item>  
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Statut</ion-label>
-                  <ion-select [(ngModel)]="rental.status">
-                    <ion-option *ngFor="let option of rentalStatuses" [value]="option.code">{{option.label}}</ion-option>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6>
+              <ion-item>
+                  <ion-label>Salle</ion-label>
+                  <ion-select [(ngModel)]="rental$.location">
+                    <ion-option *ngFor="let location of config.locations" [value]="location">{{location.label}}</ion-option>
                   </ion-select>
                 </ion-item>
-              </ion-col>
-              <ion-col col-6>
-                <ion-item>
-                    <ion-icon name="logo-euro" item-start color="danger"></ion-icon>
-                    <ion-label>{{outputQuotationStatus()}}</ion-label>
-                    <button ion-button icon-only outline item-end (click)="goToQuotationDash()">
-                      <ion-icon name="cog"></ion-icon>
-                    </button>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col col-6>
-                <ion-item>
-                    <ion-label>Salle</ion-label>
-                    <ion-select [(ngModel)]="rental.location">
-                      <ion-option *ngFor="let location of config.locations" [value]="location">{{location.label}}</ion-option>
-                    </ion-select>
-                  </ion-item>
-              </ion-col>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Accompte</ion-label>
-                  <ion-input value="A implémenter"></ion-input>
-                </ion-item>                
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col col-6>
-                <ion-item>
-                    <ion-label>Dates</ion-label>
-                    <ion-input [(ngModel)]="rental.date_label"></ion-input>
-                </ion-item>
-              </ion-col>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Facture</ion-label>
-                  <ion-input value="A implémenter"></ion-input>
-                </ion-item>                
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Client</ion-label>
-                  <ion-input value="A implémenter"></ion-input>
-                </ion-item>                
-              </ion-col>
-              <ion-col col-6>
-                <ion-item>
-                  <ion-label>Fact. de Regu.</ion-label>
-                  <ion-input value="A implémenter"></ion-input>
-                </ion-item>                
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-          <ion-grid>
-            <ion-row justify-content-between>
-              <ion-col>
-                <div class="main-option-container">
-                  <h2 class="title">horaire précis</h2>
-                  <ion-textarea class="fixed" [(ngModel)]="rental.schedule"></ion-textarea>
-                </div>
-              </ion-col>
-              <ion-col>
-                <div class="main-option-container">
-                  <h2 class="title">remarques</h2>
-                  <ion-textarea class="fixed" [(ngModel)]="rental.notes"></ion-textarea>
-                </div>
-              </ion-col>
-              <ion-col>
-                <div class="main-option-container">
-                  <h2 class="title">Régisseurs</h2>
-                  <ion-textarea class="fixed"[(ngModel)]="rental.tech"></ion-textarea>
-                </div>
-              </ion-col>
-              <ion-col>
-                <div class="main-option-container">
-                  <h2 class="title">contact</h2>
-                  <div>
-                    <div *ngFor="let contact of rental.contact">
-                      <p>{{contact.name}}</p>
-                      <p>{{contact.mail}}</p>
-                      <p>{{contact.tel}}</p>
-                    </div>
+            </ion-col>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Accompte</ion-label>
+                <ion-input value="A implémenter"></ion-input>
+              </ion-item>                
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6>
+              <ion-item>
+                  <ion-label>Dates</ion-label>
+                  <ion-input [(ngModel)]="rental$.date_label"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Facture</ion-label>
+                <ion-input value="A implémenter"></ion-input>
+              </ion-item>                
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Client</ion-label>
+                <ion-input value="A implémenter"></ion-input>
+              </ion-item>                
+            </ion-col>
+            <ion-col col-6>
+              <ion-item>
+                <ion-label>Fact. de Regu.</ion-label>
+                <ion-input value="A implémenter"></ion-input>
+              </ion-item>                
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid>
+          <ion-row justify-content-between>
+            <ion-col>
+              <div class="main-option-container">
+                <h2 class="title">horaire précis</h2>
+                <ion-textarea class="fixed" [(ngModel)]="rental$.schedule"></ion-textarea>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="main-option-container">
+                <h2 class="title">remarques</h2>
+                <ion-textarea class="fixed" [(ngModel)]="rental$.notes"></ion-textarea>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="main-option-container">
+                <h2 class="title">Régisseurs</h2>
+                <ion-textarea class="fixed"[(ngModel)]="rental$.tech"></ion-textarea>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="main-option-container">
+                <h2 class="title">contact</h2>
+                <div>
+                  <div *ngFor="let contact of rental$.contact">
+                    <p>{{contact.name}}</p>
+                    <p>{{contact.mail}}</p>
+                    <p>{{contact.tel}}</p>
                   </div>
                 </div>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <h2 class="title">journal</h2>
-                <rental-last-log [logs]="rental.log"></rental-last-log>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </div>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <h2 class="title">journal</h2>
+              <rental-last-log [logs]="rental$.log"></rental-last-log>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        
         <div id="details">
-          <p>{{rental.name}}</p>
-          <p>{{rental.status}}</p>
-          <p>{{rental.location.label}}</p>
-          <p>{{rental.date_label}}</p>
-          <p *ngIf="rental.client">{{rental.client.name}}</p>
+          <p>{{rental$.name}}</p>
+          <p>{{rental$.status}}</p>
+          <p>{{rental$.location.label}}</p>
+          <p>{{rental$.date_label}}</p>
+          <p *ngIf="rental$.client">{{rental$.client.name}}</p>
           <p>Convention de location</p>
           <p><a (click)="goToQuotationDash()">lien vers le devis</a> ({{outputQuotationStatus()}})</p>
           <p>Facture d'accompte</p>
@@ -186,7 +187,5 @@
             </div>
           </div>
         </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  </div>
 </ion-content>

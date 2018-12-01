@@ -34,15 +34,17 @@ export class RentalMenuComponent {
           page : 'StartPage',
           data : {
             user : this.userService.getConnectedUser(),
-          }
+          },
         },
         {
           label : 'Calculer un devis',
           page : 'RentalQuotationDashPage',
           data : {
-            quotation : new Quotation(),
-            config_key : 'config_1', // A récupérer dynamiquement !
-          }
+            //quotation : new Quotation(),
+            //config_key : 'config_1', // A récupérer dynamiquement !
+            push: true,
+          },
+          push : true,
         },
         {
           label : 'Toutes  les locations',
@@ -50,6 +52,14 @@ export class RentalMenuComponent {
           data : {
             struct_key : this.structService.getLoadedStructureKey(),
           }
+        },
+        {
+          label : 'Configuration',
+          page : 'RentalConfigPage',
+          data : {
+            push : true,
+          },
+          push: true,
         }
       ];
     }
@@ -59,14 +69,27 @@ export class RentalMenuComponent {
     this.navCtrl.pop();
   }
 
-  goToPage(page, passedData = null) : void {
-    if (passedData != null){
-      console.log(passedData);
-      this.navCtrl.setRoot(page, {
-        data : passedData,
-      })
+  // goToPage(page, passedData = null) : void {
+  //   if (passedData != null){
+  //     console.log(passedData);
+  //     if( passedData.push) {
+  //       this.navCtrl.push(page, {
+  //         data : passedData,
+  //       })
+  //     } else {
+  //       this.navCtrl.setRoot(page, {
+  //         data : passedData,
+  //       })
+  //     }
+  //   } else {
+  //     this.navCtrl.setRoot(page);
+  //   }
+  // }
+  goToPage(page) : void {
+    if(page.push){
+      this.navCtrl.push(page.page);
     } else {
-      this.navCtrl.setRoot(page);
+      this.navCtrl.setRoot(page.page);
     }
   }
 

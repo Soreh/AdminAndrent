@@ -1,0 +1,25 @@
+<form>
+  <ion-item>
+    <ion-label>nom</ion-label>
+    <ion-input [(ngModel)] = "structureToAdd.name" name="name"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>rue</ion-label>
+    <ion-input [(ngModel)] = "structureToAdd.contact.street" name="street"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>numéro</ion-label>
+    <ion-input type="number" [(ngModel)] = "structureToAdd.contact.number" name="number"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>ville</ion-label>
+    <ion-input [(ngModel)] = "structureToAdd.contact.city" name="city"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>modules</ion-label>
+    <ion-select multiple="true" [(ngModel)]= "structureToAdd.modules" name="modules">
+      <ion-option *ngFor="let module of modulesAvailable" [value]="module">{{getModName(module.module_key)}}</ion-option>
+    </ion-select>
+  </ion-item>
+  <button type="submit" ion-button block outline (click)="saveStructure()">Créer une structure</button>
+</form>
