@@ -14,7 +14,7 @@ const usersList : UserProfile[] =
                 key : 'struct_2',
             },
         ],
-        email : "sebphone@gmail.com",
+        mail : "sebphone@gmail.com",
         isConnected : false,
     },
     {
@@ -26,7 +26,7 @@ const usersList : UserProfile[] =
                 isDefault : true,
             }
         ],
-        email : "sebphone@gmail.com",
+        mail : "sebphone@gmail.com",
         isConnected : false,
     },
     {

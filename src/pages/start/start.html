@@ -13,34 +13,34 @@
 </ion-header> -->
 
 
-<ion-content padding *ngIf='userProfile'>
+<ion-content padding *ngIf='userProfile && dataRetrieved'>
   <ion-grid style="height:100%">
     <ion-row style="min-height:100%" justify-content-center align-items-center>
       <ion-col col-auto text-center>
-        <div *ngIf="structure ; else addStructure">
-          <button ion-button class="square-button large" *ngFor="let module of modules" (click)="goTo(module)">
-              {{module.name}}
+        <div *ngIf="defaultStructure ; else addStructure">
+          <button ion-button class="square-button large" *ngFor="let module of defaultStructure.modules" (click)="goTo(module)">
+              {{modulesService.getModuleName(module?.module_key)}}
           </button>
           <div class="adress" text-center>
             <ion-icon style="font-size:5em;" name="cog" (click)="goToConfig()"></ion-icon>
-            <p>{{structure.name}}</p>
-            <p>{{structure.contact.number}}, {{structure.contact.street}}</p>
-            <p>{{structure.contact.city }}</p>
+            <p>{{defaultStructure?.name}}</p>
+            <p>{{defaultStructure?.contact.number}}, {{defaultStructure?.contact.street}}</p>
+            <p>{{defaultStructure?.contact.city }}</p>
           </div>
           
         </div>
         <ng-template #addStructure>
-          <ion-row justify-content-center>
+          <ion-row justify-content-center *ngIf="dataRetrieved">
             <ion-col col-4>
               <p>Vous n'avez aucune structure enregistrée.</p>
-              <p>Veuillez tout d'abord vous choisir un pseudo, et vérifier votre adresse mail</p>
+              <p>Veuillez tout d'abord vous choisir un pseudo, et vérifier votre adresse mail (il s'agit également de votre login).</p>
               <ion-item>
                 <ion-label>Pseudo</ion-label>
                 <ion-input name="pseudo"[(ngModel)]="userProfile.name"></ion-input>
               </ion-item>
               <ion-item>
                 <ion-label>E-mail</ion-label>
-                <ion-input name="email"[(ngModel)]="userProfile.email"></ion-input>
+                <ion-input name="email"[(ngModel)]="userProfile.mail"></ion-input>
               </ion-item>
               <p>Si vous avez reçu un code, introduisez le ici pour rattacher une strucutre existante à votre compte, sinon, cliquez sur "nouvelle structure"</p>
               <ion-item>
@@ -48,16 +48,16 @@
                 <ion-input name="struct_link"[(ngModel)]="structKeyToLink"></ion-input>
               </ion-item>
               <ion-buttons>
-                <button ion-button clear outline (click)="createProfileAndShowAddStruct()">Nouvelle Structure</button>
-                <button ion-button clear outline (click)="createProfileAndLinkStructure()">Lier structure</button>
+                <button ion-button clear outline (click)="updatePseudoAndShowAddForm()" [disabled]="!userProfile.name || structKeyToLink">Nouvelle Structure</button>
+                <button ion-button clear outline (click)="createProfileAndLinkStructure()" [disabled]="!userProfile.name || !structKeyToLink">Lier structure</button>
               </ion-buttons>
             </ion-col>
             <ion-col *ngIf="showAddStruct">
-              <add-structure [isDefault]="true" [userID]="authUser.uid "></add-structure>
+              <add-structure [isDefault]="true" [userID]="userProfile.key "></add-structure>
             </ion-col>
           </ion-row>
         </ng-template>
-        <div class="options-ctrl">
+        <div class="options-ctrl" *ngIf="dataRetrieved">
           <p *ngIf="structure$">
             <span (click)="openAddStructureModal()">
                 Ajouter une nouvelle struture
@@ -75,7 +75,13 @@
 </ion-content>
 <ng-template #noUser>
   <ion-content padding>
-    <p>Aucun utilisateur connecté</p>
-    <p (click)="disconnect()">Se connecter</p>
+    <ion-grid>
+      <ion-row align-items-center justify-content-center>
+        <ion-col>
+          <p text-center>Nous récupérons vos données...</p>
+          <ion-spinner name="ios"r></ion-spinner>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-content>
 </ng-template>

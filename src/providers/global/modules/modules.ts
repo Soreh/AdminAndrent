@@ -23,21 +23,21 @@ export class ModulesProvider {
    * @param structure$ Structure
    * @returns the modules list
    */
-  getModulesToLoadList(structure$ : Structure)  {
-    this.modulesToLoad = [];
-    structure$.modules.forEach(m => {
-      let module = MODULES.filter(module => module.key === m.module_key)[0];
-      module.config_key = m.config_key;
-      this.modulesToLoad.push(module);
-    });
-    return this.modulesToLoad;
-  }
+  // getModulesToLoadList(structure$ : Structure)  {
+  //   this.modulesToLoad = [];
+  //   structure$.modules.forEach(m => {
+  //     let module = MODULES.filter(module => module.key === m.module_key)[0];
+  //     module.config_key = m.config_key;
+  //     this.modulesToLoad.push(module);
+  //   });
+  //   return this.modulesToLoad;
+  // }
 
   getModuleName(module_key) : string {
     return MODULES.filter(mod => mod.key == module_key)[0].name;
   }
 
-  async createDefaultRentalConfig() {
+  createDefaultRentalConfig(): RentalConfig {
     const id = this.db.createPushId();
     const cat1Id = this.db.createPushId();
     const cat2Id = this.db.createPushId();
@@ -45,8 +45,8 @@ export class ModulesProvider {
     const option2Id = this.db.createPushId();
     const chargeType1Id = this.db.createPushId();
     const chargeDetail1Id = this.db.createPushId();
-    let data = this.db.list(MODULES_KEYS.rental);
-    let defaultConfig : RentalConfig = {
+    //let data = this.db.list(MODULES_KEYS.rental);
+    return {
       categories : [
         {
             id : cat1Id,
@@ -102,13 +102,13 @@ export class ModulesProvider {
         ],
     }
 
-    let path = this.db.object(`config/${id}`);
-    try {
-      const data = await path.set(defaultConfig);
-      return id;
-    } catch (error) {
-      console.error(error.message);
-    }
+    // let path = this.db.object(`config/${id}`);
+    // try {
+    //   const data = await path.set(defaultConfig);
+    //   return id;
+    // } catch (error) {
+    //   console.error(error.message);
+    // }
   }
 
 }

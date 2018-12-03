@@ -26,7 +26,7 @@
           <ion-input text-center [(ngModel)]="password" placeholder="mot de passe" type="password"></ion-input>
         </ion-item>
         <div padding>
-          <button class="square-button small" ion-button (click)="connect()">entrer</button>
+          <button class="square-button small" ion-button (click)="logIn ()">entrer</button>
           <p style="height:25px;"><span *ngIf="errorMsg" color="danger">{{errorMsg}}</span></p>
         </div>
       </ion-col>

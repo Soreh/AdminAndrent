@@ -6,7 +6,7 @@ const structuresList : Structure[] = [
         modules : [
             {
                 module_key : 'module_1',
-                config_key : 'config_1',
+                config : { },
             }
         ],
         users : [
@@ -27,11 +27,11 @@ const structuresList : Structure[] = [
         modules : [
             {
                 module_key : 'module_1',
-                config_key : 'config_2',
+                config : { },
             },
             {
                 module_key : 'module_3',
-                config_key : 'config_1',
+                config : { },
             }
         ],
         users : [

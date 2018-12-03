@@ -10,6 +10,12 @@ import { AngularFireAuth } from "angularfire2/auth";
 import { AngularFireDatabase, AngularFireObject } from "angularfire2/database";
 import { User } from "firebase/app";
 
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
+
 /*
   Generated class for the StructureServiceProvider provider.
 
@@ -24,10 +30,73 @@ export class StructureServiceProvider {
   activeStructure$: Structure;
   activeModules;
 
+  structuresList: firebase.firestore.CollectionReference;
+  activeStructure: firebase.firestore.DocumentReference;
+  defaultStructureKey : string;
+  userStructures: firebase.firestore.CollectionReference;
+
   constructor(private userService: UserServiceProvider, private db: AngularFireDatabase) {
     console.log('Hello StructureServiceProvider Provider');
     // this.setUser();
+    firebase.auth().onAuthStateChanged( user => {
+      if ( user ) {
+        this.structuresList = firebase.firestore().collection('/structures');
+        this.userStructures = this.userService.getUserStructures();
+      }
+    })
   }
+
+  async addStructure(structure: Structure, isDefault: boolean): Promise<any> {
+    let structAdded = false;
+    let userUpdated = false;
+    let errorMsg: string = '';
+    await this.structuresList.add(structure)
+    .then( 
+      async (doc) => {
+        if (doc) {
+          structAdded = true;
+          await this.userStructures.add({name: structure.name, key: doc.id, isDefault: isDefault}).then(
+            ( doc ) => {
+              if (doc) {
+                userUpdated = true;
+              } else {
+                console.warn('Could not add the object in the structure collection :(');
+              }
+            },
+            ( error ) => errorMsg += ` Could not add the object in the structure collection :( `,
+          );
+        } else {
+          console.warn('Could not add the structure :(');
+        }
+      },
+      ( error ) => errorMsg += ` Could not add the structure :( `,
+    )
+    .then( () => {
+      return new Promise((resolve, reject) => {
+        if (!structAdded || !userUpdated ) {
+          console.error(errorMsg);
+          resolve(false);
+        } else {
+          console.debug('Structure and strcut_meta added')
+          resolve(true);
+        }
+      })
+    });
+  }
+
+  public async getStructureDetails(structKey: string): Promise<Structure | boolean> {
+    return await firebase.firestore().doc(`/structures/${structKey}`).get()
+    .then( (struct) => {
+        if (struct) {
+          // console.log(struct.data());
+          return <Structure>struct.data();
+        } else {
+          return false
+        }
+    });
+  }
+
+  /* OLD FUNCTIONS */
 
   /**
    * 
@@ -150,32 +219,32 @@ export class StructureServiceProvider {
     }
   }
 
-  addStructure(structure: Structure, isDefault = false) : void {
-    // if (!this.structures){
-    //   this.structures = [];
-    // }
-    // this.structures.push(structure);
-    // Adding the structure in the DataBase
+//   addStructure(structure: Structure, isDefault = false) : void {
+//     // if (!this.structures){
+//     //   this.structures = [];
+//     // }
+//     // this.structures.push(structure);
+//     // Adding the structure in the DataBase
 
-    // create a DefaultConfig pour chaque module
-    // recupérer la clef et la stocker dans la structure
+//     // create a DefaultConfig pour chaque module
+//     // recupérer la clef et la stocker dans la structure
 
    
-    // ajouter la structure dans la DB
-    MOCK_STRUCTURES.push(structure);
+//     // ajouter la structure dans la DB
+//     MOCK_STRUCTURES.push(structure);
 
-    // récupérer la clef et la stocker ajouter la structure à la liste des structures de l'utilisateur connecté.
-    this.userService.addStructure(structure.key, isDefault);
-    // if (!this.userService.getConnectedUser().structures){
-    //   this.userService.getConnectedUser().structures = [];
-    // }
-    // this.userService.getConnectedUser().structures.push(
-    //   {
-    //     key : structure.key,
-    //     isDefault : isDefault
-    //   }
-    // );
-    // console.log(this.userService.getConnectedUser());
-  }
+//     // récupérer la clef et la stocker ajouter la structure à la liste des structures de l'utilisateur connecté.
+//     this.userService.addStructure(structure.key, isDefault);
+//     // if (!this.userService.getConnectedUser().structures){
+//     //   this.userService.getConnectedUser().structures = [];
+//     // }
+//     // this.userService.getConnectedUser().structures.push(
+//     //   {
+//     //     key : structure.key,
+//     //     isDefault : isDefault
+//     //   }
+//     // );
+//     // console.log(this.userService.getConnectedUser());
+//   }
 
 }

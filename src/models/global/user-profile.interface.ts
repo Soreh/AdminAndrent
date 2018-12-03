@@ -7,7 +7,7 @@ export interface UserProfile {
         isDefault ?: boolean,
     }[];
     key ?: string;
-    email ?: string;
+    mail ?: string;
     isConnected ?: boolean;
     connectError ?: {
         code ?: string;

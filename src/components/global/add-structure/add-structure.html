@@ -17,9 +17,9 @@
   </ion-item>
   <ion-item>
     <ion-label>modules</ion-label>
-    <ion-select multiple="true" [(ngModel)]= "structureToAdd.modules" name="modules">
-      <ion-option *ngFor="let module of modulesAvailable" [value]="module">{{getModName(module.module_key)}}</ion-option>
+    <ion-select multiple="true" [(ngModel)]= "modulesToSetup" name="modules">
+      <ion-option *ngFor="let module of modulesAvailable" [value]="module.module_key">{{getModName(module.module_key)}}</ion-option>
     </ion-select>
   </ion-item>
-  <button type="submit" ion-button block outline (click)="saveStructure()">Créer une structure</button>
+  <button type="submit" ion-button block outline (click)="addStructure()">Créer une structure</button>
 </form>

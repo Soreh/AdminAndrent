@@ -15,6 +15,11 @@ import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import { LoginResponse } from '../../../models/global/login-response.interface';
 import { Subscription } from 'rxjs';
 
+
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
 /*
   Generated class for the UserServiceProvider provider.
 
@@ -32,65 +37,123 @@ export class UserServiceProvider {
   profile$ : Subscription;
   profile : UserProfile;
 
-  constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase) {
+  currentUser : firebase.User;
+  userProfile : firebase.firestore.DocumentReference;
+  userStructures: firebase.firestore.CollectionReference;
 
+  constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase) {
+    firebase.auth().onAuthStateChanged( user => {
+      if (user) {
+        this.currentUser = user;
+        this.userProfile = firebase.firestore().doc(`/userProfiles/${user.uid}`);
+        this.userStructures = firebase.firestore().doc(`/userProfiles/${user.uid}`).collection('/structures/');
+      }
+    })
+  }
+
+  /**
+   * 
+   */
+  getUserProfile(): firebase.firestore.DocumentReference {
+    return this.userProfile;
+  }
+
+  /**
+   * 
+   */
+  getCurrentUser(): firebase.User {
+    return this.currentUser;
+  }
+
+  /**
+   * 
+   */
+  getUserStructures(): firebase.firestore.CollectionReference {
+    return this.userStructures;
+  }
+
+  /**
+   * 
+   */
+  createUserProfile(): Promise<any> {
+    return this.userProfile.set({mail: this.currentUser.email, key: this.currentUser.uid});
+  }
+
+  /**
+   * 
+   * @param pseudo 
+   */
+  updatePseudo(pseudo : string): Promise<any> {
+    return this.userProfile.update({
+      name : pseudo,
+    })
+  }
+
+  /**
+   * 
+   * @param newEmail
+   * @param password
+   */
+  updateMail(newEmail: string, password: string): Promise<void> {
+    throw new Error("not implemented yet ;)");
   }
 
  
+  
 
   /**
    * Login and authentificate on Firebase
    * @param email login email
    * @param password 
    */
-  async login(email: string, password: string) : Promise<LoginResponse> {
-    let ok = false;
-    try {
-      const result = await this.afAuth.auth.signInWithEmailAndPassword(email, password);
-      //console.log(result.user.uid);
-      this.profile$ = await this.db.object(`/profiles/${result.user.uid}`).valueChanges().subscribe(
-        res => this.profile = res, 
-        e => console.log(e),
-        () => {
-          console.log(this.profile);
-        }
-        );
+  // async login(email: string, password: string) : Promise<LoginResponse> {
+  //   let ok = false;
+  //   try {
+  //     const result = await this.afAuth.auth.signInWithEmailAndPassword(email, password);
+  //     //console.log(result.user.uid);
+  //     this.profile$ = await this.db.object(`/profiles/${result.user.uid}`).valueChanges().subscribe(
+  //       res => this.profile = res, 
+  //       e => console.log(e),
+  //       () => {
+  //         console.log(this.profile);
+  //       }
+  //       );
         
-      return {
-        uid : this.profile.key,
-      }
-      // try {
-      //   const response = await this._getProfile(result.user).then(profile =>
-      //     {
-      //       this.profile = profile;
-      //       console.log(this.profile);
-      //       return {
-      //         uid : this.profile.key,
-      //       }
-      //     });
-      //   //console.log(this.profile);
-      //   // if ( !this.profile ){
-      //   //   this.profile = {
-      //   //     name : result.user.displayName,
-      //   //     key : result.user.uid,
-      //   //     email : result.user.email,
-      //   //   }
-      //   // }
+  //     return {
+  //       uid : this.profile.key,
+  //     }
+  //     // try {
+  //     //   const response = await this._getProfile(result.user).then(profile =>
+  //     //     {
+  //     //       this.profile = profile;
+  //     //       console.log(this.profile);
+  //     //       return {
+  //     //         uid : this.profile.key,
+  //     //       }
+  //     //     });
+  //     //   //console.log(this.profile);
+  //     //   // if ( !this.profile ){
+  //     //   //   this.profile = {
+  //     //   //     name : result.user.displayName,
+  //     //   //     key : result.user.uid,
+  //     //   //     email : result.user.email,
+  //     //   //   }
+  //     //   // }
         
-      // } catch (e) {
-      //   console.warn(e.message);
-      // }
-      //console.log(this.connectedUser$);
-    } catch (e) {
-      console.error(e);
-      return {
-        error : {
-          code: e.code,
-          msg: e.message,
-        }
-      }
-    }
-  }
+  //     // } catch (e) {
+  //     //   console.warn(e.message);
+  //     // }
+  //     //console.log(this.connectedUser$);
+  //   } catch (e) {
+  //     console.error(e);
+  //     return {
+  //       error : {
+  //         code: e.code,
+  //         msg: e.message,
+  //       }
+  //     }
+  //   }
+  // }
 
   // async _getProfile(user: User) : Promise<UserProfile> {
   //   //let profile : UserProfile;
