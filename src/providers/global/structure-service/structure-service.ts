@@ -15,6 +15,8 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
+import { Moduleconfig } from '../../../models/global/module-config.interface';
+import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
 
 /*
   Generated class for the StructureServiceProvider provider.
@@ -32,8 +34,11 @@ export class StructureServiceProvider {
 
   structuresList: firebase.firestore.CollectionReference;
   activeStructure: firebase.firestore.DocumentReference;
-  defaultStructureKey : string;
+  currentStructureId : string;
   userStructures: firebase.firestore.CollectionReference;
+
+  currentStructure: Structure;
+  //currentStructureId: string;
 
   constructor(private userService: UserServiceProvider, private db: AngularFireDatabase) {
     console.log('Hello StructureServiceProvider Provider');
@@ -54,6 +59,7 @@ export class StructureServiceProvider {
     .then( 
       async (doc) => {
         if (doc) {
+          //await doc.update({key: doc.id});
           structAdded = true;
           await this.userStructures.add({name: structure.name, key: doc.id, isDefault: isDefault}).then(
             ( doc ) => {
@@ -84,17 +90,69 @@ export class StructureServiceProvider {
     });
   }
 
+  // Pas sur que ça marche... a essayer plus tard
+  public async updateStructure(key: any, structure: Structure): Promise<any> {
+    return await firebase.firestore().doc(`/structures/${key}`).update(structure);
+  }
+  
+  /**
+   * Return the detail of the structure and set the current structure id
+   * on the go.
+   * @param structKey 
+   */
   public async getStructureDetails(structKey: string): Promise<Structure | boolean> {
     return await firebase.firestore().doc(`/structures/${structKey}`).get()
     .then( (struct) => {
         if (struct) {
           // console.log(struct.data());
+          //this.setCurrentStructure(<Structure>struct.data());
+          this.currentStructureId = struct.id; // Could be structKey ?
           return <Structure>struct.data();
         } else {
           return false
         }
     });
   }
+
+  public setCurrentStructure(structure: Structure): void {
+    this.currentStructure = structure;
+  }
+
+  public getCurrentStructure(): Promise<firebase.firestore.DocumentReference> {
+    return this.isStructureLoaded().then( (ok) => {
+      if (ok) {
+        return firebase.firestore().doc(`/structures/${this.currentStructureId}`)
+      }
+    })
+  }
+
+  public getCurrentId(): Promise<any> {
+    return this.isStructureLoaded().then( (ok) => {
+      return this.currentStructureId;
+    })
+  }
+
+  public isStructureLoaded(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      if (this.currentStructureId) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    })
+  }
+
+  public getModuleConfig(module_key: string): Promise<Moduleconfig> {
+    return this.getCurrentStructure().then( (ref) => {
+      ref.get().then((snap) => {
+        let data = <Structure>snap.data();
+        let config = <ModuleConfig>data.modules.filter(mod => mod.module_key === module_key)[0].config;
+        return config;
+      } )
+    })
+    // return this.currentStructure.modules.filter(mod => mod.module_key === module_key)[0].config;
+  }
+
 
   /* OLD FUNCTIONS */
 

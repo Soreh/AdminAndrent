@@ -7,6 +7,8 @@ import { Rental } from "../../../models/rentals/rental.interface";
 import { Quotation } from '../../../models/rentals/quotation.class';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { Observable } from 'rxjs/Observable';
+import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
+import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 // import { Log } from "../../../models/rentals/log.interface";
 
 /**
@@ -26,7 +28,14 @@ export class RentalsPage {
   //public configKey;
   public rentals$: Observable<Rental[]>;
 
-  constructor(private rentalProvider: RentalServiceProvider, private navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController, private user : UserServiceProvider) {
+  constructor(
+    private rentalProvider: RentalServiceProvider, 
+    private navCtrl: NavController, 
+    public navParams: NavParams, 
+    public modalCtrl: ModalController, 
+    private user : UserServiceProvider,
+    private auth: AuthServiceProvider,
+    private struct: StructureServiceProvider) {
   }
 
   /**
@@ -38,22 +47,23 @@ export class RentalsPage {
 
   ionViewWillLoad() {
     console.log('ionViewWillLoad RentalsPage');
-    if (!this.user.isConnected())
-    {
-      console.error('Erreur : pas d\'utilisteur connecté');
-      this.navCtrl.setRoot('ConnectPage');
-    } else
-    {
-      //console.log(this.navParams.get('data'));
-      this.rentals$ = this.rentalProvider.getRentals();
-      //this.getRentalsList(this.navParams.get('data').struct_key);
-      
-      // if (this.navParams.get('data').config_key) {
-      //   //this.configKey = this.navParams.get('data').config_key;
-      // } else {
-      //   console.log ('Erreur : pas de config_key reçue');
-      // }
-    }
+
+    this.auth.isConnected().then( (ok) => {
+      if (!ok) {
+        console.error('Erreur : pas d\'utilisteur connecté');
+        this.navCtrl.setRoot('ConnectPage');
+      } else {
+        this.struct.isStructureLoaded().then( (ok) => {
+          if (!ok) {
+            console.error('Erreur, aucune structure chargée');
+            this.auth.logOut();
+            this.navCtrl.setRoot('ConnectPage');
+          } else {
+            this.rentals$ = this.rentalProvider.getRentals();
+          }
+        })
+      }
+    });
   }
 
   ionViewDidLoad() {

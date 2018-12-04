@@ -190,7 +190,7 @@ export class StartPage implements OnInit {
 
   async updatePseudoAndShowAddForm() {
     await this.user.updatePseudo(this.userProfile.name).then( () => {
-      this.showAddStruct = true;
+      this.showAddForm();
     })
   }
   
@@ -272,19 +272,20 @@ export class StartPage implements OnInit {
     console.log(this.modules);
   }
 
-  goTo(module): void {
-    console.log(module);
-    console.log(this.structure$.modules);
-    let configKey = this.structure$.modules.filter(mod =>
-      mod.module_key === module.key)[0].config_key;
-      console.log(configKey);
-    this.navCtrl.setRoot(module.page, {
-      data : {
-        struct_key : this.structService.getLoadedStructureKey(),
-        config_key : configKey,
-      }
-      // config_key : this.defaultStructure$.modules.filter(mod => mod.module_key === module.key)[0].config_key,
-    });
+  goTo(moduleKey: string): void {
+    console.log(this.modulesService.getModulePage(moduleKey));
+    this.navCtrl.setRoot(this.modulesService.getModulePage(moduleKey));
+    // console.log(this.structure$.modules);
+    // let configKey = this.structure$.modules.filter(mod =>
+    //   mod.module_key === module.key)[0].config_key;
+    //   console.log(configKey);
+    // this.navCtrl.setRoot(module.page, {
+    //   data : {
+    //     struct_key : this.structService.getLoadedStructureKey(),
+    //     config_key : configKey,
+    //   }
+    //   // config_key : this.defaultStructure$.modules.filter(mod => mod.module_key === module.key)[0].config_key,
+    // });
   }
 
   disconnect() {

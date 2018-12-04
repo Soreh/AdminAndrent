@@ -37,6 +37,10 @@ export class ModulesProvider {
     return MODULES.filter(mod => mod.key == module_key)[0].name;
   }
 
+  getModulePage(module_key): string {
+    return MODULES.filter(mod => mod.key === module_key)[0].page;
+  }
+
   createDefaultRentalConfig(): RentalConfig {
     const id = this.db.createPushId();
     const cat1Id = this.db.createPushId();

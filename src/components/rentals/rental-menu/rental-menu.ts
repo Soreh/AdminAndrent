@@ -4,6 +4,7 @@ import { Rental } from '../../../models/rentals/rental.interface';
 import { Quotation } from '../../../models/rentals/quotation.class';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
+import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 
 /**
  * Generated class for the RentalMenuComponent component.
@@ -23,18 +24,21 @@ export class RentalMenuComponent {
   root:string = 'ConnectPage';
   pages;
 
-  constructor(public navCtrl : NavController, private alertCtrl : AlertController, private structService: StructureServiceProvider, private userService: UserServiceProvider) {
+  constructor(
+    public navCtrl : NavController, 
+    private alertCtrl : AlertController, 
+    private structService: StructureServiceProvider, 
+    private userService: UserServiceProvider,
+    private auth: AuthServiceProvider) {
     console.log('Hello RentalMenuComponent Component');
-    if ( !this.userService.getConnectedUser() || !this.structService.getLoadedStructureKey()){
-      this.pages = [];
-    } else {
+
       this.pages = [
         {
           label : 'Home',
           page : 'StartPage',
-          data : {
-            user : this.userService.getConnectedUser(),
-          },
+          // data : {
+          //   user : this.userService.getConnectedUser(),
+          // },
         },
         {
           label : 'Calculer un devis',
@@ -49,9 +53,9 @@ export class RentalMenuComponent {
         {
           label : 'Toutes  les locations',
           page : 'RentalsPage',
-          data : {
-            struct_key : this.structService.getLoadedStructureKey(),
-          }
+          // data : {
+          //   struct_key : this.structService.getLoadedStructureKey(),
+          // }
         },
         {
           label : 'Configuration',
@@ -62,7 +66,7 @@ export class RentalMenuComponent {
           push: true,
         }
       ];
-    }
+
   }
 
   goBack(): void {
@@ -105,7 +109,7 @@ export class RentalMenuComponent {
         {
           text : "Je m'en fiche...",
           handler : () => {
-            this.navCtrl.setRoot('ConnectPage');
+            this.auth.logOut().then(() => this.navCtrl.setRoot('ConnectPage'));
           }
         }
       ]

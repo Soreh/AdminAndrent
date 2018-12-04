@@ -18,7 +18,7 @@
     <ion-row style="min-height:100%" justify-content-center align-items-center>
       <ion-col col-auto text-center>
         <div *ngIf="defaultStructure ; else addStructure">
-          <button ion-button class="square-button large" *ngFor="let module of defaultStructure.modules" (click)="goTo(module)">
+          <button ion-button class="square-button large" *ngFor="let module of defaultStructure.modules" (click)="goTo(module?.module_key)">
               {{modulesService.getModuleName(module?.module_key)}}
           </button>
           <div class="adress" text-center>

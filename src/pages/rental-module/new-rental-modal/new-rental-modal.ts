@@ -22,7 +22,10 @@ export class NewRentalModalPage {
   }
 
   ionViewWillLoad() {
-    this.id = this.struct.activeStructure$.key;
+    this.struct.isStructureLoaded().then(()=>{
+      this.struct.getCurrentId().then((id) => this.id = id);
+      console.log(this.id);
+    })
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad NewRentalModalPage');

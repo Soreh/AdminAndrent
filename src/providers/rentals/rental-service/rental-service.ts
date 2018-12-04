@@ -18,6 +18,10 @@ import { LogController } from '../../../controllers/log.controller';
 import { QuotationArgs } from '../../../models/rentals/quotation.class';
 //import { RentalLastLogComponent } from '../../../components/rentals/rental-last-log/rental-last-log';
 
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
 /*
   Generated class for the RentalServiceProvider provider.
 
@@ -35,8 +39,10 @@ export class RentalServiceProvider {
   rentals$ : Observable<Rental[]>;
   sortedByCategoryPriceList : Array<CategoryDetail>;
 
+
   constructor(private struct : StructureServiceProvider, private logCtrl : LogController ) {
     console.log('Hello RentalServiceProvider Provider');
+    this.config$ = <RentalConfig>this.struct.getModuleConfig(this.module_key);
   }
 
   // CONFIG
