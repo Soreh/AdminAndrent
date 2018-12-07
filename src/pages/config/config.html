@@ -13,6 +13,17 @@
 </ion-header>
 
 
-<ion-content padding>
-  Ici c'est configuration de la structure
+<ion-content padding *ngIf="loaded">
+  <ion-fab top right>
+      <button ion-fab icon-only (click)="update()">
+        <ion-icon name="cloud-upload"></ion-icon>
+      </button>
+  </ion-fab>
+  <div>
+    <h1>Onglet de configuration générale</h1>
+  </div>
+  <div>
+    <h1>Onglet de configuration du module rental</h1>
+    <p>il faudrait un petit component ;)</p>
+  </div>
 </ion-content>

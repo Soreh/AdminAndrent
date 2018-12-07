@@ -9,7 +9,7 @@ import { Log } from '../../../models/rentals/log.interface';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { ViewController } from 'ionic-angular';
+import { ViewController, NavController } from 'ionic-angular';
 import { ValueTransformer } from '@angular/compiler/src/util';
 
 /**
@@ -29,9 +29,14 @@ export class RentalAddFormComponent implements OnInit {
   contactToAdd: Contact;
   errorIdMsg: string;
   errorMsg: string;
-  config$: RentalConfig;
+  config: RentalConfig;
 
-  constructor(private user : UserServiceProvider, private rentalService: RentalServiceProvider, private viewCtrl : ViewController, private formBuilder: FormBuilder) {
+  constructor(
+    private user : UserServiceProvider, 
+    private rentalService: RentalServiceProvider, 
+    private viewCtrl : ViewController, 
+    private formBuilder: FormBuilder,
+    private navCtrl: NavController) {
     console.log('Hello RentalAddFormComponent Component');
     this.rentalToAdd = this.formBuilder.group({
       name : ['', Validators.required],
@@ -42,11 +47,11 @@ export class RentalAddFormComponent implements OnInit {
       contact_tel :[''],
       contact_mail : ['', Validators.email],
     })
+    this.config = this.rentalService.getConfig();
   }
 
   ngOnInit() {
-    this.errorIdMsg = "Oops... Pas de structure chargée...";
-    this.config$ = this.rentalService.getConfig();
+
     // let firstLog: Log = {
     //   author : this.user.getConnectedUser().name + ' (auto)',
     //   date : new Date(),
@@ -69,9 +74,11 @@ export class RentalAddFormComponent implements OnInit {
     // }
   }
 
-  add() : void {
+  async add() : Promise<void> {
+
+    let name = await this.user.getUserName();
     let firstLog: Log = {
-      author : this.user.getConnectedUser().name + ' (auto)',
+      author : name + ' (auto)',
       date : new Date(),
       msg : 'Création'
     };
@@ -98,6 +105,7 @@ export class RentalAddFormComponent implements OnInit {
     // this.rentalToAdd.contact.push(this.contactToAdd);
     // console.warn(this.rentalToAdd);
     this.rentalService.addRental(rental);
-    this.viewCtrl.dismiss();
+    // this.navCtrl.setRoot('RentalsPage');
+    this.viewCtrl.dismiss().then( () => this.navCtrl.setRoot('RentalsPage'));
   }
 }

@@ -3,6 +3,7 @@ import { RentalResumeComponent } from './rental-resume/rental-resume';
 import { RentalLastLogComponent } from "./rental-last-log/rental-last-log";
 import { RentalMenuComponent } from "./rental-menu/rental-menu";
 import { RentalAddFormComponent } from "./rental-add-form/rental-add-form";
+import { RentalConfigComponent } from "./rental-config/rental-config";
 import { IonicModule } from 'ionic-angular';
 import { PipesModule } from "../../pipes/pipes.module";
 
@@ -11,7 +12,8 @@ import { PipesModule } from "../../pipes/pipes.module";
 		RentalResumeComponent,
 		RentalLastLogComponent,
 		RentalMenuComponent,
-		RentalAddFormComponent
+		RentalAddFormComponent,
+		RentalConfigComponent
 	],
 	imports: [
 		IonicModule,
@@ -21,7 +23,8 @@ import { PipesModule } from "../../pipes/pipes.module";
 		RentalResumeComponent,
 		RentalLastLogComponent,
 		RentalMenuComponent,
-		RentalAddFormComponent
+		RentalAddFormComponent,
+		RentalConfigComponent
 	]
 })
 export class RentalComponentsModule {}

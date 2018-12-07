@@ -80,7 +80,15 @@ export class RentalDetailsPage {
       this.navCtrl.setRoot('ConnectPage');
     } else {
       this.rentalID = this.navParams.get('id');
-      this.rental$ = this.rentalService.getRentalDetails(this.rentalID);
+      // this.rental$ = this.rentalService.getRentalDetails(this.rentalID);
+      this.rentalService.getRentalDetails(this.rentalID).then(
+        rental => {
+          if (rental ) {
+            this.rental$ = rental;
+          }
+        }
+      )
+      // this.rental$ = this.rentalService.g
       this.config = this.rentalService.getConfig();
       // if ( this.rental.quotation_args ) {
       //   this.quotationArgsExists = true;

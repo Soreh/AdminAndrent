@@ -11,5 +11,5 @@ export interface RentalConfig extends Moduleconfig {
     locations : Location[];
     chargesTypes : ChargeType[];
     chargesTypeDetails : Charge[];
-    
+     
 }

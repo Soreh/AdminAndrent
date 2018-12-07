@@ -17,6 +17,8 @@ import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 import { Moduleconfig } from '../../../models/global/module-config.interface';
 import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
+import { MODULES_KEYS } from '../modules/modules';
+import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 
 /*
   Generated class for the StructureServiceProvider provider.
@@ -49,6 +51,10 @@ export class StructureServiceProvider {
         this.userStructures = this.userService.getUserStructures();
       }
     })
+  }
+
+  public destroyCurrentStructureID(): void {
+    this.currentStructureId = null;
   }
 
   async addStructure(structure: Structure, isDefault: boolean): Promise<any> {
@@ -118,12 +124,14 @@ export class StructureServiceProvider {
     this.currentStructure = structure;
   }
 
-  public getCurrentStructure(): Promise<firebase.firestore.DocumentReference> {
-    return this.isStructureLoaded().then( (ok) => {
+  public async getCurrentStructure(): Promise<firebase.firestore.DocumentReference | void> {
+    return await this.isStructureLoaded().then(
+      (ok) => {
       if (ok) {
-        return firebase.firestore().doc(`/structures/${this.currentStructureId}`)
+        console.debug('got the Doc Ref !');
+        return firebase.firestore().doc(`/structures/${this.currentStructureId}`);
       }
-    })
+    });
   }
 
   public getCurrentId(): Promise<any> {
@@ -142,15 +150,35 @@ export class StructureServiceProvider {
     })
   }
 
-  public getModuleConfig(module_key: string): Promise<Moduleconfig> {
-    return this.getCurrentStructure().then( (ref) => {
-      ref.get().then((snap) => {
-        let data = <Structure>snap.data();
-        let config = <ModuleConfig>data.modules.filter(mod => mod.module_key === module_key)[0].config;
-        return config;
-      } )
-    })
-    // return this.currentStructure.modules.filter(mod => mod.module_key === module_key)[0].config;
+  /**
+   * 
+   * @param module_key the module key as stored in MODULES_KEY
+   * @returns the module config for the loaded structre, or false if it fails
+   */
+  public async getStructureModuleConfigBykey(module_key: string): Promise<Moduleconfig | boolean> {
+    console.debug(this.currentStructureId);
+    return await this.getCurrentStructure()
+    .then(
+      async (doc) => {
+        if( doc ) {
+          return await doc.get()
+          .then(
+            async (snap) => {
+              let struct = await <Structure>snap.data();
+              let data = struct.modules.filter(mod => mod.module_key === module_key)[0].config;
+              console.debug(data);
+              return data
+            },
+            () => {
+              return false
+            }
+          )
+        }
+      }, 
+      () => {
+        return false
+      }
+    );
   }
 
 

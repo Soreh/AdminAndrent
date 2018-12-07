@@ -58,6 +58,24 @@ export class UserServiceProvider {
     return this.userProfile;
   }
 
+  public async getUserName() : Promise<string> {
+    return this.userProfile.get().then(
+      (snap) => {
+        let profile = <UserProfile>snap.data();
+        if (profile.name){
+          return profile.name
+        } else {
+          return "J'ai toujours pas de pseudo..."
+        }
+      }
+    )
+    .catch( (e) => {
+        console.warn(e);
+        return 'Anonymous';
+      }
+    )
+  }
+
   /**
    * 
    */

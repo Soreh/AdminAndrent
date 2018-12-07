@@ -10,7 +10,7 @@
     <ion-item>
       <ion-label>Salle*</ion-label>
       <ion-select formControlName="location">
-        <ion-option *ngFor="let loc of config$.locations" [value]="loc">{{loc.label}}</ion-option>
+        <ion-option *ngFor="let loc of config?.locations" [value]="loc">{{loc.label}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>

@@ -16,20 +16,26 @@ import { NavController} from 'ionic-angular';
 })
 export class RentalResumeComponent implements OnInit{
 
-  @Input() rental : Rental;
-  // name : string;
-  // status : number;
-  // payment_status : number;
-  // location_name : string;
-  // dates : string;
-  // contact : Contact;
-  // color_class : any;
+  @Input() rental: Rental;
+
+  public color_class: any;
+  public status_label: any;
+  public contact: Contact;
+  
 
   constructor(private navCtrl:NavController) {
     console.log('Hello RentalResumeComponent Component');
+    console.log(this.rental);
   }
   
   ngOnInit(){
+    console.log('On Init');
+    this.color_class = STATUS.getColor(this.rental.status);
+    this.status_label = STATUS.getLabel(this.rental.status);
+    this.contact = this.rental.contact.find( contact => contact.main );
+    // this.color_class = STATUS.getLabel(this.rental.status);
+    // this.status_label = STATUS.getLabel(this.rental.status);
+    // this.contact = this.rental.contact.find( contact => contact.main );
     // this.name = this.rental.name;
     // this.status = this.rental.status;
     // this.payment_status = this.rental.payment_status;
@@ -38,17 +44,19 @@ export class RentalResumeComponent implements OnInit{
     // this.contact = this.rental.contact.find( contact => contact.main );
   }
 
-  getFirstContact() : Contact {
-    return this.rental.contact.find( contact => contact.main );
-  }
+  // getFirstContact() : Contact {
+  //   return this.rental.contact.find( contact => contact.main );
+  // }
 
-  getStatusLabel(statusCode) : string {
-    return STATUS.getLabel(statusCode);
-  }
+  // getStatusLabel(statusCode) : string {
+  //   console.log('get status label');
+  //   return STATUS.getLabel(statusCode);
+  // }
 
-  getColorClass(statusCode) : string {
-    return STATUS.getColor(statusCode);
-  }
+  // getColorClass(statusCode) : string {
+  //   console.log('get status label');
+  //   return STATUS.getColor(statusCode);
+  // }
 
   
 }

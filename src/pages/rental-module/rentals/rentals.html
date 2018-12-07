@@ -10,13 +10,13 @@
     <rental-menu></rental-menu>
   </div>
   <div padding class="panel-content">
-    <ion-grid *ngIf="rentals$; else noRentals">
+    <ion-grid *ngIf="rentalList; else noRentals">
       <ion-row>
         <ion-col>
             <button ion-button (click)="openNewRentalModal()">Nouvelle Location</button>
         </ion-col>
       </ion-row>
-      <ion-row *ngFor="let rental of rentals$ | async" align-items-center>
+      <ion-row *ngFor="let rental of rentalList" align-items-center>
         <ion-col col-6>
           <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
         </ion-col>

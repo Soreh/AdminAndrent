@@ -14,51 +14,5 @@
 
 
 <ion-content padding *ngIf="config">
-  <div id="options">
-    <div class="category" *ngFor="let cat of config.categories">
-      <ion-grid>
-        <ion-row>
-          <ion-col col-10>
-            <h2>{{cat.label}}</h2>
-          </ion-col>
-          <ion-col col-1>
-            Prix
-          </ion-col>
-          <ion-col col-1>
-            Coût
-          </ion-col>
-        </ion-row>
-        <ion-row *ngFor="let option of config.options">
-          <ion-col *ngIf="option.catId == cat.id" col-10>
-              <p>
-                {{option.label}}<span *ngIf="option.infos"> <ion-icon *ngIf="option.infos" color="primary" name="ios-help-circle-outline" (click)="displayInfo(option.infos)"></ion-icon></span>
-              </p>
-          </ion-col>
-          <ion-col *ngIf="option.catId == cat.id" col-1>{{option.amount}}</ion-col>
-          <ion-col *ngIf="option.catId == cat.id" col-1>{{option.cost}}</ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
-  </div>
-  <div id="board">
-    <div id="Lcoation-board">
-      <h2>Salles</h2>
-      <ul>
-        <li *ngFor="let y of config.locations">{{y.label}}</li>
-      </ul>
-    </div>
-    <div id="option-board">
-      <h2>Catégories</h2>
-      <ul>
-        <li *ngFor="let y of config.categories">{{y.label}}</li>
-      </ul>
-    </div>
-    <div id="location-board">
-      <h2>Types de coûts</h2>
-      <ul>
-        <li *ngFor="let y of config.chargesTypeDetails">{{y.label}}</li>
-      </ul>
-    </div>
-  </div>
-  <pre>{{config | json}}</pre>
+  <rental-config [config]="config"></rental-config>
 </ion-content>

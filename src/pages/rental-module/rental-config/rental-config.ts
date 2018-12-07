@@ -20,7 +20,16 @@ export class RentalConfigPage {
 
   public config : RentalConfig;
 
-  constructor(private rentalService : RentalServiceProvider, private user: UserServiceProvider, public navCtrl: NavController, public navParams: NavParams) {
+  constructor(
+    private rentalService : RentalServiceProvider, 
+    private user: UserServiceProvider, 
+    public navCtrl: NavController, 
+    public navParams: NavParams) {
+      this.config = this.rentalService.getConfig();
+      // this.rentalService.getConfig().then( (data) => {
+      //   this.config = data;
+      //   console.debug(data);
+      // });
   }
 
   ionViewDidLoad() {
@@ -28,12 +37,9 @@ export class RentalConfigPage {
   }
 
   ionViewWillLoad() {
-    if(!this.user.isConnected()){
-      console.warn('No user connected');
-      this.navCtrl.setRoot('ConnectPage');
-    } else {
-      this.config = this.rentalService.getConfig();
-      console.warn(this.config);
+    if (!this.config) {
+      console.error('Have to move, no config found...');
+      this.navCtrl.setRoot('StartPage');
     }
   }
 

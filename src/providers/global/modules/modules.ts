@@ -71,6 +71,7 @@ export class ModulesProvider {
           amount : 0,
           cost : 0,
           isCompulsory : true,
+          chargeTypeId : chargeDetail1Id,
         },
         {
           id : this.db.createPushId(),

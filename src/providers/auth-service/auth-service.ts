@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 
 import * as firebase from 'firebase/app';
+import { StructureServiceProvider } from '../global/structure-service/structure-service';
 //import { UserCredential } from 'firebase/auth';
 
 /*
@@ -13,7 +14,7 @@ import * as firebase from 'firebase/app';
 @Injectable()
 export class AuthServiceProvider {
 
-  constructor() {
+  constructor( private structService : StructureServiceProvider) {
     console.log('Hello AuthServiceProvider Provider');
   }
 
@@ -27,6 +28,7 @@ export class AuthServiceProvider {
   }
 
   logOut(): Promise<void> {
+    this.structService.destroyCurrentStructureID();
     return firebase.auth().signOut();
   }
 

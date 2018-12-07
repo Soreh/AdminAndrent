@@ -9,6 +9,7 @@ import { QuotationverboseLine } from "../../../models/rentals/quotation-verbose-
 import { STATUSCODE, STATUS, Status } from "../../../models/global/status.interface";
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { Console } from '@angular/core/src/console';
+import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 /**
  * Generated class for the RentalQuotationDashPage page.
  *
@@ -98,7 +99,13 @@ export class RentalQuotationDashPage {
   public quotation: Quotation;
   public sortedOptions: savedOptionByCategory[];
 
-  constructor(private rentalService: RentalServiceProvider, private navCtrl: NavController, private navParams: NavParams, private alertCtrl : AlertController, private user : UserServiceProvider) {
+  constructor(
+    private rentalService: RentalServiceProvider, 
+    private navCtrl: NavController, 
+    private navParams: NavParams, 
+    private alertCtrl : AlertController, 
+    private user : UserServiceProvider,
+    private auth: AuthServiceProvider) {
   }
   
   showHelp() {
@@ -112,41 +119,43 @@ export class RentalQuotationDashPage {
 
   ionViewWillLoad() { 
     console.debug('ionViewWillLoad RentalQuotationDashPage');
-    if (this.user.isConnected()){
-      if (!this.rentalService.getConfig()) {
-        console.error('No config found');
-      } else {
-        this.config = this.rentalService.getConfig();
-        this.priceList = this.rentalService.getSortedByCategoryPriceList();
-        if(this.navParams.get('data')) { // if some data is passed
-          let args = this.navParams.get('data').quotationArgs;
-          let id = this.navParams.get('data').rentalID;
-          if(id) { // If a rental id is passed
-            this.rentalId = id;
-            if(args) { // if there are args, then pass them to to constructor
-              this.quotation = new Quotation(id, args);
-            } else { // otherwise mak a empty and default quotation for the rental of rental id
-              this.quotation = new Quotation(id);
+    this.auth.isConnected().then( (ok) => {
+      if ( ok ) {
+        if (!this.rentalService.getConfig()) {
+          console.error('No config found');
+        } else {
+          this.config = this.rentalService.getConfig();
+          this.priceList = this.rentalService.getSortedByCategoryPriceList();
+          if(this.navParams.get('data')) { // if some data is passed
+            let args = this.navParams.get('data').quotationArgs;
+            let id = this.navParams.get('data').rentalID;
+            if(id) { // If a rental id is passed
+              this.rentalId = id;
+              if(args) { // if there are args, then pass them to to constructor
+                this.quotation = new Quotation(id, args);
+              } else { // otherwise mak a empty and default quotation for the rental of rental id
+                this.quotation = new Quotation(id);
+              }
+            } else {
+              console.error("No rental ID received for the quotation to create.");
             }
-          } else {
-            console.error("No rental ID received for the quotation to create.");
+          } else { //otherwise create a new empty quotation, and with no id, allow to open the page and just calculate
+            this.quotation = new Quotation();
           }
-        } else { //otherwise create a new empty quotation, and with no id, allow to open the page and just calculate
-          this.quotation = new Quotation();
-        }
-        this.sortedOptions = this.quotation.getSortedOptions(this.config); // Could it be a method of the Quotation Class, like Quotation.getSortedDetails() (with no argument)
-        if(this.quotation.verbose.categories){
-          for (let catLength = 0; catLength < this.quotation.verbose.categories.length; catLength++) {
-            this.linesToAdd.push({label:"",amount:0});
+          this.sortedOptions = this.quotation.getSortedOptions(this.config); // Could it be a method of the Quotation Class, like Quotation.getSortedDetails() (with no argument)
+          if(this.quotation.verbose.categories){
+            for (let catLength = 0; catLength < this.quotation.verbose.categories.length; catLength++) {
+              this.linesToAdd.push({label:"",amount:0});
+            }
           }
+          this.variousChargeTypeToAdd = this.config.chargesTypeDetails[0]; // Sets a default ChargeType
+          // Ici il faudrait choisir un onglet actif selon le code
         }
-        this.variousChargeTypeToAdd = this.config.chargesTypeDetails[0]; // Sets a default ChargeType
-        // Ici il faudrait choisir un onglet actif selon le code
+      } else {
+        console.error('Have to move ! No user connected !')
+        this.navCtrl.setRoot('ConnectPage');
       }
-    } else {
-      this.navCtrl.setRoot('ConnectPage');
-    }
-
+    });
     
 
     // if(this.navParams.get('data')){
@@ -184,27 +193,27 @@ export class RentalQuotationDashPage {
   }
 
   ionViewWillLeave() {
-    if(this.rentalId){ // If a rentalId exists, we are modifying a rental, we thus have to persists the changes in that specific renal
+    if(this.rentalId){ // If a rentalId exists, we are modifying a rental, we thus have to persists the changes in that specific rental
       // Get the args
       let args:QuotationArgs = this.quotation.getQuotationArgs();
       // Retrieve the rental
-      let rental = this.rentalService.getRentalDetails(this.rentalId);
-      let currentArgs = rental.quotation_args;
-      let change = true;
-      console.warn(currentArgs);
-      if (currentArgs){
-        change = this.rentalService.compareQuotationArgs(args, currentArgs);
-      }
-      if( change ) {
-        rental.quotation_args = args;
-        if( rental.quotation_args.statusCode == STATUSCODE.toDO){
-          rental.quotation_args.statusCode = STATUSCODE.processing;
-        }
-        this.rentalService.log(rental, "Devis modifié");
-        console.warn('Devis sauvegardé');
-      } else {
-        console.warn('No chnage made');
-      }
+      // let rental = this.rentalService.getRentalDetails(this.rentalId);
+      // let currentArgs = rental.quotation_args;
+      // let change = true;
+      // console.warn(currentArgs);
+      // if (currentArgs){
+      //   change = this.rentalService.compareQuotationArgs(args, currentArgs);
+      // }
+      // if( change ) {
+      //   rental.quotation_args = args;
+      //   if( rental.quotation_args.statusCode == STATUSCODE.toDO){
+      //     rental.quotation_args.statusCode = STATUSCODE.processing;
+      //   }
+      //   this.rentalService.log(rental, "Devis modifié");
+      //   console.warn('Devis sauvegardé');
+      // } else {
+      //   console.warn('No chnage made');
+      // }
     }
   }
 
@@ -557,7 +566,7 @@ export class RentalQuotationDashPage {
   }
 
   goToPrint() {
-    this.rentalService.getRentalDetails(this.rentalId).quotation_args.statusCode = STATUSCODE.toBeSend;
+    // this.rentalService.getRentalDetails(this.rentalId).quotation_args.statusCode = STATUSCODE.toBeSend;
     this.navCtrl.push('RentalQuotationPrintPage', {
       quotation : {
         verbose : this.quotation.verbose,

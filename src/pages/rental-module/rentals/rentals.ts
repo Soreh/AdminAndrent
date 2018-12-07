@@ -26,7 +26,9 @@ import { StructureServiceProvider } from '../../../providers/global/structure-se
 export class RentalsPage {
 
   //public configKey;
-  public rentals$: Observable<Rental[]>;
+  public rentals$: Observable<any>;
+
+  public rentalList: Rental[];
 
   constructor(
     private rentalProvider: RentalServiceProvider, 
@@ -59,17 +61,42 @@ export class RentalsPage {
             this.auth.logOut();
             this.navCtrl.setRoot('ConnectPage');
           } else {
-            this.rentals$ = this.rentalProvider.getRentals();
+            if ( ! this.rentalProvider.isConfigLoaded() ) {
+              this.rentalProvider.loadConfig().then( () => 
+                this.retrieveRentals()
+              );
+            } else {
+              this.retrieveRentals()
+            }
           }
         })
       }
     });
   }
 
+  ionViewWillEnter() {
+    console.log('coucou');
+  }
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad RentalsPage');
   }
 
+  retrieveRentals() {
+    this.rentalProvider.getRentals().then(
+      docs => {
+        docs.get().then( listSnap => {
+          this.rentalList = [];
+          listSnap.forEach( snap => {
+            let rental = <Rental>snap.data();
+            rental.id = snap.id;
+            this.rentalList.push(rental);
+          });
+          return false
+        });
+      }
+    );
+  }
   // checkRentals() : boolean {
   //   if (this.rentals$) {
   //     if (this.rentals$.length > 0) {

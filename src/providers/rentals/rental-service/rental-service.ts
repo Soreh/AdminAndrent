@@ -21,6 +21,7 @@ import { QuotationArgs } from '../../../models/rentals/quotation.class';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { Moduleconfig } from '../../../models/global/module-config.interface';
 
 /*
   Generated class for the RentalServiceProvider provider.
@@ -35,14 +36,19 @@ export class RentalServiceProvider {
   structId = 'struct1';
 
   module_key = MODULES_KEYS.rental;
-  config$: RentalConfig;
+  config: RentalConfig;
+  
+  rentalsPath : firebase.firestore.CollectionReference = firebase.firestore().collection(`/rentals/`);
   rentals$ : Observable<Rental[]>;
+  
   sortedByCategoryPriceList : Array<CategoryDetail>;
 
 
-  constructor(private struct : StructureServiceProvider, private logCtrl : LogController ) {
+  constructor(
+    private struct : StructureServiceProvider, 
+    private logCtrl : LogController ) {
     console.log('Hello RentalServiceProvider Provider');
-    this.config$ = <RentalConfig>this.struct.getModuleConfig(this.module_key);
+    this.loadConfig();
   }
 
   // CONFIG
@@ -75,12 +81,12 @@ export class RentalServiceProvider {
    */
   getSortedByCategoryPriceList() : Array<CategoryDetail> {
     this.sortedByCategoryPriceList = [];
-    this.config$.categories.forEach( cat => {
+    this.config.categories.forEach( cat => {
       var category : CategoryDetail = {
         catName : cat.label,
         pricesList : [],
       };
-      this.config$.options.forEach(option => {
+      this.config.options.forEach(option => {
         if(option.catId == cat.id) {
           category.pricesList.push(option);
         }
@@ -137,32 +143,76 @@ export class RentalServiceProvider {
   /* MOCK DATA */
   
   // CONFIG
-  /* 
-    Deprecated ?
-    return Observable
-  */
-  mockGetOptionsByKey(config_key) : Observable<RentalConfig> {
-    return Observable.of(MOCK_RENTAL_CONFIG.filter(config => config.key === config_key)[0]);
-  }
 
   /**
    * Set the Config Option for the loaded structure
    */
-  private _setConfig() : void {
-    // if(this.struct.getDefaultStructure()){
-    //   let key = this.struct.getDefaultStructure().modules.filter(mod => mod.module_key == this.module_key)[0].config_key;
-    //   Observable.of(MOCK_RENTAL_CONFIG.filter(config => config.key == key)[0]).subscribe(config => this.config$ = config);
-    // }
+  private async _setConfig(): Promise<void> {
+    await this.struct.getStructureModuleConfigBykey(this.module_key).then( 
+      (config) => {
+        if (config) {
+          this.config = <RentalConfig>config;
+        }
+      }
+    );
   }
   
   /**
-   * Get the Config Options for the loaded structure
-   * @returns RentalConfig as a susbcription
+   * Get the Rental config for the loaded structure
+   * @returns RentalConfig
    */
-  getConfig() : RentalConfig {
-      this._setConfig();
-    return this.config$;
+  public getConfig() : RentalConfig {
+    return this.config;
   }
+
+  public async loadConfig() {
+    firebase.auth().onAuthStateChanged( (user) => {
+      if (user) {
+        this._setConfig().then(() => {
+          if (this.config) {
+            console.debug(`config chargée : ${this.config}`);
+            // this.rentalsPath = firebase.firestore().collection(`/rentals/`);
+          }
+        });
+      }
+    })
+  }
+
+  public isConfigLoaded() : boolean {
+    return (this.config)?true:false;
+  }
+
+  /**
+   * Get the Rental[] for the loaded structure
+   * @returns Rental[] as a subscription
+   * Promise<Observable<Rental[]>>
+   */
+  async getRentals() : Promise<firebase.firestore.Query> {
+    const structkey = await this.struct.getCurrentId();
+    console.log(`Struct key for the rentals to retrieve : ${structkey}`);
+    console.log
+    return await this.rentalsPath.where("struct_key", "==", structkey);
+  }
+
+
+  /**
+   * Add a rental in DB
+   * @param rental : Rental
+   */
+  async addRental(rental: Rental) : Promise<boolean> {
+    return this.rentalsPath.add(rental)
+      .then(
+        (data) => {
+          console.log('rental added !');
+          return true
+        }
+      )
+      .catch( () => {
+        return false
+        }
+      )
+  }
+
 
   /**
    * Set the rentals Array<Rentals> for the loaded structure
@@ -172,23 +222,7 @@ export class RentalServiceProvider {
     // this.rentals$ = Observable.of(RENTALS_MOCK.filter(rental => rental.struct_key == key));
   }
 
-  /**
-   * Get the Rental[] for the loaded structure
-   * @returns Rental[] as a subscription
-   */
-  getRentals() : Observable<Rental[]> {
-    this._setRentals();
-    return this.rentals$;
-  }
 
-  /**
-   * Add a rental to the rentals$ array of the loaded structure
-   * @param rental 
-   */
-  addRental(rental: Rental) : void {
-    rental.id = "test" + Math.random(); // WARNING ! I HAVe TO RETRIEVE THE KEY FROM DB
-    RENTALS_MOCK.unshift(rental);
-  }
 
   /**
    * Delete the rental of id rentalID in DB
@@ -204,14 +238,12 @@ export class RentalServiceProvider {
    * @param rentalID
    * @returns Rental
    */
-  getRentalDetails(rentalID) : Rental {
-    if( !this.rentals$ ){
-      console.error("No rentals loaded... Try to invoke getRentals() first")
-    } else {
-      let result;
-      Observable.of(RENTALS_MOCK.filter(rental => rental.id === rentalID)[0]).subscribe(rental => result = rental);
-      return result;
-    }
+  async getRentalDetails(rentalID) : Promise<Rental | void> {
+    return this.rentalsPath.doc(`${rentalID}`).get().then(
+      doc => {
+        return <Rental>doc.data()
+      }
+    )
 
     //return this.rentals$.filter(rental => rental.id == rentalID)[0];
   }
@@ -241,6 +273,13 @@ export class RentalServiceProvider {
   mockGetRentalDetails(id:any): Observable<Rental> {
     return Observable.of(RENTALS_MOCK.filter(rental => rental.id === id)[0]);
   }
-
+  
+    /* 
+    Deprecated ?
+    return Observable
+  */
+ mockGetOptionsByKey(config_key) : Observable<RentalConfig> {
+  return Observable.of(MOCK_RENTAL_CONFIG.filter(config => config.key === config_key)[0]);
+}
   /* END OF MOCK DATA */
 }
