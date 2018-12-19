@@ -11,6 +11,7 @@ import { RentalServiceProvider } from '../../../providers/rentals/rental-service
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 import { ViewController, NavController } from 'ionic-angular';
 import { ValueTransformer } from '@angular/compiler/src/util';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 /**
  * Generated class for the RentalAddFormComponent component.
@@ -74,22 +75,13 @@ export class RentalAddFormComponent implements OnInit {
     // }
   }
 
-  async add() : Promise<void> {
+  async addNewRental() {
 
-    let name = await this.user.getUserName();
-    let firstLog: Log = {
-      author : name + ' (auto)',
-      date : new Date(),
-      msg : 'Création'
-    };
-    console.warn("Il faut ajouter :");
-    let contact : Contact = {
-      name : this.rentalToAdd.value.contact_name,
-      surname : this.rentalToAdd.value.contact_surname,
-      tel : this.rentalToAdd.value.contact_tel,
-      mail : this.rentalToAdd.value.contact_mail,
-      main : true,
-    }
+    console.debug(this.rentalToAdd);
+
+    const firstLog = await this._geFirstLog();
+    const mainContact = this._getContact();
+
     let rental : Rental = {
       name : this.rentalToAdd.value.name,
       struct_key : this.id,
@@ -97,15 +89,57 @@ export class RentalAddFormComponent implements OnInit {
       payment_status : STATUSCODE.toBePaid,
       log : [firstLog],
       dates : this.rentalToAdd.value.dates,
-      contact : [contact],
-      location : this.rentalToAdd.value.location,
+      contact : [mainContact],
+      location_id : this.rentalToAdd.value.location,
     }
-    console.warn(rental);
-    // this.rentalToAdd.log.push(firstLog);
-    // this.rentalToAdd.contact.push(this.contactToAdd);
-    // console.warn(this.rentalToAdd);
-    this.rentalService.addRental(rental);
-    // this.navCtrl.setRoot('RentalsPage');
-    this.viewCtrl.dismiss().then( () => this.navCtrl.setRoot('RentalsPage'));
+
+    console.debug(`location à ajouter : ${rental}`);
+
+    this.rentalService.addRental(rental)
+      .then(
+        () => {
+          this.viewCtrl.dismiss();
+        },
+        (e) => {
+          console.warn("Impossible d'ajouter la location : " + e);
+        }
+      )
+
+  }
+
+
+  private async _geFirstLog(): Promise<Log> {
+    return await this.user.getUserName()
+      .then(
+        (name) => {
+          let firstLog: Log = {
+            author: name + ' (auto)',
+            date: new Date(),
+            msg: 'Création'
+          };
+          console.debug(firstLog);
+          return firstLog;
+        }
+      )
+
+    // let firstLog: Log = {
+    //   author : await this.user.getUserName() + ' (auto)',
+    //   date : new Date(),
+    //   msg : 'Création'
+    // };
+    // console.debug(firstLog);
+    // return firstLog;
+  }
+
+  private _getContact(): Contact {
+    const contact = {
+      name : this.rentalToAdd.value.contact_name,
+      surname : this.rentalToAdd.value.contact_surname,
+      tel : this.rentalToAdd.value.contact_tel,
+      mail : this.rentalToAdd.value.contact_mail,
+      main : true,
+    }
+    console.debug(contact);
+    return contact;
   }
 }

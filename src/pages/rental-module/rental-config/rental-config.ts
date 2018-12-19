@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
+import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
 /**
  * Generated class for the RentalConfigPage page.
@@ -24,7 +25,8 @@ export class RentalConfigPage {
     private rentalService : RentalServiceProvider, 
     private user: UserServiceProvider, 
     public navCtrl: NavController, 
-    public navParams: NavParams) {
+    public navParams: NavParams,
+    private struct: StructureServiceProvider) {
       this.config = this.rentalService.getConfig();
       // this.rentalService.getConfig().then( (data) => {
       //   this.config = data;
@@ -37,6 +39,7 @@ export class RentalConfigPage {
   }
 
   ionViewWillLoad() {
+    this.config = this.rentalService.getConfig();
     if (!this.config) {
       console.error('Have to move, no config found...');
       this.navCtrl.setRoot('StartPage');

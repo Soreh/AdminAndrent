@@ -2,7 +2,7 @@
 export interface QuotationOption {
     id : any;
     label : any;
-    catId : any;
+    catId ?: any;
     amount : number;
     cost : number;
     isCalculated ?: boolean;

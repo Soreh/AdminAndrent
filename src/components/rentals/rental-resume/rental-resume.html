@@ -8,10 +8,10 @@
       </div>
     </ion-col>
     <ion-col class="resume">
-      <p class="name">{{rental.name | trim : 30}}</p>
-      <p class="location">{{rental.location.label}}</p>
-      <p class="dates" *ngIf="rental.date_label">{{rental.date_label}}</p>
-      <p class="contact">{{contact.tel}} | {{contact.mail}}</p>
+      <p class="name">{{rental?.name | trim : 30}}</p>
+      <p class="location">{{locationName}}</p>
+      <p class="dates" *ngIf="rental.date_label">{{rental?.dates}}</p>
+      <p class="contact">{{contact?.tel}} | {{contact?.mail}}</p>
     </ion-col>
   </ion-row>
 </ion-grid>

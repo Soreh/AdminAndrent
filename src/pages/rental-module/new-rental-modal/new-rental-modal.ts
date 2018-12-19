@@ -18,7 +18,11 @@ export class NewRentalModalPage {
 
   id: any;
 
-  constructor(public viewCtrl : ViewController, public navParams: NavParams, private struct: StructureServiceProvider) {
+  constructor(
+    public viewCtrl : ViewController, 
+    public navParams: NavParams, 
+    private struct: StructureServiceProvider,
+    private nav: NavController) {
   }
 
   ionViewWillLoad() {
@@ -35,6 +39,7 @@ export class NewRentalModalPage {
 
   closeModal() {
     this.viewCtrl.dismiss();
+    //this.nav.setRoot('RentalsPage');
   }
 
 }

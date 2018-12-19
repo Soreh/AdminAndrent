@@ -1,5 +1,5 @@
 <p *ngIf="!id">{{errorIdMsg}}</p>
-<form [formGroup]="rentalToAdd" *ngIf="id" (ngSubmit)="add()">
+<form [formGroup]="rentalToAdd" *ngIf="id" (ngSubmit)="addNewRental()">
   <p class="notes">* champs obligatoires. Pour ajouter une salle dans la liste, rendez-vous dans l'onglet de configuration</p>
   <ion-item-group>
     <ion-title>Location</ion-title>
@@ -10,7 +10,7 @@
     <ion-item>
       <ion-label>Salle*</ion-label>
       <ion-select formControlName="location">
-        <ion-option *ngFor="let loc of config?.locations" [value]="loc">{{loc.label}}</ion-option>
+        <ion-option *ngFor="let loc of config?.locations" [value]="loc.id">{{loc.label}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>

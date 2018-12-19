@@ -15,6 +15,7 @@ export class LogController {
     private _date    : Date;
   
     constructor(private user: UserServiceProvider) {
+        console.debug('Hello log controller');
     }
 
     /**

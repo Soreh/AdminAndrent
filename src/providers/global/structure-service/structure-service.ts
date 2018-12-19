@@ -6,19 +6,25 @@ import { Structure } from '../../../models/global/structure.interface';
 import { UserServiceProvider } from '../user-service/user-service';
 import { UserProfile } from '../../../models/global/user-profile.interface';
 
-import { AngularFireAuth } from "angularfire2/auth";
-import { AngularFireDatabase, AngularFireObject } from "angularfire2/database";
+import { AngularFireAuth } from '@angular/fire/auth'
+import { AngularFireDatabase, AngularFireObject } from "@angular/fire/database";
 import { User } from "firebase/app";
 
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
+// import * as firebase from 'firebase/app';
+// import 'firebase/auth';
+// import 'firebase/firestore';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 import { Moduleconfig } from '../../../models/global/module-config.interface';
 import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
 import { MODULES_KEYS } from '../modules/modules';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
+
+import{
+  AngularFirestore,
+  AngularFirestoreCollection,
+  AngularFirestoreDocument
+} from '@angular/fire/firestore';
 
 /*
   Generated class for the StructureServiceProvider provider.
@@ -34,28 +40,34 @@ export class StructureServiceProvider {
   activeStructure$: Structure;
   activeModules;
 
-  structuresList: firebase.firestore.CollectionReference;
-  activeStructure: firebase.firestore.DocumentReference;
+  structuresList: AngularFirestoreCollection;
+  activeStructure: AngularFirestoreDocument<Structure>;
+  
   currentStructureId : string;
-  userStructures: firebase.firestore.CollectionReference;
-
   currentStructure: Structure;
+
+  userStructures: AngularFirestoreCollection;
+
   //currentStructureId: string;
 
-  constructor(private userService: UserServiceProvider, private db: AngularFireDatabase) {
+  constructor(
+    private userService: UserServiceProvider, 
+    private db: AngularFireDatabase,
+    private afAuth: AngularFireAuth,
+    private afStore: AngularFirestore) {
     console.log('Hello StructureServiceProvider Provider');
     // this.setUser();
-    firebase.auth().onAuthStateChanged( user => {
+    this.afAuth.auth.onAuthStateChanged( user => {
       if ( user ) {
-        this.structuresList = firebase.firestore().collection('/structures');
+        this.structuresList = this.afStore.collection('/structures');
         this.userStructures = this.userService.getUserStructures();
       }
-    })
+    }) 
   }
 
-  public destroyCurrentStructureID(): void {
-    this.currentStructureId = null;
-  }
+  // public destroyCurrentStructureID(): void {
+  //   this.currentStructureId = null;
+  // }
 
   async addStructure(structure: Structure, isDefault: boolean): Promise<any> {
     let structAdded = false;
@@ -98,38 +110,73 @@ export class StructureServiceProvider {
 
   // Pas sur que ça marche... a essayer plus tard
   public async updateStructure(key: any, structure: Structure): Promise<any> {
-    return await firebase.firestore().doc(`/structures/${key}`).update(structure);
+    return await this.afStore.doc(`/structures/${key}`).update(structure);
   }
   
   /**
-   * Return the detail of the structure and set the current structure id
+   * Return the detail of the structure and sets the current structure id
    * on the go.
    * @param structKey 
    */
-  public async getStructureDetails(structKey: string): Promise<Structure | boolean> {
-    return await firebase.firestore().doc(`/structures/${structKey}`).get()
-    .then( (struct) => {
-        if (struct) {
-          // console.log(struct.data());
-          //this.setCurrentStructure(<Structure>struct.data());
-          this.currentStructureId = struct.id; // Could be structKey ?
-          return <Structure>struct.data();
-        } else {
-          return false
-        }
-    });
+  public async getStructureDetails(structKey: string): Promise<Structure> {
+    console.debug();
+    this.activeStructure = this.afStore.doc(`/structures/${structKey}`);
+    // await this.activeStructure.valueChanges().subscribe(
+    //   (structure) => {
+    //     if (structure) {
+    //       this.currentStructureId = structure.key;
+    //       this.currentStructure = structure;
+    //     }
+    //   }
+    // )
+    return await this.activeStructure.ref.get().then(
+      (snap) => {
+        let struct = <Structure>snap.data();
+        this.currentStructureId = snap.id;
+        console.debug(this.currentStructureId);
+        this.currentStructure = struct;
+        return this.currentStructure;
+      } 
+    )
+    // return await this.activeStructure.valueChanges().subscribe(
+    //   (structure) => return {
+    //     if (structure) {
+    //       this.currentStructureId = structure.key;
+    //       this.currentStructure = structure;
+    //       return this.currentStructure;
+    //     } else {
+    //       return false
+    //     }
+    //   },
+    //   () => {return false},
+    //   () => {return false}
+    // )
+
+    // return this.currentStructure;
+
+    // return await this.afStore.doc(`/structures/${structKey}`).get()
+    // .then( (struct) => {
+    //     if (struct) {
+    //       // console.log(struct.data());
+    //       //this.setCurrentStructure(<Structure>struct.data());
+    //       this.currentStructureId = struct.id; // Could be structKey ?
+    //       return <Structure>struct.data();
+    //     } else {
+    //       return false
+    //     }
+    // });
   }
 
   public setCurrentStructure(structure: Structure): void {
     this.currentStructure = structure;
   }
 
-  public async getCurrentStructure(): Promise<firebase.firestore.DocumentReference | void> {
+  public async getCurrentStructure(): Promise<AngularFirestoreDocument | void> {
     return await this.isStructureLoaded().then(
       (ok) => {
       if (ok) {
         console.debug('got the Doc Ref !');
-        return firebase.firestore().doc(`/structures/${this.currentStructureId}`);
+        return this.afStore.doc(`/structures/${this.currentStructureId}`);
       }
     });
   }
@@ -145,7 +192,7 @@ export class StructureServiceProvider {
       if (this.currentStructureId) {
         resolve(true);
       } else {
-        resolve(false);
+        resolve(false); 
       }
     })
   }
@@ -161,7 +208,7 @@ export class StructureServiceProvider {
     .then(
       async (doc) => {
         if( doc ) {
-          return await doc.get()
+          return await doc.ref.get()
           .then(
             async (snap) => {
               let struct = await <Structure>snap.data();
@@ -179,6 +226,24 @@ export class StructureServiceProvider {
         return false
       }
     );
+  }
+
+  public async updateStructureModuleConfig(module_key: string, config: Moduleconfig) {
+    return await this.getCurrentStructure().then(
+      async (doc) => {
+        if (doc) {
+          await doc.ref.get().then(
+            async (snap) => {
+              let struct = await <Structure>snap.data();
+              console.log(struct);
+              console.log(config);
+              struct.modules.find(mod => mod.module_key === module_key).config = config;
+              doc.set(struct);
+            }
+          )
+        }
+      }
+    )
   }
 
 
@@ -208,21 +273,21 @@ export class StructureServiceProvider {
   }
   
   private setActiveStructure() : void {
-    if(this.userService.getConnectedUser()){
-      if(this.userService.getConnectedUser().structures){
-        let default_struct_key = this.userService.getConnectedUser().structures.find(struct => struct.isDefault).key;
-        console.log(default_struct_key);
-        // We fetch the data
-        const struct_data = this.db.object(`structures/${default_struct_key}`);
-        console.log(struct_data);
-        Observable.of(MOCK_STRUCTURES.filter(struct => struct.key === default_struct_key)[0]).subscribe( structure =>
-          this.activeStructure$ = structure,
-        )
-        console.log(this.activeStructure$);
-      }
-    } else {
-      console.error('No user...')
-    }
+    // if(this.userService.getConnectedUser()){
+    //   if(this.userService.getConnectedUser().structures){
+    //     let default_struct_key = this.userService.getConnectedUser().structures.find(struct => struct.isDefault).key;
+    //     console.log(default_struct_key);
+    //     // We fetch the data
+    //     const struct_data = this.db.object(`structures/${default_struct_key}`);
+    //     console.log(struct_data);
+    //     Observable.of(MOCK_STRUCTURES.filter(struct => struct.key === default_struct_key)[0]).subscribe( structure =>
+    //       this.activeStructure$ = structure,
+    //     )
+    //     console.log(this.activeStructure$);
+    //   }
+    // } else {
+    //   console.error('No user...')
+    // }
   }
 
   private setActiveModules() : void {
@@ -254,21 +319,21 @@ export class StructureServiceProvider {
    * Deprecated ?
    * @param key 
    */
-  getStructureByKey(key) : Observable<Structure> {
-    this.activeStructure$ = MOCK_STRUCTURES.filter(struct => struct.key === key)[0];
-    return Observable.of(this.activeStructure$);
-  }
+  // getStructureByKey(key) : Observable<Structure> {
+  //   this.activeStructure$ = MOCK_STRUCTURES.filter(struct => struct.key === key)[0];
+  //   return Observable.of(this.activeStructure$);
+  // }
 
   /**
    * Deprecated ?
    * @param keys
    */
-  getStructuresByKeys(keys : Array<any>) : Observable<Structure[]> {
-    keys.forEach(key => {
-      this.structures.push(MOCK_STRUCTURES.filter(struct => struct.key === key.key)[0]);
-    });
-    return Observable.of(this.structures);
-  }
+  // getStructuresByKeys(keys : Array<any>) : Observable<Structure[]> {
+  //   keys.forEach(key => {
+  //     this.structures.push(MOCK_STRUCTURES.filter(struct => struct.key === key.key)[0]);
+  //   });
+  //   return Observable.of(this.structures);
+  // }
   
   /**
    * Deprecated ?

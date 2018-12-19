@@ -1,14 +1,20 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { IonicPage, NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
-import { RentalServiceProvider } from "../../../providers/rentals/rental-service/rental-service";
 
 import { Rental } from "../../../models/rentals/rental.interface";
 import { Quotation } from '../../../models/rentals/quotation.class';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
-import { Observable } from 'rxjs/Observable';
+
+
+import { RentalServiceProvider } from "../../../providers/rentals/rental-service/rental-service";
+import { Observable } from 'rxjs';
+
+
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
+import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
+import { AngularFirestoreCollection } from '@angular/fire/firestore';
 // import { Log } from "../../../models/rentals/log.interface";
 
 /**
@@ -23,12 +29,16 @@ import { StructureServiceProvider } from '../../../providers/global/structure-se
   selector: 'page-rentals',
   templateUrl: 'rentals.html',
 })
-export class RentalsPage {
+export class RentalsPage implements OnInit {
 
   //public configKey;
   public rentals$: Observable<any>;
 
+  public rentalList$: Observable<Rental[]>; // should I type it ? AngularFirestoreCollection<Rental>
+  public rentalCount: number;
   public rentalList: Rental[];
+
+  public rentalsCharged: boolean;
 
   constructor(
     private rentalProvider: RentalServiceProvider, 
@@ -37,7 +47,9 @@ export class RentalsPage {
     public modalCtrl: ModalController, 
     private user : UserServiceProvider,
     private auth: AuthServiceProvider,
-    private struct: StructureServiceProvider) {
+    private struct: StructureServiceProvider,
+    private loader: LoadingController) {
+      console.debug('rentals page');
   }
 
   /**
@@ -47,9 +59,9 @@ export class RentalsPage {
   //   this.rentalProvider.mockGetRentalsInformation(struct_key).subscribe( data => this.rentals$ = data);
   // }
 
-  ionViewWillLoad() {
-    console.log('ionViewWillLoad RentalsPage');
 
+  ngOnInit() {
+    console.log('RentalsPage OnInit !');
     this.auth.isConnected().then( (ok) => {
       if (!ok) {
         console.error('Erreur : pas d\'utilisteur connecté');
@@ -61,18 +73,53 @@ export class RentalsPage {
             this.auth.logOut();
             this.navCtrl.setRoot('ConnectPage');
           } else {
-            if ( ! this.rentalProvider.isConfigLoaded() ) {
-              this.rentalProvider.loadConfig().then( () => 
-                this.retrieveRentals()
-              );
-            } else {
-              this.retrieveRentals()
-            }
+            this.retrieveRentals();
           }
         })
       }
     });
   }
+
+
+  ionViewWillLoad() {
+    console.log('ionViewWillLoad RentalsPage');
+
+    // this.auth.isConnected().then( (ok) => {
+    //   if (!ok) {
+    //     console.error('Erreur : pas d\'utilisteur connecté');
+    //     this.navCtrl.setRoot('ConnectPage');
+    //   } else {
+    //     this.struct.isStructureLoaded().then( (ok) => {
+    //       if (!ok) {
+    //         console.error('Erreur, aucune structure chargée');
+    //         this.auth.logOut();
+    //         this.navCtrl.setRoot('ConnectPage');
+    //       } else {
+    //         if ( ! this.rentalProvider.isConfigLoaded() ) {
+    //           this.rentalProvider.loadConfig().then( () => 
+    //             this.retrieveRentals()
+    //           );
+    //         } else {
+    //           this.retrieveRentals()
+    //         }
+    //       }
+    //     })
+    //   }
+    // });
+  }
+
+  // async rentalsExist(): Promise<boolean> {
+  //   return this.rentalProvider.getRentalscount().then(
+  //     (count) => {
+  //       console.log(count);
+  //       if (count > 0) {
+  //         return true
+  //       } else {
+  //         return false
+  //       }
+  //     }
+  //   );
+  // }
 
   ionViewWillEnter() {
     console.log('coucou');
@@ -82,28 +129,28 @@ export class RentalsPage {
     console.log('ionViewDidLoad RentalsPage');
   }
 
-  retrieveRentals() {
-    this.rentalProvider.getRentals().then(
-      docs => {
-        docs.get().then( listSnap => {
-          this.rentalList = [];
-          listSnap.forEach( snap => {
-            let rental = <Rental>snap.data();
-            rental.id = snap.id;
-            this.rentalList.push(rental);
-          });
-          return false
-        });
-      }
-    );
+  retrieveRentals(): void {
+    const loading = this.loader.create();
+    try {
+      this.rentalProvider.getRentals().then(
+        (list) => {
+          this.rentalList$ = list.valueChanges();
+          list.valueChanges().subscribe(
+            (list) => {
+              console.debug(list.length);
+              this.rentalCount = list.length;
+              this.rentalsCharged = true;
+              loading.dismiss();
+            }
+          )
+          // Et la suppression de la subscription ?...
+        }
+      )
+    } catch (error) {
+      console.warn("Aucune locations en base de données");
+    }
+    loading.present();
   }
-  // checkRentals() : boolean {
-  //   if (this.rentals$) {
-  //     if (this.rentals$.length > 0) {
-  //       return true;
-  //     }
-  //   }
-  // }
 
   openNewRentalModal() {
     let modal = this.modalCtrl.create('NewRentalModalPage');

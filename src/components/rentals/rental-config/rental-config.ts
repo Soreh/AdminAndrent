@@ -5,7 +5,9 @@ import { AngularFireDatabase } from 'angularfire2/database';
 
 import { Location } from "../../../models/rentals/location.interface";
 import { CategoryDetail } from '../../../models/rentals/category-detail.interface';
-import { OptionCategory, QuotationOption } from '../../../models/rentals/quotation-option.interface';
+import { OptionCategory, QuotationOption, ChargeType, Charge } from '../../../models/rentals/quotation-option.interface';
+import { ThrowStmt } from '@angular/compiler';
+import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 
 
 /**
@@ -22,8 +24,18 @@ export class RentalConfigComponent implements OnInit {
 
   @Input() config : RentalConfig;
   
+  public op = 0;
+
+
+  public calculatedCost = 0;
+  public suggestedPrice = 0;
+  
+  public showAddForm: boolean = false;
+  
   public newLoc: Location;
   public newCat: OptionCategory;
+  public newChargeType: ChargeType;
+  public newChargeDetails: Charge;
 
   public optionToAdd: QuotationOption;
 
@@ -34,7 +46,8 @@ export class RentalConfigComponent implements OnInit {
   constructor(
     private alertCtrl: AlertController,
     private navCtrl: NavController,
-    private db: AngularFireDatabase) {
+    private db: AngularFireDatabase,
+    private rental: RentalServiceProvider) {
     console.log('Hello RentalConfigComponent Component');
     this.newLoc = {
       label : '',
@@ -43,19 +56,46 @@ export class RentalConfigComponent implements OnInit {
     this.newCat = {
       label: '',
       id: 0,
+    };
+    this.newChargeType = {
+      id: 0,
+      label: '',
+    };
+    this.newChargeDetails = {
+      id: 0,
+      label: '',
+      amount: 0,
+      cost: 0,
+      chargeTypeId: '',
     }
 
     this._emptyOptionToAdd();
   }
 
+  showAdd() {
+    if (this.showAddForm) {
+      this.showAddForm = false;
+    } else {
+      this.showAddForm = true;
+    }
+    console.log(this.showAddForm);
+  }
+
+  getSuggestedPrice() {
+    return `prix conseillé: ${this.suggestedPrice}€`
+  }
+
   private _emptyOptionToAdd(): void {
     this.optionToAdd = {
-      id : this.db.createPushId(),
+      id : 'to create',
       label: '',
-      catId: 0,
       amount : 0,
       cost: 0,
+      catId: null,
+      chargeId: null,
+      unit: 0,
     }
+    this.getCost();
   }
   //ngOnInit() {}
 
@@ -86,6 +126,29 @@ export class RentalConfigComponent implements OnInit {
     alert(msg);
   }
 
+  getCost() {
+    let price = 0;
+    if ( this.optionToAdd.chargeId ) {
+      price = this.config.chargesTypeDetails.find(charge => charge.id === this.optionToAdd.chargeId ).cost;
+      console.log(price);
+    }
+    this.optionToAdd.cost = price * this.optionToAdd.unit;
+    this.suggestedPrice = price * this.optionToAdd.unit * 1.5;
+    this.optionToAdd.amount = this.suggestedPrice;
+    console.log("newCost");
+  }
+
+  updateCost(option: QuotationOption) {
+    option.cost = option.unit * this.config.chargesTypeDetails.find(charge => charge.id === option.chargeId).cost;
+  }
+
+  saveConfig() {
+    this.rental.updateConfig(this.config).then(
+      () => { console.log("Ok !")},
+      (error) => { console.warn(error)} 
+    );
+  }
+
 
   /**
    * LOCATIONS
@@ -100,8 +163,7 @@ export class RentalConfigComponent implements OnInit {
     this.newLoc.label = '';
   }
 
-  async deleteLocation(){
-    // Warning ! What if a rental uses that location ?
+  async deleteToimplement() {
     this.alert = await this.alertCtrl.create( {
       title : "Attention !",
       message : "A implémenter, pour gérer la suppression des salles utilisées par des locations existantes.",
@@ -115,12 +177,22 @@ export class RentalConfigComponent implements OnInit {
     this.alert.present();
   }
 
+  async deleteLocation(){
+    // Warning ! What if a rental uses that location ?
+    await this.deleteToimplement();
+  }
+
   /**
    * ChargeType
    */
 
   addchargeType(){
-    
+    let chargeTypeToAdd: ChargeType = {
+      label: this.newChargeType.label.toString(),
+      id: this.db.createPushId(),
+    }
+    this.config.chargesTypes.push(chargeTypeToAdd);
+    this.newChargeType.label = '';
   }
 
   modifyChargetype(){
@@ -128,7 +200,45 @@ export class RentalConfigComponent implements OnInit {
   }
 
   deleteChargeType(){
+    this.deleteToimplement();
+  }
 
+  /**
+   * ChargeDetails
+   */
+
+  addChargeDetails(chargeTypeId: string){
+    let charge: Charge = {
+      id : this.db.createPushId(),
+      label: this.newChargeDetails.label,
+      amount: this.newChargeDetails.amount,
+      cost: this.newChargeDetails.cost,
+      chargeTypeId: chargeTypeId,
+    };
+    let index = this.config.chargesTypes.findIndex(chargeType => chargeType.id === chargeTypeId);
+    if ( index != -1) {
+      this.config.chargesTypes[index].chargesId.push(charge.id);
+      this.config.chargesTypeDetails.push(charge);
+      this;this.newChargeDetails = {
+        id : 0,
+        label: '',
+        amount: 0,
+        cost: 0,
+        chargeTypeId: '',
+      }
+    } else {
+      console.error("Something went wrong... Charge not added");
+      console.error(chargeTypeId);
+      console.error(index);
+    }
+  }
+
+  modifyChargeDetails(){
+
+  }
+
+  deleteChargeDetails(){
+    this.deleteToimplement();
   }
 
   /**
@@ -176,7 +286,7 @@ export class RentalConfigComponent implements OnInit {
   }
 
   deleteCategory() {
-
+    this.deleteToimplement();
   }
 
   /**
@@ -184,7 +294,34 @@ export class RentalConfigComponent implements OnInit {
    */
   
   addOption(){
+    if ( this.optionToAdd.label != '' &&
+          this.optionToAdd.amount != 0 &&
+          this.optionToAdd.catId &&
+          this.optionToAdd.chargeId) {
+            console.log(this.optionToAdd);
+            let option: QuotationOption = {
+              id : this.db.createPushId(),
+              label : this.optionToAdd.label,
+              amount : this.optionToAdd.amount,
+              cost: this.optionToAdd.cost,
+              catId: this.optionToAdd.catId,
+              chargeId: this.optionToAdd.chargeId,
+              chargeTypeId: this._findChargeTypeId(this.optionToAdd.chargeId),
+              unit: this.optionToAdd.unit,
+            };
+            if (this.optionToAdd.infos) {
+              option.infos = this.optionToAdd.infos;
+            }
+            console.warn(option);
+            this.config.options.push(option);
+            this._emptyOptionToAdd();
+    } else {
+      console.error('Tous les champs sont obligatoires');
+    }
+  }
 
+  private _findChargeTypeId(chargeId) {
+    return this.config.chargesTypeDetails.find(charge => charge.id === chargeId).chargeTypeId;
   }
 
   modifyOption(){
@@ -193,5 +330,6 @@ export class RentalConfigComponent implements OnInit {
 
   deleteOption(){
     // Warning ! What if a quotation uses that option ?
+    this.deleteToimplement();
   }
 }

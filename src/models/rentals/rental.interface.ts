@@ -10,18 +10,18 @@ export interface Rental {
     status      : number; //Has to be later a collection Status
     contact     : Contact[]; //Has to be later a Client[]
     log         : Log[];
-    location    ?: Location; //Has to be later a Salle
+    location_id    ?: any; //Has to be later a Salle
     payment_status ?: number;
     id          ?: any;
     client      ?: any; //Has to be later a Client
     tech        ?: string,
     quotation_args ?: QuotationArgs;
     quotation   ?: Quotation;
-    dates       ?: any; //Will have to be a Date or Timestamp
-    date_label  ?: string;
+    dates       ?: string; 
+    date_label  ?: string; // Unused ?
     schedule    ?: string;
     notes       ?: string;
     contract    ?: any; //Will have to be an Object including a rentalContract and its statuses
     advance_invoice ?: any; //Will have to be an Object including an Invoic and its statuses
-    invoice     ?: any; //Will have to be later an Object including Invoice and and its statuses
+    invoice     ?: any; //Will have to be later an Object including Invoice and and its statuses 
 }

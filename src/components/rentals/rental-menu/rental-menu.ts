@@ -63,7 +63,7 @@ export class RentalMenuComponent {
           data : {
             push : true,
           },
-          push: true,
+          push: false,
         }
       ];
 

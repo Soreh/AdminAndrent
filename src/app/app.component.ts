@@ -14,14 +14,14 @@ export class MyApp {
   rootPage:string = 'ConnectPage';
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, private _app: App, private _ionicApp: IonicApp, private _menu: MenuController) {
-    firebase.initializeApp(FIREBASE_CONFIG);
+   //firebase.initializeApp(FIREBASE_CONFIG);
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
 
-      // this.setupBackButtonBehavior ();
+      // this.setupBackButtonBehavior (); 
     });
   }
 

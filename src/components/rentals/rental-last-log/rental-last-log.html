@@ -9,7 +9,7 @@
         {{lastLog.author}}
         </span>
         <span>
-        {{lastLog.date}}
+        {{lastLog.date.toDate() | date}}
       </span>
     </ion-col>
     <ion-col class="log">
@@ -24,7 +24,7 @@
         {{log.author}}
         </span>
         <span>
-        {{log.date}}
+        {{log.date.toDate() | date}}
       </span>
     </ion-col>
     <ion-col class="log">

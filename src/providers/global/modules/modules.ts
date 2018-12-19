@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Structure } from '../../../models/global/structure.interface';
 import { FirebaseDatabase } from 'angularfire2';
-import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireDatabase } from '@angular/fire/database';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 
 /*
-  Generated class for the ModulesProvider provider.
+  Generated class for the ModulesProvider provider. 
 
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
@@ -55,12 +55,6 @@ export class ModulesProvider {
         {
             id : cat1Id,
             label : "Categorie 1",
-            isCompulsory: true,
-        },
-        {
-            id: cat2Id,
-            label : "Categorie hors devis",
-            isPostQuotation : true,
         }
       ],
       options : [
@@ -71,28 +65,21 @@ export class ModulesProvider {
           amount : 0,
           cost : 0,
           isCompulsory : true,
-          chargeTypeId : chargeDetail1Id,
-        },
-        {
-          id : this.db.createPushId(),
-          label : 'Option 2 - hors devis',
-          catId : 2,
-          amount : 20,
-          cost : 0,
+          chargeId : chargeDetail1Id,
+          unit: 0,
         }
       ],
       locations : [
         {
           id : 1,
           label : "Salle 1",
-          isCompulsory: true,
         }
       ],
       chargesTypes : [
             {
               isCompulsory : true,  
               id : chargeType1Id,
-              label : 'coûts personnel',
+              label : 'Coûts de type 1',
               chargesId : [chargeDetail1Id], // je reprends ici la liste des coûts, ça redouble l'information, mais ça peut faciliter le tri, mai sbon du coup chargestype et chargesTypeDetails sont interconnectés, pas sur que ce soit une bonne idée.
             },
         ],

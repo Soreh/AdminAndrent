@@ -4,9 +4,12 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
-import { AngularFireModule } from "angularfire2";
-import { AngularFireAuthModule } from "angularfire2/auth";
-import { AngularFireDatabaseModule } from "angularfire2/database";
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore'; 
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireDatabaseModule } from "@angular/fire/database";
+
 import { FIREBASE_CONFIG } from "./app.firebase.config";
 
 import { MyApp } from './app.component';
@@ -21,7 +24,7 @@ import { StructureServiceProvider } from '../providers/global/structure-service/
 import { LogController } from "../controllers/log.controller";
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
 // import { ComponentsModule } from "../components/components.module";
-// import { RentalComponentsModule } from "../components/rentals/rental.components.module";
+// import { RentalComponentsModule } from "../components/rentals/rental.components.module"; 
 
 @NgModule({
   declarations: [
@@ -31,8 +34,10 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
     BrowserModule,
     IonicModule.forRoot(MyApp),
     PipesModule,
-    AngularFireModule.initializeApp(FIREBASE_CONFIG),
+    AngularFireModule.initializeApp(FIREBASE_CONFIG), // since I use both AngularFire an Firebase, the databaase has allready been initialize in the app component
+    AngularFirestoreModule,
     AngularFireAuthModule,
+    AngularFireStorageModule,
     AngularFireDatabaseModule
   ],
   bootstrap: [IonicApp],

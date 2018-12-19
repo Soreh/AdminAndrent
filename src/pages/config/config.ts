@@ -31,7 +31,7 @@ export class ConfigPage {
     public rentalService: RentalServiceProvider) {
       this.structService.getCurrentStructure().then( (doc) => {
         if ( doc ) {
-          doc.get().then( (snap) => {
+          doc.ref.get().then( (snap) => {
             this.structure = <Structure>snap.data();
             this.loaded = true;
           })

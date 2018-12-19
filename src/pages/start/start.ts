@@ -9,6 +9,7 @@ import { UserServiceProvider } from '../../providers/global/user-service/user-se
 import { Subscription, Observable } from 'rxjs';
 import { User } from 'firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
+import { RentalServiceProvider } from '../../providers/rentals/rental-service/rental-service';
 
 /**
  * Generated class for the StartPage page.
@@ -60,7 +61,8 @@ export class StartPage implements OnInit {
     private user : UserServiceProvider,
     private auth: AuthServiceProvider,
     private modalCtrl: ModalController,
-    private loadCtrl: LoadingController) {
+    private loadCtrl: LoadingController,
+    private rentalProvider: RentalServiceProvider) {
       //this.userProfile = this.user.getConnectedUser();
       //console.debug(this.userProfile);
       // this.authenticatedUSer$ = this.user.getAuthUser().subscribe( 
@@ -102,7 +104,7 @@ export class StartPage implements OnInit {
   }
 
   private async _getProfile(): Promise<void> {
-    return this.user.getUserProfile().get().then(
+    return this.user.getUserProfile().ref.get().then(
       (userSnapShot) => {
       this.userProfile = <UserProfile>userSnapShot.data();
       console.debug(this.userProfile);
@@ -120,7 +122,7 @@ export class StartPage implements OnInit {
         this.user.createUserProfile().then( () => this._getProfile() );
       } else {
         // We have to get the structure list and the defaultStructure
-        await this.user.getUserStructures().get()
+        await this.user.getUserStructures().ref.get()
         .then( 
           async (snap) => {
             if ( snap ) {
@@ -138,10 +140,16 @@ export class StartPage implements OnInit {
               });
               if (defaultKey) {
                 await this.structService.getStructureDetails(defaultKey).then(
-                  (data) => {
-                    console.log(data);
+                  async (data) => {
+                    console.debug(data);
                     if (data) {
                       this.defaultStructure = <Structure>data;
+                      this.dataRetrieved = true;
+                      // Sets the rental Config (WILL HAVE TO CHECK IF THE SPECIFIED STUCTURE NEEDS IT)
+                      if ( ! this.rentalProvider.isConfigLoaded() ) {
+                        await this.rentalProvider.loadConfig();
+                      }
+                      this.loading.dismiss();
                       //this.loading.dismiss();
                     } else {
                       console.error("Gros soucis pour récupérer la structure");
@@ -156,18 +164,16 @@ export class StartPage implements OnInit {
               console.error('No data... :(');
               //this.loading.dismiss();
             }
-          })
-        .then( () => {
-          this.dataRetrieved = true;
-          this.loading.dismiss();}
-        );
+          });
       }
     });
+
     this.loading = this.loadCtrl.create({
       spinner: 'ios',
       content: 'Un peu de patience... Nous récupérons vos données !'
     });
-    await this.loading.present();
+    
+    await this.loading.present(); 
   }
 
   ionViewWillLoad() {

@@ -6,22 +6,29 @@ import { Observable } from 'rxjs/Observable';
 import { MOCK_USERS_LIST } from "../../../mock_data/global/users_mock";
 import { Structure } from '../../../models/global/structure.interface';
 
-import { AngularFireAuth } from "angularfire2/auth";
-import { AngularFireDatabase, AngularFireObject } from "angularfire2/database";
+//Angularfire2
+import{
+  AngularFirestore,
+  AngularFirestoreCollection,
+  AngularFirestoreDocument
+} from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth'
+
+import { AngularFireDatabase, AngularFireObject } from "@angular/fire/database";
 import { User } from "firebase/app";
 
-import "rxjs/add/operator/take";
+//import "rxjs/add/operator/take";
 import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import { LoginResponse } from '../../../models/global/login-response.interface';
 import { Subscription } from 'rxjs';
 
 
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
+//import * as firebase from 'firebase/app';
+//import 'firebase/auth';
+//import 'firebase/firestore';
 
 /*
-  Generated class for the UserServiceProvider provider.
+  Generated class for the UserServiceProvider provider. 
 
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
@@ -38,42 +45,46 @@ export class UserServiceProvider {
   profile : UserProfile;
 
   currentUser : firebase.User;
-  userProfile : firebase.firestore.DocumentReference;
-  userStructures: firebase.firestore.CollectionReference;
+  userProfile : AngularFirestoreDocument<UserProfile>;
+  userStructures: AngularFirestoreCollection;
 
-  constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase) {
-    firebase.auth().onAuthStateChanged( user => {
-      if (user) {
-        this.currentUser = user;
-        this.userProfile = firebase.firestore().doc(`/userProfiles/${user.uid}`);
-        this.userStructures = firebase.firestore().doc(`/userProfiles/${user.uid}`).collection('/structures/');
-      }
-    })
+  constructor(
+    private afAuth: AngularFireAuth,
+    private db: AngularFireDatabase,
+    private firestore: AngularFirestore
+    ) {
+      this.afAuth.auth.onAuthStateChanged( user => {
+        if (user) {
+          this.currentUser = user;
+          this.userProfile = this.firestore.doc(`/userProfiles/${user.uid}`);
+          //this.userProfile = firebase.firestore().doc(`/userProfiles/${user.uid}`);
+          this.userStructures = this.firestore.collection(`/userProfiles/${user.uid}/structures/`)
+          //this.userStructures = firebase.firestore().doc(`/userProfiles/${user.uid}`).collection('/structures/');
+        }
+      })
   }
 
   /**
    * 
    */
-  getUserProfile(): firebase.firestore.DocumentReference {
+  getUserProfile(): AngularFirestoreDocument<UserProfile> {
     return this.userProfile;
   }
 
   public async getUserName() : Promise<string> {
-    return this.userProfile.get().then(
+    await this.userProfile.ref.get().then(
       (snap) => {
-        let profile = <UserProfile>snap.data();
-        if (profile.name){
-          return profile.name
-        } else {
-          return "J'ai toujours pas de pseudo..."
-        }
-      }
-    )
-    .catch( (e) => {
+        this.profile = <UserProfile>snap.data();
+      },
+      (e) => {
         console.warn(e);
-        return 'Anonymous';
       }
     )
+    if (this.profile.name) {
+      return this.profile.name;
+    } else {
+      return "J'ai toujours pas de pseudo..."
+    }
   }
 
   /**
@@ -86,7 +97,7 @@ export class UserServiceProvider {
   /**
    * 
    */
-  getUserStructures(): firebase.firestore.CollectionReference {
+  getUserStructures(): AngularFirestoreCollection {
     return this.userStructures;
   }
 
@@ -278,17 +289,17 @@ export class UserServiceProvider {
    * @param name for now, I just pass the name, will have leter to authentificate on FireBase
    * @returns true if success
    */
-  connectUser(name:string) : boolean {
-    if(MOCK_USERS_LIST.filter( user => user.name === name)[0]){
-      Observable.of(MOCK_USERS_LIST.filter( user => user.name === name)[0]).subscribe(user =>
-        this.connectedUser = user);
-      console.log(this.connectedUser$);
-      return true;
-    } else {
-      console.error('No User found...')
-      return false;
-    }
-  }
+  // connectUser(name:string) : boolean {
+  //   if(MOCK_USERS_LIST.filter( user => user.name === name)[0]){
+  //     Observable.of(MOCK_USERS_LIST.filter( user => user.name === name)[0]).subscribe(user =>
+  //       this.connectedUser = user);
+  //     console.log(this.connectedUser$);
+  //     return true;
+  //   } else {
+  //     console.error('No User found...')
+  //     return false;
+  //   }
+  // }
 
   /**
    * Disconnect the user

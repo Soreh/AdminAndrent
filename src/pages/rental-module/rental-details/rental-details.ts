@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import { RentalServiceProvider} from "../../../providers/rentals/rental-service/rental-service";
 import { Rental } from '../../../models/rentals/rental.interface';
 import { STATUSCODE, STATUS } from "../../../models/global/status.interface";
@@ -9,6 +9,9 @@ import { Log } from '../../../models/rentals/log.interface';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { MODULES_KEYS } from "../../../providers/global/modules/modules";
 import { Observable } from 'rxjs/Observable';
+import { AngularFirestoreDocument } from '@angular/fire/firestore';
+import { Subscription } from 'rxjs';
+import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 
 /**
  * Generated class for the RentalDetailsPage page.
@@ -25,7 +28,11 @@ import { Observable } from 'rxjs/Observable';
 export class RentalDetailsPage {
 
   rentalID: any;
-  rental$: Rental;
+  rental$: Observable<Rental>;
+  rentalSub: Subscription;
+
+  rental: Rental;
+
   quotationArgsExists : boolean;
   rentalStatuses = [
     {
@@ -59,7 +66,13 @@ export class RentalDetailsPage {
     'Dates'
   ];
 
-  constructor(private rentalService: RentalServiceProvider, private navCtrl: NavController, public navParams: NavParams, public structService: StructureServiceProvider, private alertCtrl: AlertController ) {
+  constructor(
+    private rentalService: RentalServiceProvider, 
+    private navCtrl: NavController, 
+    public navParams: NavParams, 
+    public structService: StructureServiceProvider, 
+    private alertCtrl: AlertController,
+    private loader: LoadingController ) {
   }
 
   /**
@@ -81,13 +94,17 @@ export class RentalDetailsPage {
     } else {
       this.rentalID = this.navParams.get('id');
       // this.rental$ = this.rentalService.getRentalDetails(this.rentalID);
-      this.rentalService.getRentalDetails(this.rentalID).then(
-        rental => {
-          if (rental ) {
-            this.rental$ = rental;
-          }
-        }
-      )
+      this.rental$ = this.rentalService.getRentalDetails(this.rentalID).valueChanges();
+      
+      this._getRentalDetails();
+      
+      // this.rentalService.getRentalDetails(this.rentalID).then(
+      //   rental => {
+      //     if (rental ) {
+      //       this.rental$ = rental;
+      //     }
+      //   }
+      // )
       // this.rental$ = this.rentalService.g
       this.config = this.rentalService.getConfig();
       // if ( this.rental.quotation_args ) {
@@ -114,12 +131,34 @@ export class RentalDetailsPage {
   }
 
   ionViewWillEnter(){
-    if(this.rental$){
-      if ( this.rental$.quotation_args ) {
-        this.quotationArgsExists = true;
+    //OOPPPS
+      if(this.rental){
+        if ( this.rental.quotation_args ) {
+          this.quotationArgsExists = true;
+        }
       }
+  }
+
+  ionViewDidLeave(){
+    if(this.rentalSub){
+      this.rentalSub.unsubscribe();
+      console.debug('Subscription on rental closed');
     }
   }
+
+  async _getRentalDetails() {
+    const load = this.loader.create();
+    this.rentalSub = await this.rental$.subscribe(
+      async (rental) => {
+        this.rental = rental;
+        console.debug(this.rental);
+        load.dismiss()
+      }
+    );
+
+    await load.present();
+  }
+
   /**
    * Has to move int the Quotation Class ?
    */
@@ -128,11 +167,11 @@ export class RentalDetailsPage {
     let amount = '';
     let total : number;
     if ( this.quotationArgsExists ) {
-      label = STATUS.getLabel(this.rental$.quotation_args.statusCode);
-      if( this.rental$.quotation_args.total ){
-        total = this.rental$.quotation_args.total.amount;
-        if ( this.rental$.quotation_args.discount ) {
-          total = total - this.rental$.quotation_args.discount;
+      label = STATUS.getLabel(this.rental.quotation_args.statusCode);
+      if( this.rental.quotation_args.total ){
+        total = this.rental.quotation_args.total.amount;
+        if ( this.rental.quotation_args.discount ) {
+          total = total - this.rental.quotation_args.discount;
         }
         amount = " | "+ total +"€";
       }
@@ -159,11 +198,11 @@ export class RentalDetailsPage {
       this.navCtrl.push('RentalQuotationDashPage',{
         data: {
           rentalID      : this.rentalID,
-          quotationArgs : this.rental$.quotation_args,
+          quotationArgs : this.rental.quotation_args,
           //config_key : this.config_key,
         }
       });
-      console.log(this.rental$.quotation_args); 
+      console.log(this.rental.quotation_args); 
     } else {
       // this.rental.quotation = new Quotation(this.rental.id, this.rental.quotation_args);
       this.navCtrl.push('RentalQuotationDashPage',{
@@ -228,7 +267,7 @@ export class RentalDetailsPage {
   deleteRental() : void {
     this.alertCtrl.create({
       title : "Attention",
-      subTitle : "L'effacement de la location est défintive. Êtes-vous sûr.e de vouloir continuer ?",
+      subTitle : "L'effacement de la location est définitive. Êtes-vous sûr.e de vouloir continuer ?",
       buttons : [
         {
           text : 'Annuler',
