@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
 
@@ -8,7 +8,7 @@ import { UserServiceProvider } from '../../../providers/global/user-service/user
 
 
 import { RentalServiceProvider } from "../../../providers/rentals/rental-service/rental-service";
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
@@ -29,7 +29,7 @@ import { AngularFirestoreCollection } from '@angular/fire/firestore';
   selector: 'page-rentals',
   templateUrl: 'rentals.html',
 })
-export class RentalsPage implements OnInit {
+export class RentalsPage implements OnInit, OnDestroy {
 
   //public configKey;
   public rentals$: Observable<any>;
@@ -37,6 +37,8 @@ export class RentalsPage implements OnInit {
   public rentalList$: Observable<Rental[]>; // should I type it ? AngularFirestoreCollection<Rental>
   public rentalCount: number;
   public rentalList: Rental[];
+
+  private _sub: Subscription;
 
   public rentalsCharged: boolean;
 
@@ -80,6 +82,12 @@ export class RentalsPage implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this._sub) {
+      console.debug("Subscription on rentals[] closed");
+      this._sub.unsubscribe();
+    }
+  }
 
   ionViewWillLoad() {
     console.log('ionViewWillLoad RentalsPage');
@@ -122,28 +130,42 @@ export class RentalsPage implements OnInit {
   // }
 
   ionViewWillEnter() {
-    console.log('coucou');
+    // console.log('coucou');
+    // this.retrieveRentals();
   }
+
+
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad RentalsPage');
   }
 
-  retrieveRentals(): void {
-    const loading = this.loader.create();
+  ionViewDidLeave() {
+    
+  }
+
+  async retrieveRentals() {
+    const loading = await this.loader.create();
     try {
       this.rentalProvider.getRentals().then(
-        (list) => {
-          this.rentalList$ = list.valueChanges();
-          list.valueChanges().subscribe(
-            (list) => {
-              console.debug(list.length);
-              this.rentalCount = list.length;
-              this.rentalsCharged = true;
-              loading.dismiss();
-            }
-          )
-          // Et la suppression de la subscription ?...
+        async (list) => {
+          try {
+            this.rentalList$ = list.valueChanges();
+            this._sub = await list.valueChanges().subscribe(
+              (list) => {
+                console.debug(list.length);
+                this.rentalList = list;
+                this.rentalCount = list.length;
+                this.rentalsCharged = true;
+                loading.dismiss();
+              }
+            )
+          } catch (error) {
+            console.warn(error);
+            loading.dismiss();
+            this.navCtrl.setRoot('StartPage');
+          }
+          // Et la suppression de la subscription ?... 
         }
       )
     } catch (error) {

@@ -114,7 +114,7 @@ export class RentalAddFormComponent implements OnInit {
         (name) => {
           let firstLog: Log = {
             author: name + ' (auto)',
-            date: new Date(),
+            date: Date.now(),
             msg: 'Création'
           };
           console.debug(firstLog);

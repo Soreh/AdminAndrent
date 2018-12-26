@@ -83,7 +83,7 @@ export class UserServiceProvider {
     if (this.profile.name) {
       return this.profile.name;
     } else {
-      return "J'ai toujours pas de pseudo..."
+      return "J'ai toujours pas de pseudo..." 
     }
   }
 

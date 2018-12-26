@@ -142,6 +142,18 @@ export class RentalConfigComponent implements OnInit {
     option.cost = option.unit * this.config.chargesTypeDetails.find(charge => charge.id === option.chargeId).cost;
   }
 
+  updateCostOnChargeTypeCost(charge: Charge) {
+    this.config.options.forEach(
+      (option) => {
+        // Find the Quotation options that uses the charge
+        if (option.chargeId === charge.id) {
+          // update the cost of every specific quotation options
+          this.updateCost(option);
+        }
+      }
+    )
+  }
+
   saveConfig() {
     this.rental.updateConfig(this.config).then(
       () => { console.log("Ok !")},

@@ -244,7 +244,7 @@
                       <ion-input class="simple" type="text" [(ngModel)]="charge.label"></ion-input>
                     </ion-col>
                     <ion-col col-3>
-                      <ion-input class="simple" type="number" [(ngModel)]="charge.cost"></ion-input>
+                      <ion-input class="simple" type="number" [(ngModel)]="charge.cost" (ngModelChange)="updateCostOnChargeTypeCost(charge)"></ion-input>
                     </ion-col>
                     <ion-col col-3>
                       <ion-input  class="simple" type="number" [(ngModel)]="charge.amount"></ion-input>
@@ -262,11 +262,11 @@
                     <ion-input class="simple"[(ngModel)]="newChargeDetails.label" type="text"></ion-input>
                   </ion-col>
                   <ion-col col-3>
-                    <ion-input class="simple" type="number" [(ngModel)]="newChargeDetails.amount">
+                    <ion-input class="simple" type="number" [(ngModel)]="newChargeDetails.cost">
                     </ion-input>
                   </ion-col>
                   <ion-col col-3>
-                    <ion-input class="simple" type="number" [(ngModel)]="newChargeDetails.cost"></ion-input>
+                    <ion-input class="simple" type="number" [(ngModel)]="newChargeDetails.amount"></ion-input>
                   </ion-col>
                   <ion-col>
                     <button ion-button icon-only outline clear [disabled]="newChargeDetails.label.length == 0" (click)="addChargeDetails(chargeType.id)">

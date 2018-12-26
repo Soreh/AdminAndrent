@@ -2,16 +2,17 @@
 <ion-grid>
   <ion-row align-items-center>
     <ion-col col-4>
-      <div class="square-status {{color_class}}">
-          <span class="option-status">{{status_label}}</span>
+      <div class="square-status {{getColorClass(rental.status)}}">
+          <span class="option-status">{{getStatusLabel(rental.status)}}</span>
           <span class="payment-status">en attente de paiement</span>
       </div>
     </ion-col>
     <ion-col class="resume">
       <p class="name">{{rental?.name | trim : 30}}</p>
-      <p class="location">{{locationName}}</p>
-      <p class="dates" *ngIf="rental.date_label">{{rental?.dates}}</p>
-      <p class="contact">{{contact?.tel}} | {{contact?.mail}}</p>
+      <p class="location">{{getLocationLabel(rental.location_id)}}</p>
+      <p class="dates">{{rental?.dates}}</p>
+      <p class="contact">{{getContact()?.name}}</p>
+      <p class="contact">{{getContact()?.tel}} | <a href="mailto:{{getContact()?.mail}}">mail</a></p>
     </ion-col>
   </ion-row>
 </ion-grid>

@@ -342,6 +342,13 @@ export class RentalServiceProvider {
   }
 
 
+  /**
+   * 
+   * @param structKey 
+   */
+  async log(rental, automatedMsg: string = '', msg:string = '') : Promise<void> {
+    await this.logCtrl.log(rental, automatedMsg, msg);
+  }
   /******************************************************************
    * 
    * 
@@ -356,13 +363,6 @@ export class RentalServiceProvider {
 
   
 
-  /**
-   * 
-   * @param structKey 
-   */
-  log(rental, automatedMsg: string = '', msg:string = '') : void {
-    this.logCtrl.log(rental, automatedMsg, msg);
-  }
 
   // RENTALS
   /* 

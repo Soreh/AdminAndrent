@@ -11,12 +11,12 @@
   </div>
   <div padding class="panel-content">
     <ion-grid *ngIf="rentalCount >= 1; else noRentals">
-      <ion-row>
-        <ion-col>
-            <button ion-button (click)="openNewRentalModal()">Nouvelle Location</button>
-        </ion-col>
-      </ion-row>
-      <ion-row *ngFor="let rental of rentalList$ | async " align-items-center>
+      <ion-fab top right>
+          <button ion-fab icon-only (click)="openNewRentalModal()">
+            <ion-icon name="add"></ion-icon>
+          </button>
+      </ion-fab>
+      <ion-row *ngFor="let rental of rentalList" align-items-center>
         <ion-col col-6>
           <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
         </ion-col>

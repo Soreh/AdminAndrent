@@ -26,14 +26,11 @@ export class Quotation {
         this.verbose = {
             amount : 0,
             discount : 0,
-            categories : [
+            categories : [ 
                 {
-                    label : 'Salles',
-                    lines : [],
-                },
-                {
-                    label : 'Options',
-                    lines : [],
+                    id: 'none',
+                    label: 'Options',
+                    lines: []
                 }
             ]
         };

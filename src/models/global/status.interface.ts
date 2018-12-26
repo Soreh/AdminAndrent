@@ -72,12 +72,12 @@ export class Status {
     }
 
     getColor(code): string {
-        console.log("getColor");
+        //console.log("getColor");
         let colorClass = "";
         if (this.labels.filter(status => status.code === code)[0].color) {
             colorClass = this.labels.filter(status => status.code === code)[0].color;
         } 
-        console.log(colorClass);
+        //console.log(colorClass);
         return colorClass;
     }
 }

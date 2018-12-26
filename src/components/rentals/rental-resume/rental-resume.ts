@@ -1,23 +1,42 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, OnChanges } from '@angular/core';
 import { STATUS, STATUSCODE } from '../../../models/global/status.interface';
 import { Contact } from '../../../models/global/contact.interface';
 import { Rental } from '../../../models/rentals/rental.interface';
 import { NavController} from 'ionic-angular';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
+import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 
 /**
  * Generated class for the RentalResumeComponent component.
  *
  * See https://angular.io/api/core/Component for more info on Angular
  * Components.
+ * 
+ * ATTENTION POSSIBILITE DE MEMORY LEAK ? A CREUSER....
  */
 @Component({
   selector: 'rental-resume',
   templateUrl: 'rental-resume.html'
 })
-export class RentalResumeComponent implements OnInit{
+export class RentalResumeComponent implements OnInit, OnChanges{
 
-  @Input() rental: Rental;
+  // rentalValue: Rental;
+
+  // @Output() rentalChange = new EventEmitter();
+
+  @Input() rental:Rental;
+  // get rental(){
+  //   this.status_label = this.getStatusLabel(this.rentalValue.status);
+  //   this.color_class = this.getColorClass(this.rentalValue.status);
+  //   return this.rentalValue;
+  // }
+  // set rental(rental: Rental){
+  //   this.rentalValue = rental;
+  //   // this.status_label = this.getStatusLabel(rental.status);
+  //   // this.color_class = this.getColorClass(rental.status)
+  //   this.getColorClass(rental.status);
+  //   this.rentalChange.emit(this.rental);
+  // }
 
   public color_class: any;
   public status_label: any;
@@ -27,18 +46,21 @@ export class RentalResumeComponent implements OnInit{
 
   constructor(private navCtrl:NavController,
     private rentalsProvider: RentalServiceProvider) {
-    console.log('Hello RentalResumeComponent Component');
   }
   
+  ngOnChanges(){
+    console.debug("Changes made !");
+    // this.getStatusLabel(this.rental.status);
+    // this.getColorClass(this.rental.status);
+  }
   ngOnInit(){
-    console.log('On Init');
-    console.debug(this.rental);
-    this.color_class = STATUS.getColor(this.rental.status);
-    this.status_label = STATUS.getLabel(this.rental.status);
-    this.locationName = this.rentalsProvider.getLocationLabel(this.rental.location_id);
-    this.contact = this.rental.contact.find( contact => contact.main );
-    // this.color_class = STATUS.getLabel(this.rental.status);
+    // this.color_class = STATUS.getColor(this.rental.status);
     // this.status_label = STATUS.getLabel(this.rental.status);
+    // this.locationName = this.rentalsProvider.getLocationLabel(this.rental.location_id);
+    this.contact = this.rental.contact.find( contact => contact.main );
+    
+    // this.color_class = STATUS.getLabel(this.rental.status);
+    // this.status_label = STATUS.getLabel(this.rental.status); 
     // this.contact = this.rental.contact.find( contact => contact.main );
     // this.name = this.rental.name;
     // this.status = this.rental.status;
@@ -52,15 +74,23 @@ export class RentalResumeComponent implements OnInit{
   //   return this.rental.contact.find( contact => contact.main );
   // }
 
-  // getStatusLabel(statusCode) : string {
-  //   console.log('get status label');
-  //   return STATUS.getLabel(statusCode);
-  // }
+  getStatusLabel(statusCode): string {
+    //console.debug("in get statusLabel...");
+    return STATUS.getLabel(statusCode);
+  }
 
-  // getColorClass(statusCode) : string {
-  //   console.log('get status label');
-  //   return STATUS.getColor(statusCode);
-  // }
+  getColorClass(statusCode): string {
+    //console.debug("in get colorClass...");
+    return STATUS.getColor(statusCode);
+  }
+
+  getLocationLabel(location_id): string {
+    return this.rentalsProvider.getLocationLabel(location_id);
+  }
+
+  getContact(): Contact {
+    return this.rental.contact.find( contact => contact.main);
+  }
 
   
 }

@@ -71,7 +71,7 @@
           </ion-col>
           <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
             <h3 class="mn">prix conseillé</h3>
-            <p class="mn">{{variousChargeTypeToAdd.amount * variousOptionToAdd.units}}€</p>
+            <p class="mn">{{variousChargeTypeToAdd.cost * variousOptionToAdd.units * 1.5}}€</p>
           </ion-col>
         </ion-row>
         <ion-row align-items-center>
@@ -193,7 +193,13 @@
       <div *ngFor="let cat of sortedOptions; index as i">
         <div *ngIf="cat.isPost">
           <h2>{{cat.name}}</h2>
-          <p *ngFor="let option of cat.options">{{option.label}} <input [(ngModel)]="option.amount">€ | {{option.cost * option.unit}}€ | {{getBalance(option) * option.unit}}€  </p>
+          <p *ngFor="let option of cat.options">
+            <ion-input [(ngModel)]="option.label"></ion-input>
+            <ion-input [(ngModel)]="option.amount"></ion-input>€ | {{option.cost * option.unit}}€ | {{getBalance(option) * option.unit}}€
+            <button ion-button (click)="removeOption(option)">
+              remove
+            </button>
+          </p>
           <p>Ajouter option sur base des options enregistrées, prévoir de pouvoir choisir le coût</p>
           <p>Ajouter various option</p>
           <p>Dans tous les cas, cela créé une various option d'OptionID 0</p>
@@ -209,7 +215,7 @@
         <div *ngFor="let options of sortedOptions">
           <div *ngFor="let option of options.options">
             {{option | json}}
-            <p *ngIf="option.chargeTypeId === chargeType.id && !options.isPost">
+            <p *ngIf="getChargeTypeId(option.chargeId) === chargeType.id && !options.isPost">
               {{getChargeLabel(option.chargeId)}} {{option.cost * option.unit}}€ / {{getChargeUnits(option.chargeId, option.cost * option.unit)}} * {{getChargeCost(option.chargeId)}}€ pour {{option.label}}
             </p>
           </div>
@@ -245,8 +251,11 @@
         </p>
       </div>
       <!-- QUOTATION LINES -->
+      <pre>{{quotation.verbose | json}}</pre>
       <div *ngFor="let cat of quotation.verbose.categories;index as catIndex">
-        <h2>{{cat.label}}</h2>
+        <h2>
+          <ion-input [(ngModel)]="cat.label"></ion-input>
+        </h2>
         <p *ngFor="let line of cat.lines"><input [(ngModel)]="line.label"> - <input [(ngModel)]="line.amount" (ngModelChange)="computeVerboseTotal()">€ | <a (click)="deleteVerboseLine(cat.label, line)">supprimer</a></p>
         <p>
           <input type='text' [(ngModel)]="linesToAdd[catIndex].label">

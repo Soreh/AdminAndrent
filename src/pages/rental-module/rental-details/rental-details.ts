@@ -1,17 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import { RentalServiceProvider} from "../../../providers/rentals/rental-service/rental-service";
 import { Rental } from '../../../models/rentals/rental.interface';
 import { STATUSCODE, STATUS } from "../../../models/global/status.interface";
-import { Quotation } from '../../../models/rentals/quotation.class';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { Log } from '../../../models/rentals/log.interface';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
-import { MODULES_KEYS } from "../../../providers/global/modules/modules";
 import { Observable } from 'rxjs/Observable';
-import { AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
-import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 
 /**
  * Generated class for the RentalDetailsPage page.
@@ -25,7 +20,7 @@ import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serialize
   selector: 'page-rental-details',
   templateUrl: 'rental-details.html',
 })
-export class RentalDetailsPage {
+export class RentalDetailsPage implements OnInit, OnDestroy {
 
   rentalID: any;
   rental$: Observable<Rental>;
@@ -56,15 +51,10 @@ export class RentalDetailsPage {
       label : STATUS.getLabel(STATUSCODE.canceled)
     }
   ];
-  //config_key;
   config : RentalConfig;
   showDetails : boolean = true; // Details are shown by default
   logMsg : string;
-  changeMade : any[] = [
-    'Statut',
-    'Régisseur',
-    'Dates'
-  ];
+  changeMade : string[];
 
   constructor(
     private rentalService: RentalServiceProvider, 
@@ -75,19 +65,11 @@ export class RentalDetailsPage {
     private loader: LoadingController ) {
   }
 
-  /**
-   * Deprecated ?
-   */
-  // getRentalDetails(){
-  //   this.rentalService.mockGetRentalDetails(this.rentalID).subscribe(data => this.rental$ = data);
-  // }
+  /** LIFE CYCLES
+   *************************************/
 
-  ionWiewDidLoad() {
-    console.log("ionViewDidLoad Rental Details");
-  }
-
-  ionViewWillLoad() {
-    console.log("ionViewWillLoad Rental Details");
+  ngOnInit() {
+    console.log("OnInit Rental Details");
     if (!this.navParams.get('id')){
       console.error('No rental ID received');
       this.navCtrl.setRoot('ConnectPage');
@@ -98,40 +80,19 @@ export class RentalDetailsPage {
       
       this._getRentalDetails();
       
-      // this.rentalService.getRentalDetails(this.rentalID).then(
-      //   rental => {
-      //     if (rental ) {
-      //       this.rental$ = rental;
-      //     }
-      //   }
-      // )
-      // this.rental$ = this.rentalService.g
       this.config = this.rentalService.getConfig();
-      // if ( this.rental.quotation_args ) {
-      //   this.quotationArgsExists = true;
-      // }
     }
+  }
 
-    // if( !this.navParams.get('id') 
-    //     || !this.navParams.get('config_key') ) {
-    //       console.error('no param...');
-    //       this.navCtrl.setRoot('ConnectPage');
-    // } else {
-    //       console.log('dans le else..');
-    //       this.rentalID = this.navParams.get('id');
-    //       this.config_key = this.navParams.get('config_key');
-    //       console.log(this.rentalID);
-    //       this.getRentalDetails();
-    //       if ( this.rental.quotation_args ) {
-    //         this.quotationArgsExists = true;
-    //       }
-    //       this.rentalService.mockGetOptionsByKey(this.config_key).subscribe(data =>        this.config = data
-    //       );
-    // }
+  ionViewWillLoad() {
+  }
+
+  ionWiewDidLoad() {
+    console.log("ionViewDidLoad Rental Details");
   }
 
   ionViewWillEnter(){
-    //OOPPPS
+    //OOPPPS 
       if(this.rental){
         if ( this.rental.quotation_args ) {
           this.quotationArgsExists = true;
@@ -139,92 +100,52 @@ export class RentalDetailsPage {
       }
   }
 
+  async ionViewCanLeave(){
+    return new Promise<boolean>(
+      resolve => {
+        if (!this.changeMade) return resolve(true)
+        const alert = this.alertCtrl.create({
+          title: "Attention ici !",
+          message: "Vous avez apporté des modifications à cette location, voulez-vous les sauvegarder ?",
+          buttons: [
+            {
+              text: "Même pas en rève !",
+              role: 'cancel',
+              handler: () => {
+                resolve(true);
+              }
+            },
+            {
+              text: "Allez, d'accord...",
+              handler: (()=>{
+                this.saveAndLog();
+                resolve(true);
+              }
+              )
+            }
+          ]
+        })
+        alert.present()
+      }
+    );
+  }
+
+  ionViewWillLeave(){
+  }
+
   ionViewDidLeave(){
+  }
+  
+  ngOnDestroy(){
     if(this.rentalSub){
       this.rentalSub.unsubscribe();
       console.debug('Subscription on rental closed');
     }
   }
+  
+  /** CRUD
+   *************************************/
 
-  async _getRentalDetails() {
-    const load = this.loader.create();
-    this.rentalSub = await this.rental$.subscribe(
-      async (rental) => {
-        this.rental = rental;
-        console.debug(this.rental);
-        load.dismiss()
-      }
-    );
-
-    await load.present();
-  }
-
-  /**
-   * Has to move int the Quotation Class ?
-   */
-  outputQuotationStatus(){
-    let label: string;
-    let amount = '';
-    let total : number;
-    if ( this.quotationArgsExists ) {
-      label = STATUS.getLabel(this.rental.quotation_args.statusCode);
-      if( this.rental.quotation_args.total ){
-        total = this.rental.quotation_args.total.amount;
-        if ( this.rental.quotation_args.discount ) {
-          total = total - this.rental.quotation_args.discount;
-        }
-        amount = " | "+ total +"€";
-      }
-    } else {
-      label = STATUS.getLabel(STATUSCODE.toDO);
-    }
-    return "Devis "+ label + amount;
-  }
-
-  /**
-   * Utilities
-   */
-
-  toggleDetails(): void {
-    this.showDetails = !this.showDetails;
-  }
-
-  /**
-   * Navigation
-   */
-
-  goToQuotationDash(){
-    if ( this.quotationArgsExists ) {
-      this.navCtrl.push('RentalQuotationDashPage',{
-        data: {
-          rentalID      : this.rentalID,
-          quotationArgs : this.rental.quotation_args,
-          //config_key : this.config_key,
-        }
-      });
-      console.log(this.rental.quotation_args); 
-    } else {
-      // this.rental.quotation = new Quotation(this.rental.id, this.rental.quotation_args);
-      this.navCtrl.push('RentalQuotationDashPage',{
-        data: {
-          rentalID      : this.rentalID,
-          //config_key : this.config_key,
-        }
-      });
-    }
-  }
-
-  /**
-   * Save and Changes
-   */
-
-  /**
-   * Set the changes track
-   * @returns void
-   */
-  keepChangesTrack(): void {
-
-  }
 
   /**
    * Save the details in DB and generate an log the changes track
@@ -233,32 +154,46 @@ export class RentalDetailsPage {
   saveAndLog(): void {
     let msg : string;
     let modif : string;
-    //let author : string = 'Seb';
     if (this.logMsg) {
       msg = this.logMsg
     }
     if ( this.changeMade ) {
-      modif = 'Modification de :<ul>';
-      // if(this.logMsg){
-      //   modif += '<br>';
-      // }
+      modif = '[ Modification(s) apportée(s) : ';
       this.changeMade.forEach(change => {
-        modif += '<li>' + change + '</li>';
+        modif += change + ' ';
       });
-      modif += '</ul>';
+      modif += ']';
+      this.changeMade = null;
     }
-    //   if (!this.logMsg ){
-    //     author += ' (auto)';
-    //   }
-    //   msg += modif;
-    // }
-    // let log : Log = {
-    //   author: author,
-    //   date : new Date(),
-    //   msg : msg,
-    // }
 
-    this.rentalService.log(this.rental$, modif, msg);
+    this.rentalService.log(this.rental, modif, msg).then(
+      ()=> {
+        try {
+          this.rentalService.updateRental(this.rentalID, this.rental);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    );
+  }
+
+
+  async _getRentalDetails() {
+    const load = await this.loader.create();
+    this.rentalSub = await this.rental$.subscribe(
+      async (rental) => {
+        if (rental) {
+          this.rental = rental;
+          if (rental.quotation_args){
+            this.quotationArgsExists = true;
+          }
+        }
+        console.debug(this.rental);
+        load.dismiss()
+      }
+    );
+
+    await load.present();
   }
 
   /**
@@ -283,5 +218,65 @@ export class RentalDetailsPage {
       ]
     }).present();
   }
+
+
+  /** UTILITIES 
+   *************************************/
+
+  /**
+   * Set the changes track
+   * @returns void
+   */
+  keepChangesTrack(field: string): void {
+    if(!this.changeMade){
+      this.changeMade = [];
+    }
+    const fieldIndex = this.changeMade.findIndex((change)=> change === field);
+    if (fieldIndex === -1){
+      this.changeMade.push(field);
+    }
+  }
+
+  outputQuotationStatus(){
+    let label: string;
+    let amount = '';
+    let total : number;
+    if ( this.quotationArgsExists ) {
+      label = STATUS.getLabel(this.rental.quotation_args.statusCode);
+      if( this.rental.quotation_args.total ){
+        total = this.rental.quotation_args.total.amount;
+        if ( this.rental.quotation_args.discount ) {
+          total = total - this.rental.quotation_args.discount;
+        }
+        amount = " | "+ total +"€";
+      }
+    } else {
+      label = STATUS.getLabel(STATUSCODE.toDO);
+    }
+    return "Devis "+ label + amount;
+  }
+
+  toggleDetails(): void {
+    this.showDetails = !this.showDetails;
+  }
+
+  /** NAVIGATION
+   *************************************/
+
+  goToQuotationDash(){
+    let data:any = {
+      rentalID : this.rentalID,
+    }
+    if ( this.quotationArgsExists ) {
+      data.quotationArgs = this.rental.quotation_args;
+      console.log(this.rental.quotation_args); 
+    }
+
+    console.warn(data);
+
+    this.navCtrl.push('RentalQuotationDashPage', {
+      data: data,
+    });
+    }
 
 }

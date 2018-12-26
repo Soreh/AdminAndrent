@@ -10,6 +10,7 @@ export interface QuotationverboseLine {
 }
 
 export interface QuotationverboseCategory {
+    id: string;
     label : string;
     lines : QuotationverboseLine[];
 }

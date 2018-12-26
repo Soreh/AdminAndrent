@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { CategoryDetail } from '../../../models/rentals/category-detail.interface';
 import { RentalConfig } from "../../../models/rentals/rentals-config.interface";
@@ -10,6 +10,8 @@ import { STATUSCODE, STATUS, Status } from "../../../models/global/status.interf
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { Console } from '@angular/core/src/console';
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
+import { Rental } from '../../../models/rentals/rental.interface';
+import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 /**
  * Generated class for the RentalQuotationDashPage page.
  *
@@ -22,7 +24,7 @@ import { AuthServiceProvider } from '../../../providers/auth-service/auth-servic
   selector: 'page-rental-quotation-dash',
   templateUrl: 'rental-quotation-dash.html',
 })
-export class RentalQuotationDashPage {
+export class RentalQuotationDashPage implements OnInit {
 
   public tabs = [
     {
@@ -117,16 +119,20 @@ export class RentalQuotationDashPage {
     help.present();
   }
 
-  ionViewWillLoad() { 
+  ngOnInit() { 
     console.debug('ionViewWillLoad RentalQuotationDashPage');
     this.auth.isConnected().then( (ok) => {
       if ( ok ) {
         if (!this.rentalService.getConfig()) {
-          console.error('No config found');
+          this.auth.logOut();
+          console.error('Have to move ! No config found !')
+          this.navCtrl.setRoot('ConnectPage');
         } else {
           this.config = this.rentalService.getConfig();
           this.priceList = this.rentalService.getSortedByCategoryPriceList();
           if(this.navParams.get('data')) { // if some data is passed
+            let data = this.navParams.get('data');
+            console.log(data);
             let args = this.navParams.get('data').quotationArgs;
             let id = this.navParams.get('data').rentalID;
             if(id) { // If a rental id is passed
@@ -149,7 +155,7 @@ export class RentalQuotationDashPage {
             }
           }
           this.variousChargeTypeToAdd = this.config.chargesTypeDetails[0]; // Sets a default ChargeType
-          // Ici il faudrait choisir un onglet actif selon le code
+          // Ici il faudrait choisir un onglet actif selon le code 
         }
       } else {
         console.error('Have to move ! No user connected !')
@@ -193,12 +199,32 @@ export class RentalQuotationDashPage {
   }
 
   ionViewWillLeave() {
+    console.log('ionview will leave');
+    console.log(this.rentalId);
     if(this.rentalId){ // If a rentalId exists, we are modifying a rental, we thus have to persists the changes in that specific rental
       // Get the args
-      let args:QuotationArgs = this.quotation.getQuotationArgs();
+      let args: QuotationArgs = this.quotation.getQuotationArgs();
+      console.log(args);
+      let currentArgs:  QuotationArgs;
       // Retrieve the rental
-      // let rental = this.rentalService.getRentalDetails(this.rentalId);
-      // let currentArgs = rental.quotation_args;
+      let rental:Rental;
+
+      this.rentalService.getRentalDetails(this.rentalId).ref.get().then(
+        async (storedRental) => {
+          rental = <Rental>storedRental.data();
+          if (rental.quotation_args) {
+            currentArgs = rental.quotation_args;
+          }
+          // il faut comparer currentArgs et args
+          rental.quotation_args = args;
+          await this.rentalService.updateRental(this.rentalId, rental);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+      
       // let change = true;
       // console.warn(currentArgs);
       // if (currentArgs){
@@ -278,7 +304,7 @@ export class RentalQuotationDashPage {
 
   checkFinalBalance(price, discount, cost){
     if(this.quotation.total.amount-this.quotation.discount-this.quotation.total.cost < 0){
-      return "alert";
+      return "alert"; 
     }
   }
 
@@ -350,7 +376,7 @@ export class RentalQuotationDashPage {
           && this.variousOptionToAdd.catID != 0
           && this.variousChargeTypeToAdd ) {
        option = {
-         units : this.variousOptionToAdd.units,
+         units : 1,
          optionID : this.variousOptionToAdd.optionID,
          variousAmount : Number(this.variousOptionToAdd.amount),
          variousCatID : this.variousOptionToAdd.catID,
@@ -360,7 +386,7 @@ export class RentalQuotationDashPage {
         if (this.variousChargeTypeToAdd) {
           option.variousChargeId = this.variousChargeTypeToAdd.id;
           option.variousChargeTypeId = this.variousChargeTypeToAdd.chargeTypeId;
-          option.variousCost = Number(this.variousChargeTypeToAdd.cost) * option.units;
+          option.variousCost = Number(this.variousChargeTypeToAdd.cost) * this.variousOptionToAdd.units;
         }
       }
     
@@ -414,12 +440,16 @@ export class RentalQuotationDashPage {
    * RECAP TAB
    */
 
+   getCatLabel(catId): string {
+     return this.config.categories.find(cat => cat.id === catId).label;
+   }
+
   computeCostByChargeType(chargeTypeId) : number {
     var total = 0;
     this.sortedOptions.forEach(cat => {
       if(!cat.isPost){
         cat.options.forEach(option => {
-          if (option.chargeTypeId === chargeTypeId){
+          if (this.getChargeTypeId(option.chargeId) === chargeTypeId){
             total += option.cost * option.unit;
           }
         });
@@ -430,6 +460,16 @@ export class RentalQuotationDashPage {
 
   getChargeLabel(chargeId) : string {
     return this.getChargeById(chargeId).label;
+  }
+
+  getChargeTypeLabel(chargeId): string {
+    let typeId = this.getChargeTypeId(chargeId);
+    return this.config.chargesTypes.find(chargeType => chargeType.id == typeId).label;
+  }
+
+  getChargeTypeId(chargeId): string {
+    // return this.config.chargesTypes.find(chargeType => chargeType.chargesId.)
+    return this.getChargeById(chargeId).chargeTypeId;
   }
 
   getChargeUnits(chargeId, total) : number {
@@ -492,64 +532,131 @@ export class RentalQuotationDashPage {
 
   resetVerbose() : void {
     
+    let catIdsList = []; // je créé une variable pour stocker les catégories du verbose quotation
+    this.quotation.verbose.discount = this.quotation.discount;
+    this.quotation.verbose.categories = [];
+    this.linesToAdd = [];
+
+    // Je récupère les ID des catégories qui ne sont pas post
     let noPostCatIds =[];
     this.config.categories.forEach(cat => {
       if (!cat.isPostQuotation) {
         noPostCatIds.push(cat.id);
       }
     });
-    console.debug("ids = " + noPostCatIds);
-    let firstCatId = noPostCatIds.shift();
-    let optionsOfCat1 = this.config.options.filter(option => option.catId === firstCatId);
-    // let otherOptions = this.config.options.filter(option => option.catId != firstCatId)
-    let otherOptions = [];
+
+    // Je récupère les options por chacune des catégories qui ne sont pas post
+    let options: QuotationOption[] = [];
     noPostCatIds.forEach(id => {
-      otherOptions.push(this.config.options.filter(option => option.catId === id)[0]);
-    });
-    // console.debug('first cat id : ' + firstCatId);
-    // console.debug('option of Cat 1 = ');
-    // console.debug(optionsOfCat1);
-    // console.debug('other Options = ');
-    // console.debug(otherOptions);
-    this.quotation.verbose.discount = this.quotation.discount;
-    this.quotation.verbose.categories[0].lines = [];
-    this.quotation.verbose.categories[1].lines = [];
-    optionsOfCat1.forEach(configOption => {
-      this.quotation.details.forEach(option => {
-        if(option.optionID === configOption.id) 
-        {
-          this.quotation.verbose.categories[0].lines.push({
-            amount : option.units * configOption.amount,
-            label : configOption.label
-          });
-          console.debug('ajouter line depuis le if de optionOfCat1 ID = ' + option.optionID);
-        } else if (option.optionID === 0 && option.variousCatID === firstCatId) 
-        {
-          this.quotation.verbose.categories[0].lines.push({
-            amount : option.variousAmount * option.units,
-            label : option.variousLabel,
-          });
-          console.debug('ajouter line depuis le if else de optionOfCat1 ID = ' + option.optionID);
+      options = options.concat(this.config.options.filter(option => option.catId === id));
+      // options.push(this.config.options.filter(option => option.catId === id));
+    })
+    console.log(options);
+
+    // Je vérifie si le devis en cours contient l'une ou l'autre de ces options
+    this.quotation.details.forEach(quotationOption => {
+      console.log(quotationOption);
+      let optionToCompute: any;
+      
+      let option = options.find(option => option.id === quotationOption.optionID);
+      
+      if (option) {
+        console.log(option);
+        optionToCompute = {
+          catId: option.catId,
+          amount: option.amount,
+          label:option.label
         }
-      });
-    });
-    otherOptions.forEach(configOption => {
-      this.quotation.details.forEach(option => {
-        if(option.optionID === configOption.id ){
-          this.quotation.verbose.categories[1].lines.push({
-            amount : option.units * configOption.amount,
-            label : configOption.label
-          });
-          console.debug('ajouter line depuis le if de otherOption ID = ' + option.optionID);
-        } else if (option.optionID === 0 && noPostCatIds.some(id => id === option.variousCatID) ) {
-          this.quotation.verbose.categories[1].lines.push({
-            amount : option.variousAmount * option.units,
-            label : option.variousLabel,
-          });
-          console.debug('ajouter line depuis le if else de otherOption ID =' + option.optionID);
+
+      } else if (quotationOption.optionID === 0) {
+        console.log('il faut gérer un customOption');
+        optionToCompute = {
+          catId: quotationOption.variousCatID,
+          amount: quotationOption.variousAmount,
+          label: quotationOption.variousLabel,
         }
-      });
-    });
+      } else {
+        console.log("C'est une option hors devis - ne rien faire");
+      }
+
+      if (optionToCompute) {
+        if( catIdsList.findIndex(id => id === optionToCompute.catId) === -1 ) {
+          console.log(this.getCatLabel(optionToCompute.catId));
+          this.linesToAdd.push({label:"",amount:0});
+          this.quotation.verbose.categories.push({
+            id: optionToCompute.catId,
+            label: this.getCatLabel(optionToCompute.catId),
+            lines: [
+              {
+              amount: optionToCompute.amount,
+              label: optionToCompute.label,
+              }
+            ]
+          })
+          catIdsList.push(optionToCompute.catId);
+          console.log(catIdsList);
+        } else {
+          this.quotation.verbose.categories.find(cat => cat.id === optionToCompute.catId).lines.push({
+            amount: optionToCompute.amount,
+            label: optionToCompute.label
+          })
+      }
+
+      }
+    })
+
+    // console.debug("ids = " + noPostCatIds);
+    // let firstCatId = noPostCatIds.shift();
+    // let optionsOfCat1 = this.config.options.filter(option => option.catId === firstCatId);
+    // // let otherOptions = this.config.options.filter(option => option.catId != firstCatId) 
+    // let otherOptions = [];
+    // noPostCatIds.forEach(id => {
+    //   otherOptions.push(this.config.options.filter(option => option.catId === id)[0]);
+    // });
+    // // console.debug('first cat id : ' + firstCatId);
+    // // console.debug('option of Cat 1 = '); 
+    // // console.debug(optionsOfCat1);
+    // // console.debug('other Options = ');
+    // // console.debug(otherOptions); 
+    // this.quotation.verbose.discount = this.quotation.discount;
+    // this.quotation.verbose.categories[0].lines = [];
+    // this.quotation.verbose.categories[1].lines = [];
+    // optionsOfCat1.forEach(configOption => {
+    //   this.quotation.details.forEach(option => {
+    //     if(option.optionID === configOption.id) 
+    //     {
+    //       this.quotation.verbose.categories[0].lines.push({
+    //         amount : option.units * configOption.amount,
+    //         label : configOption.label
+    //       });
+    //       console.debug('ajouter line depuis le if de optionOfCat1 ID = ' + option.optionID);
+    //     } else if (option.optionID === 0 && option.variousCatID === firstCatId) 
+    //     {
+    //       this.quotation.verbose.categories[0].lines.push({
+    //         amount : option.variousAmount * option.units,
+    //         label : option.variousLabel,
+    //       });
+    //       console.debug('ajouter line depuis le if else de optionOfCat1 ID = ' + option.optionID);
+    //     }
+    //   });
+    // });
+    // otherOptions.forEach(configOption => {
+    //   this.quotation.details.forEach(option => {
+    //     if(option.optionID === configOption.id ){
+    //       this.quotation.verbose.categories[1].lines.push({
+    //         amount : option.units * configOption.amount,
+    //         label : configOption.label
+    //       });
+    //       console.debug('ajouter line depuis le if de otherOption ID = ' + option.optionID);
+    //     } else if (option.optionID === 0 && noPostCatIds.some(id => id === option.variousCatID) ) {
+    //       this.quotation.verbose.categories[1].lines.push({
+    //         amount : option.variousAmount * option.units,
+    //         label : option.variousLabel,
+    //       });
+    //       console.debug('ajouter line depuis le if else de otherOption ID =' + option.optionID);
+    //     }
+    //   });
+    // });
     this.computeVerboseTotal();
   }
 
