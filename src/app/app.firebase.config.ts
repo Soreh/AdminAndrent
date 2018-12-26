@@ -1,3 +1,5 @@
+// Config de Firebase
+
 export const FIREBASE_CONFIG = {
     apiKey: "AIzaSyCIeidnRBhR6og1FyRG8RYbRjP__lRdguQ",
     authDomain: "adease-8b178.firebaseapp.com",
