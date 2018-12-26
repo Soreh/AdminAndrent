@@ -10,7 +10,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireDatabaseModule } from "@angular/fire/database";
 
-import { FIREBASE_CONFIG } from "./app.firebase.config";
+import { FIREBASE_CONFIG } from "./app.firebase.config2";
 
 import { MyApp } from './app.component';
 //import { HomePage } from '../pages/home/home';
