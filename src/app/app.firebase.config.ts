@@ -1,4 +1,4 @@
-// Config de Firebase
+// Config de Firebase - test
 
 export const FIREBASE_CONFIG = {
     apiKey: "AIzaSyCIeidnRBhR6og1FyRG8RYbRjP__lRdguQ",
