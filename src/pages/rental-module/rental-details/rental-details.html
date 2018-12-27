@@ -69,7 +69,7 @@
               <ion-item>
                   <ion-icon name="logo-euro" item-start color="danger"></ion-icon>
                   <ion-label>{{outputQuotationStatus()}}</ion-label>
-                  <button ion-button icon-only outline item-end (click)="goToQuotationDash()">
+                  <button ion-button icon-only outline item-end (click)="openQuotationModal()">
                     <ion-icon name="cog"></ion-icon>
                   </button>
               </ion-item>
@@ -170,7 +170,7 @@
           <p>{{rental.date_label}}</p>
           <p *ngIf="rental.client">{{rental.client.name}}</p>
           <p>Convention de location</p>
-          <p><a (click)="goToQuotationDash()">lien vers le devis</a> ({{outputQuotationStatus()}})</p>
+          <p><a (click)="openQuotationModal()">lien vers le devis</a> ({{outputQuotationStatus()}})</p>
           <p>Facture d'accompte</p>
           <p>Facture</p>
           <p>Facture de régulation</p>

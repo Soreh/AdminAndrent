@@ -2,6 +2,7 @@ export interface Quotationverbose {
     amount : number;
     discount ?: number;
     categories : QuotationverboseCategory[];
+    date?: string,
 }
 
 export interface QuotationverboseLine {

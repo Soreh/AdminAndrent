@@ -1,0 +1,31 @@
+<!--
+  Generated template for the QuotationModalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>QuotationModal</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div *ngIf="quotation_args">
+    <p>Statut : {{quotation_args}}</p>
+    <p>Montant : {{quotation_args}}</p>
+    <p>
+      <button ion-button (click)="goToDash()">Edit</button>
+      <button ion-button (click)="seeVerbose()">Voir</button>
+    </p>
+  </div>
+  <div *ngIf="!quotation_args">
+    <p>Semblerait qu'il faut encore le faire ce devis...</p>
+    <p>
+        <button ion-button (click)="goToDash()">Edit</button>
+    </p>
+  </div>
+</ion-content>

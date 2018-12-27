@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController, ModalController } from 'ionic-angular';
 import { RentalServiceProvider} from "../../../providers/rentals/rental-service/rental-service";
 import { Rental } from '../../../models/rentals/rental.interface';
 import { STATUSCODE, STATUS } from "../../../models/global/status.interface";
@@ -62,7 +62,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     public navParams: NavParams, 
     public structService: StructureServiceProvider, 
     private alertCtrl: AlertController,
-    private loader: LoadingController ) {
+    private loader: LoadingController,
+    private modalCtrl: ModalController ) {
   }
 
   /** LIFE CYCLES
@@ -263,6 +264,31 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
   /** NAVIGATION
    *************************************/
 
+  openQuotationModal() {
+    let data:any = {
+      rentalID : this.rentalID,
+    }
+    if ( this.quotationArgsExists ) {
+      data.quotationArgs = this.rental.quotation_args;
+      console.log(this.rental.quotation_args); 
+    }
+
+    let modal = this.modalCtrl.create('QuotationModalPage', {
+      quotationArgs: data.quotationArgs
+    });
+    modal.onDidDismiss((data)=> {
+      if(data==="dash") {
+        this.goToQuotationDash()
+      } else if(data==="see"){
+        this.navCtrl.push('RentalQuotationPrintPage', {
+          quotation: this.rental.quotation_args,
+        } )
+      }
+    })
+    modal.present();
+  }
+
+
   goToQuotationDash(){
     let data:any = {
       rentalID : this.rentalID,
@@ -277,6 +303,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     this.navCtrl.push('RentalQuotationDashPage', {
       data: data,
     });
-    }
+  }
 
 }

@@ -19,11 +19,94 @@
         <ion-icon name="cloud-upload"></ion-icon>
       </button>
   </ion-fab>
-  <div>
-    <h1>Onglet de configuration générale</h1>
+  <div class="tabs">
+    <span *ngFor="let tab of tabs" class="{{tab.class}}" (click)="showTab(tab.target)">
+      {{tab.name}}
+    </span>
   </div>
-  <div>
-    <h1>Onglet de configuration du module rental</h1>
-    <p>il faudrait un petit component ;)</p>
+  <div id="global" *ngIf="isShown(tabs[0].target)" class="tab-panel">
+    <p>Configuration de la structure</p>
+    <ion-item>
+      <ion-label>Nom</ion-label>
+      <ion-input [(ngModel)]="structure.name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Email</ion-label>
+      <ion-input [(ngModel)]="structure.contact.mail"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Téléphone</ion-label>
+      <ion-input [(ngModel)]="structure.contact.tel"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Numéro d'entreprise</ion-label>
+      <ion-input [(ngModel)]="structure.enterpriseNumber"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Numéro de TVA</ion-label>
+      <ion-input [(ngModel)]="structure.vat"></ion-input>
+    </ion-item>
+    <ion-item-group>
+      <ion-label>Adresse</ion-label>
+      <ion-item>
+        <ion-label>numéro</ion-label>
+        <ion-input [(ngModel)]="structure.contact.number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>rue</ion-label>
+        <ion-input [(ngModel)]="structure.contact.street"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>cp</ion-label>
+        <ion-input [(ngModel)]="structure.contact.cp"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>ville</ion-label>
+        <ion-input [(ngModel)]="structure.contact.city"></ion-input>
+      </ion-item>
+    </ion-item-group>
+    <p>Comptes en Banques</p>
+    <ion-item-group *ngFor="let account of structure?.bankAccount">
+      <ion-item>
+        <ion-label>Nom</ion-label>
+        <ion-input [(ngModel)]="account.label"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Bic</ion-label>
+        <ion-input [(ngModel)]="account.bic"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Iban</ion-label>
+        <ion-input [(ngModel)]="account.iban"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Compte principal</ion-label>
+        <ion-checkbox (ngModelChange)="switchMainAccount(account)" [(ngModel)]="account.main"></ion-checkbox>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-label>Ajouter un compte en banque</ion-label>
+      <ion-item>
+        <ion-label>Nom</ion-label>
+        <ion-input [(ngModel)]="accountToAdd.label"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Bic</ion-label>
+        <ion-input [(ngModel)]="accountToAdd.bic"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Iban</ion-label>
+        <ion-input [(ngModel)]="accountToAdd.iban"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Compte principal</ion-label>
+        <ion-checkbox [(ngModel)]="accountToAdd.main"></ion-checkbox>
+      </ion-item>
+      <button ion-button block clear outline (click)="addBankAccount()" [disabled]="accountToAddValid()">Ajouter</button>
+    </ion-item-group>
+    <pre>{{structure | json}}</pre>
+  </div>
+  <div id="rentals" *ngIf="isShown(tabs[1].target)" class="tab-panel">
+    <rental-config [config]="rentalConfig"></rental-config>
   </div>
 </ion-content>

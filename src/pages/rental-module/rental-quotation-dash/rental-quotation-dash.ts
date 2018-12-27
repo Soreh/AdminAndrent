@@ -31,7 +31,7 @@ export class RentalQuotationDashPage implements OnInit {
       name : 'options',
       target : 'prices',
       show : false,
-      class : "",
+      class : "", 
     },
     {
       name : 'calcul',

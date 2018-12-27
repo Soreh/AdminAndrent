@@ -109,8 +109,8 @@ export class StructureServiceProvider {
   }
 
   // Pas sur que ça marche... a essayer plus tard
-  public async updateStructure(key: any, structure: Structure): Promise<any> {
-    return await this.afStore.doc(`/structures/${key}`).update(structure);
+  public async updateCurrentStructure(structure: Structure): Promise<any> {
+    return await this.afStore.doc(`/structures/${this.currentStructureId}`).update(structure);
   }
   
   /**

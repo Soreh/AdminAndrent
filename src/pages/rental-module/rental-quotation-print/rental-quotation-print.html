@@ -6,7 +6,8 @@
 -->
 
 <ion-content padding>
-  <button ion-button icon-only (click)="goBack()" float-right>
+  <rental-quotation-verbose [verbose]="quotation?.verbose"></rental-quotation-verbose>
+  <!-- <button ion-button icon-only (click)="goBack()" float-right>
     <ion-icon name="close"></ion-icon>
   </button>
   <h1>Devis</h1>
@@ -30,5 +31,5 @@
     <div>
       <p>Ooops... Pas de données reçues...</p>
     </div>
-  </ng-template>
+  </ng-template> -->
 </ion-content>
