@@ -1,8 +1,8 @@
 <!-- Generated template for the RentalMenuComponent component -->
-  <ion-buttons>
+  <ion-buttons padding>
     <button ion-button icon-only *ngIf="navCtrl.canGoBack()" (click)="goBack()"><ion-icon name="arrow-back"></ion-icon></button>
-    <button *ngFor="let page of pages" ion-button (click)="goToPage(page)">
+    <button padding block *ngFor="let page of pages" ion-button (click)="goToPage(page)">
       {{page.label}}
     </button>
-    <button ion-button (click)="disconnect()">Se déconnecter</button>
+    <button ion-button clear block outline (click)="disconnect()">Se déconnecter</button>
   </ion-buttons>

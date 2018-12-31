@@ -4,23 +4,26 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>QuotationModal</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
 
 <ion-content padding>
   <div *ngIf="quotation_args">
-    <p>Statut : {{quotation_args}}</p>
-    <p>Montant : {{quotation_args}}</p>
-    <p>
-      <button ion-button (click)="goToDash()">Edit</button>
+    <h2>Le devis</h2>
+    <ion-item>
+      <ion-label>Montant :</ion-label>
+      <div item-content>
+        {{quotation_args.total.amount}}€
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-label>Etat du devis :</ion-label>
+      <ion-select [(ngModel)]="quotation_args.statusCode" (ngModelChange)="canEdit()">
+        <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-buttons end padding margin>
+      <button ion-button *ngIf="canEdit()" (click)="goToDash()">Edit</button>
       <button ion-button (click)="seeVerbose()">Voir</button>
-    </p>
+    </ion-buttons>
   </div>
   <div *ngIf="!quotation_args">
     <p>Semblerait qu'il faut encore le faire ce devis...</p>
@@ -28,4 +31,9 @@
         <button ion-button (click)="goToDash()">Edit</button>
     </p>
   </div>
+  <ion-footer>
+    <ion-buttons end>
+      <button ion-button clear (click)="close()">Ok</button>
+    </ion-buttons>
+  </ion-footer>
 </ion-content>

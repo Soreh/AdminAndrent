@@ -10,15 +10,15 @@ export class Status {
                 },
                 {
                     code : 2,
-                    label : "Envoyé",
+                    label : "Envoyé(e)",
                 },
                 {
                     code : 3,
-                    label : "Approuvé",
+                    label : "Approuvé(e)",
                 },
                 {
                     code : 4,
-                    label : "Confirmé",
+                    label : "Confirmé(e)",
                     color: 'confirmed_color',
                 },
                 {
@@ -36,7 +36,7 @@ export class Status {
                 },
                 {
                     code : 8,
-                    label : "Payé",
+                    label : "Payé(e)",
                 },
                 {
                     code : 9,
@@ -49,12 +49,12 @@ export class Status {
                 },
                 {
                     code : 11,
-                    label : "Terminé",
+                    label : "Terminé(e)",
                     color : 'over_color',
                 },
                 {
                     code : 12,
-                    label : "Annulé",
+                    label : "Annulé(e)",
                     color : 'canceled_color',
                 },
                 {

@@ -17,7 +17,7 @@ export class Quotation {
     verbose     ?: Quotationverbose;
 
     constructor(private rentalId = null, private args:QuotationArgs = null){
-        this.statusCode = STATUSCODE.toBeSend;
+        this.statusCode = STATUSCODE.toDO;
         this.discount = 0;
         this.total = {
             amount : 0,

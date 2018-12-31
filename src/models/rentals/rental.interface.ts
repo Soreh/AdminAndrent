@@ -4,6 +4,10 @@ import { Location } from "./location.interface";
 import { Contact } from "../global/contact.interface";
 import { QuotationArgs } from "../rentals/quotation.class";
 
+import { Client } from "../invoices/client.interface";
+import { Invoice } from "../invoices/invoice.interface";
+import { Contract } from "./contract.interface";
+
 export interface Rental {
     struct_key  : string;
     name        : string;
@@ -13,7 +17,7 @@ export interface Rental {
     location_id    ?: any; //Has to be later a Salle
     payment_status ?: number;
     id          ?: any;
-    client      ?: any; //Has to be later a Client
+    client      ?: Client; //Has to be later a Client
     tech        ?: string,
     quotation_args ?: QuotationArgs;
     quotation   ?: Quotation;
@@ -21,7 +25,8 @@ export interface Rental {
     date_label  ?: string; // Unused ?
     schedule    ?: string;
     notes       ?: string;
-    contract    ?: any; //Will have to be an Object including a rentalContract and its statuses
-    advance_invoice ?: any; //Will have to be an Object including an Invoic and its statuses
-    invoice     ?: any; //Will have to be later an Object including Invoice and and its statuses 
+    contract    ?: Contract; //Will have to be an Object including a rentalContract and its statuses
+    advance_invoice ?: Invoice; //Will have to be an Object including an Invoic and its statuses
+    invoice     ?: Invoice; //Will have to be later an Object including Invoice and and its statuses 
+    regu_invoice ?: Invoice;
 }

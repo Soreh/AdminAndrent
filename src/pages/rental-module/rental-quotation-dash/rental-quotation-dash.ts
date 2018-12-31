@@ -63,21 +63,13 @@ export class RentalQuotationDashPage implements OnInit {
       label : STATUS.getLabel(STATUSCODE.processing),
     },
     {
-      code : STATUSCODE.toBeSend,
-      label : STATUS.getLabel(STATUSCODE.toBeSend),
-    },
-    {
       code : STATUSCODE.send,
       label : STATUS.getLabel(STATUSCODE.send),
     },
     {
-      code : STATUSCODE.toBePaid,
-      label : STATUS.getLabel(STATUSCODE.toBePaid),
-    },
-    {
-      code : STATUSCODE.paid,
-      label : STATUS.getLabel(STATUSCODE.paid),
-    },
+      code: STATUSCODE.approved,
+      label: STATUS.getLabel(STATUSCODE.approved),
+    }
   ]
 
   public toBeConfirmedCode = STATUSCODE.toBeConfirmed;
@@ -117,6 +109,20 @@ export class RentalQuotationDashPage implements OnInit {
       buttons : ["J'ai compris !"],
     });
     help.present();
+  }
+
+  selectTabUponStatus() : void {
+    console.log(this.quotation.statusCode);
+    switch(this.quotation.statusCode) {
+      case STATUSCODE.processing :
+        this.showTab('compute');
+        break
+      case STATUSCODE.toDO :
+        this.showTab('prices');
+        break
+      default :
+        this.showTab('recap');
+    }
   }
 
   ngOnInit() { 
@@ -198,6 +204,13 @@ export class RentalQuotationDashPage implements OnInit {
 
   }
 
+  ionViewDidEnter() {
+    console.debug("ionView did enter...")
+    if(this.quotation) {
+      this.selectTabUponStatus();
+    }
+  }
+
   ionViewWillLeave() {
     console.log('ionview will leave');
     console.log(this.rentalId);
@@ -242,6 +255,7 @@ export class RentalQuotationDashPage implements OnInit {
       // }
     }
   }
+
 
 
   showTab(target) : void {

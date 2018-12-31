@@ -21,12 +21,6 @@ const rentalsList: Rental[] = [
                 tel:"02/542 25 82",
             },
         ],
-        client      : {
-            name: "Pierre",
-            surname: "Pignolet",
-            email:"pierre.p@gmail.com",
-            tel:"02/542 25 82"
-        },
         location_id    : 1,
         status      : STATUSCODE.confirmed,
         payment_status : STATUSCODE.toBePaid,
@@ -111,26 +105,6 @@ const rentalsList: Rental[] = [
                         ]
                     }
                 ]
-            }
-        },
-        invoice     : {
-            status : STATUSCODE.toBeSend,
-            details : {
-                amount : 2450,
-                status : STATUSCODE.toBePaid,
-            },
-        },
-        contract    : {
-            status : STATUSCODE.toBeSend,
-            details : {
-                signed : true,
-            },
-        },
-        advance_invoice : {
-            status : STATUSCODE.toBeSend,
-            details : {
-                amount : 245,
-                status : STATUSCODE.toBePaid,
             }
         }
     }

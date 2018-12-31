@@ -25,6 +25,10 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+        <!--
+          DETAILS
+          *******************
+        -->
         <ion-grid *ngIf="!showDetails">
           <ion-row justify-content-center>
             <ion-col col-2 text-center>
@@ -42,21 +46,40 @@
                 </button>
             </ion-col>
           </ion-row>
+          <!--
+            ROW 1
+          -->
           <ion-row>
+            <!--
+              Name
+            -->
             <ion-col col-6>
               <ion-item>
                 <ion-label>Nom</ion-label>
                 <ion-input [(ngModel)]="rental.name" (ngModelChange)="keepChangesTrack('Nom')"></ion-input>
               </ion-item>
             </ion-col>
+            <!--
+              Client
+            -->
             <ion-col col-6>
               <ion-item>
-                <ion-label>Convention</ion-label>
-                <ion-input [disabled]="true" value="A implémenter"></ion-input>
-              </ion-item>  
+                <ion-icon name="contact" item-start color="primary"></ion-icon>
+                <ion-label>{{rental?.client?.name || placeholderClient }}</ion-label>
+                <button ion-button icon-only outline item-end (click)="openClientModal()">
+                    <ion-icon name="cog"></ion-icon>
+                </button>
+                <!-- <ion-input [disabled]="true" value="A implémenter"></ion-input> -->
+              </ion-item>                
             </ion-col>
           </ion-row>
+          <!--
+            ROW 2
+          -->
           <ion-row>
+            <!--
+              Status
+            -->
             <ion-col col-6>
               <ion-item>
                 <ion-label>Statut</ion-label>
@@ -65,17 +88,26 @@
                 </ion-select>
               </ion-item>
             </ion-col>
+            <!--
+              Contract
+            -->
             <ion-col col-6>
-              <ion-item>
-                  <ion-icon name="logo-euro" item-start color="danger"></ion-icon>
-                  <ion-label>{{outputQuotationStatus()}}</ion-label>
-                  <button ion-button icon-only outline item-end (click)="openQuotationModal()">
-                    <ion-icon name="cog"></ion-icon>
-                  </button>
-              </ion-item>
+                <ion-item>
+                    <ion-icon name="paper" item-start color="primary"></ion-icon>
+                    <ion-label>{{outputContractStatus()}}</ion-label>
+                    <button ion-button icon-only outline item-end (click)="openContractModal()">
+                      <ion-icon name="cog"></ion-icon>
+                    </button>
+                </ion-item>  
             </ion-col>
           </ion-row>
+          <!--
+            ROW 3
+          -->
           <ion-row>
+            <!--
+              Location
+            -->
             <ion-col col-6>
               <ion-item>
                   <ion-label>Salle</ion-label>
@@ -84,41 +116,72 @@
                   </ion-select>
                 </ion-item>
             </ion-col>
+            <!--
+              Quotation
+            -->
             <ion-col col-6>
               <ion-item>
-                <ion-label>Accompte</ion-label>
-                <ion-input [disabled]="true" value="A implémenter"></ion-input>
-              </ion-item>                
+                  <ion-icon name="logo-euro" item-start color="primary"></ion-icon>
+                  <ion-label>{{outputQuotationStatus()}}</ion-label>
+                  <button ion-button icon-only outline item-end (click)="openQuotationModal()">
+                    <ion-icon name="cog"></ion-icon>
+                  </button>
+              </ion-item>
             </ion-col>
           </ion-row>
+          <!--
+            ROW 4
+          -->
           <ion-row>
+            <!--
+              Dates
+            -->
             <ion-col col-6>
               <ion-item>
                   <ion-label>Dates</ion-label>
                   <ion-input [(ngModel)]="rental.dates" (ngModelChange)="keepChangesTrack('Dates')"></ion-input>
               </ion-item>
             </ion-col>
+            <!--
+              Facture
+            -->
             <ion-col col-6>
               <ion-item>
-                <ion-label>Facture</ion-label>
-                <ion-input [disabled]="true" value="A implémenter"></ion-input>
-              </ion-item>                
+                <ion-icon name="cash" item-start color="primary"></ion-icon>
+                <ion-label>{{outputInvoiceStatus() }}</ion-label>
+                <button ion-button icon-only outline item-end (click)="openInvoiceModal()" [disabled]="canOpenInvoice()">
+                    <ion-icon name="cog"></ion-icon>
+                </button>               
+              </ion-item>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <ion-col col-6>
-              <ion-item>
-                <ion-label>Client</ion-label>
-                <ion-input [disabled]="true" value="A implémenter"></ion-input>
-              </ion-item>                
-            </ion-col>
-            <ion-col col-6>
-              <ion-item>
-                <ion-label>Fact. de Regu.</ion-label>
-                <ion-input [disabled]="true" value="A implémenter"></ion-input>
-              </ion-item>                
-            </ion-col>
-          </ion-row>
+          <!--
+            ROW 5 - TO IMPLEMENT !!!
+          -->
+          <!--
+            
+            <ion-row>
+
+                Deposit Invoice - To Implement
+
+              <ion-col col-6>
+                  <ion-item>
+                    <ion-label>Accompte</ion-label>
+                    <ion-input [disabled]="true" value="A implémenter"></ion-input>
+                  </ion-item>                
+                </ion-col>
+
+                Reg. Invoice - To Implement
+
+              <ion-col col-6>
+                <ion-item>
+                  <ion-label>Fact. de Regu.</ion-label>
+                  <ion-input [disabled]="true" value="A implémenter"></ion-input>
+                </ion-item>                
+              </ion-col>
+            </ion-row>
+
+          -->
         </ion-grid>
         <ion-grid>
           <ion-row justify-content-between>

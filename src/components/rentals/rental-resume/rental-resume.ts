@@ -74,6 +74,14 @@ export class RentalResumeComponent implements OnInit, OnChanges{
   //   return this.rental.contact.find( contact => contact.main );
   // }
 
+  isPaid(): boolean {
+    if (this.rental.invoice) {
+      if (this.rental.invoice.status === STATUSCODE.paid) {
+        return true;
+      }
+    }
+  }
+
   getStatusLabel(statusCode): string {
     //console.debug("in get statusLabel...");
     return STATUS.getLabel(statusCode);

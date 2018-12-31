@@ -7,6 +7,9 @@ import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs';
+import { isType } from '@angular/core/src/type';
+import { Client } from '../../../models/invoices/client.interface';
+import { Invoice } from '../../../models/invoices/invoice.interface';
 
 /**
  * Generated class for the RentalDetailsPage page.
@@ -55,6 +58,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
   showDetails : boolean = true; // Details are shown by default
   logMsg : string;
   changeMade : string[];
+
+  public placeholderClient = "Client à définir";
 
   constructor(
     private rentalService: RentalServiceProvider, 
@@ -156,7 +161,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     let msg : string;
     let modif : string;
     if (this.logMsg) {
-      msg = this.logMsg
+      msg = this.logMsg;
+      this.logMsg = null;
     }
     if ( this.changeMade ) {
       modif = '[ Modification(s) apportée(s) : ';
@@ -238,6 +244,26 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  outputContractStatus() {
+    let label: string;
+    if(this.rental.contract) {
+      label = "Convention " + STATUS.getLabel(this.rental.contract.status_code);
+    } else {
+      label = "Convention à faire";
+    }
+    return label;
+  }
+
+  outputInvoiceStatus() {
+    let label: string;
+    if(this.rental.invoice) {
+      label = "Facture " + STATUS.getLabel(this.rental.invoice.status) + " | " + this.rental.invoice.amount + "€" 
+    } else {
+      label = "Facture à faire";
+    }
+    return label;
+  }
+
   outputQuotationStatus(){
     let label: string;
     let amount = '';
@@ -274,17 +300,106 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
 
     let modal = this.modalCtrl.create('QuotationModalPage', {
-      quotationArgs: data.quotationArgs
+      quotationArgs: data.quotationArgs,
     });
+
     modal.onDidDismiss((data)=> {
-      if(data==="dash") {
-        this.goToQuotationDash()
-      } else if(data==="see"){
-        this.navCtrl.push('RentalQuotationPrintPage', {
-          quotation: this.rental.quotation_args,
-        } )
+      if(data){
+        if(data.dest==="dash") {
+          this.goToQuotationDash()
+        } else if(data.dest==="see"){
+          this.navCtrl.push('RentalQuotationPrintPage', {
+            quotation: this.rental.quotation_args,
+          } )
+        }
       }
     })
+    
+    modal.present();
+  }
+
+  openClientModal() {
+    if (!this.rental.client){
+      let client:Client = {
+        name: "",
+      }
+      this.rental.client = client;
+    }
+
+    let modal = this.modalCtrl.create('AddClientModalPage', {
+      client: this.rental.client,
+    })
+
+    modal.onDidDismiss( (data) => {
+      if (data) {
+        this.keepChangesTrack('client');
+      }
+    })
+
+    modal.present(); 
+  }
+
+  openContractModal() {
+    if (!this.rental.contract) {
+      this.rental.contract = {
+        status_code: STATUSCODE.toBeSend,
+      }
+    }
+
+    let modal = this.modalCtrl.create('ContractModalPage', {
+      contract: this.rental.contract,
+    })
+
+    modal.onDidDismiss( (data) => {
+      if (data) {
+        if(data.change) {
+          this.keepChangesTrack('Convention')
+        }
+        if(data.dest){
+          this.navCtrl.push(data.dest, {
+            contract: data.contract
+          });
+        }
+      }
+    })
+
+    modal.present();
+  }
+
+  canOpenInvoice() {
+    if (!this.rental.client || !this.rental.quotation_args){
+      return true
+    }
+  }
+  
+  openInvoiceModal() {
+    if (!this.rental.invoice){
+      let invoice:Invoice = {
+        // il faudra générer un id ?
+        client: this.rental.client,
+        amount: this.rental.quotation_args.total.amount,
+        status: STATUSCODE.toBeSend,
+      }
+      this.rental.invoice = invoice;
+    }
+
+    let modal = this.modalCtrl.create('AddInvoiceModalPage', {
+      invoice: this.rental.invoice,
+    })
+
+    modal.onDidDismiss( (data) => {
+      if(data){
+        if (data.change) {
+          this.keepChangesTrack('facture');
+        }
+        if (data.view) {
+          this.navCtrl.push('InvoicePrintPage', {
+            invoice : this.rental.invoice,
+          })
+        }
+      }
+    })
+
     modal.present();
   }
 

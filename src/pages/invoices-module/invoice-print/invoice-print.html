@@ -1,0 +1,23 @@
+<!--
+  Generated template for the InvoicePrintPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<h1>Devis</h1>
+<div *ngIf="invoice; else no_data">
+    <button ion-button icon-only (click)="close()" float-right>
+        <ion-icon name="close"></ion-icon>
+      </button>
+    <pre>{{invoice | json }}</pre>
+    <!-- <div class="postDevis">
+      <h2 *ngIf="emptyPostQuotation()">Frais hors devis</h2>
+      <p *ngFor="let option of quotation.postQuotation">{{option.label}} - {{option.amount}}€</p>
+    </div> -->
+</div>
+<ng-template #no_data>
+  <div padding margin>
+    <p>Ooops... Pas de données reçues...</p>
+    <button ion-button (click)="goHome()">Fermer</button>
+  </div>
+</ng-template>

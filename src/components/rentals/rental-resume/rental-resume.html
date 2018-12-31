@@ -4,7 +4,7 @@
     <ion-col col-4>
       <div class="square-status {{getColorClass(rental.status)}}">
           <span class="option-status">{{getStatusLabel(rental.status)}}</span>
-          <span class="payment-status">en attente de paiement</span>
+          <span *ngIf="!isPaid()" class="payment-status">en attente de paiement</span>
       </div>
     </ion-col>
     <ion-col class="resume">
