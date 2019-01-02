@@ -11,12 +11,12 @@
     <ion-item>
       <ion-label>Montant :</ion-label>
       <div item-content>
-        {{quotation_args.total.amount}}€
+        {{quotation_args.total.amount - quotation_args?.discount}}€
       </div>
     </ion-item>
     <ion-item>
       <ion-label>Etat du devis :</ion-label>
-      <ion-select [(ngModel)]="quotation_args.statusCode" (ngModelChange)="canEdit()">
+      <ion-select [(ngModel)]="quotation_args.statusCode" (ngModelChange)="keepchange()">
         <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
       </ion-select>
     </ion-item>
@@ -25,10 +25,11 @@
       <button ion-button (click)="seeVerbose()">Voir</button>
     </ion-buttons>
   </div>
-  <div *ngIf="!quotation_args">
-    <p>Semblerait qu'il faut encore le faire ce devis...</p>
+  <div text-center *ngIf="!quotation_args">
+    <h2>Oui, mais hé !</h2>
+    <p>Semblerait qu'il faille encore le faire ce devis...</p>
     <p>
-        <button ion-button (click)="goToDash()">Edit</button>
+        <button block ion-button (click)="goToDash()">Allez d'accord</button>
     </p>
   </div>
   <ion-footer>

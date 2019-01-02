@@ -1,5 +1,5 @@
 export interface Client {
-    name: string,
+    name?: string,
     type?: string,
     vat?: string,
     enterpriseNumber?: string,

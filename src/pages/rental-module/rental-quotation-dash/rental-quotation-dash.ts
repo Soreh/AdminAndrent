@@ -111,6 +111,10 @@ export class RentalQuotationDashPage implements OnInit {
     help.present();
   }
 
+  showInfo(option: QuotationOption): void {
+    alert(option.infos);
+  }
+
   selectTabUponStatus() : void {
     console.log(this.quotation.statusCode);
     switch(this.quotation.statusCode) {
@@ -363,6 +367,9 @@ export class RentalQuotationDashPage implements OnInit {
 
   addOption(option : QuotationOption, quotation : Quotation) : void {
     if( !this.quotation.hasOption(option.id)){
+      if(this.quotation.statusCode = STATUSCODE.toDO){
+        this.quotation.statusCode = STATUSCODE.processing;
+      }
       quotation.details.push({
         units : 1, // By default, I enter at least 1 unit
         optionID : option.id
@@ -405,6 +412,9 @@ export class RentalQuotationDashPage implements OnInit {
       }
     
     if( option ) {
+      if(this.quotation.statusCode === STATUSCODE.toDO){
+        this.quotation.statusCode === STATUSCODE.processing;
+      }
       this.quotation.details.push(option);
       console.debug("Added Option");
       console.debug(option);
@@ -545,6 +555,10 @@ export class RentalQuotationDashPage implements OnInit {
   }
 
   resetVerbose() : void {
+
+    if (this.quotation.statusCode === STATUSCODE.processing) {
+      this.quotation.statusCode = STATUSCODE.toBeSend;
+    }
     
     let catIdsList = []; // je créé une variable pour stocker les catégories du verbose quotation
     this.quotation.verbose.discount = this.quotation.discount;
@@ -591,6 +605,23 @@ export class RentalQuotationDashPage implements OnInit {
         }
       } else {
         console.log("C'est une option hors devis - ne rien faire");
+        console.log(quotationOption);
+        let postOptionStored = this.config.options.find(opt => opt.id === quotationOption.optionID);
+        let postOption = {
+          id: quotationOption.optionID,
+          label: postOptionStored.label,
+          price: postOptionStored.amount,
+          cost: postOptionStored.cost,
+          normal_price: postOptionStored.amount,
+        }
+
+        if (!this.quotation.verbose.postQuotation) {
+          this.quotation.verbose.postQuotation = [postOption];
+        } else {
+          if (this.quotation.verbose.postQuotation.findIndex(opt => opt.id === quotationOption.optionID) === -1) {
+            this.quotation.verbose.postQuotation.push(postOption);
+          }
+        }
       }
 
       if (optionToCompute) {
@@ -674,6 +705,13 @@ export class RentalQuotationDashPage implements OnInit {
     this.computeVerboseTotal();
   }
 
+  clearPostLine(id: string){
+    let index = this.quotation.verbose.postQuotation.findIndex(opt => opt.id === id);
+    if (index != -1) {
+      this.quotation.verbose.postQuotation.splice(index, 1);
+    }
+  }
+
   computeVerboseTotal(): void {
     console.debug("Dans computeVerboseTotal");
     this.quotation.verbose.amount = 0;
@@ -690,8 +728,7 @@ export class RentalQuotationDashPage implements OnInit {
     // this.rentalService.getRentalDetails(this.rentalId).quotation_args.statusCode = STATUSCODE.toBeSend;
     this.navCtrl.push('RentalQuotationPrintPage', {
       quotation : {
-        verbose : this.quotation.verbose,
-        postQuotation : this.getPostQuotationOptions(),
+        verbose : this.quotation.verbose
       }
     });
   }

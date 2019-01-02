@@ -18,10 +18,32 @@
       PRICES
     -->
     <div *ngIf="isShown(tabs[0].target)" id="prices" class="tab-panel">
-      <div *ngFor="let priceCat of priceList">
-        <h2>{{priceCat.catName}} - prix | coût | marge</h2>
-        <p *ngFor="let option of priceCat.pricesList">{{option.label}} - {{option.amount}}€ | {{option.cost}}€ | {{getBalance(option)}}€ <button (click)="addOption(option, quotation)" *ngIf="!quotation.hasOption(option.id)">ajouter</button>{{ option | json }}</p>
-      </div>
+      <ion-grid *ngFor="let priceCat of priceList">
+        <ion-row class="grey-back">
+          <ion-col col-8>
+           <h2>{{priceCat.catName}}</h2>
+          </ion-col>
+          <ion-col col-1 text-center><h4>Prix</h4></ion-col>
+          <ion-col col-1 text-center><h4>Coût</h4></ion-col>
+          <ion-col col-1 text-center><h4>Marge</h4></ion-col>
+        </ion-row>
+        <ion-row no-margin align-items-center *ngFor="let option of priceCat.pricesList">
+          <ion-col col-8>
+            <ion-item>
+              <button item-end ion-button icon-only (click)="showInfo(option)" [disabled]="!option.infos">
+                <ion-icon name="ios-information-circle-outline" ></ion-icon>
+              </button>
+              {{option.label}}
+            </ion-item>
+          </ion-col>
+          <ion-col col-1 text-center>{{option.amount}}€</ion-col>
+          <ion-col col-1 text-center>{{option.cost}}€</ion-col>
+          <ion-col col-1 text-center>{{getBalance(option)}}€</ion-col>
+          <ion-col col-1 text-center>
+              <button ion-button (click)="addOption(option, quotation)" *ngIf="!quotation.hasOption(option.id)">ajouter</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </div>
     <!-- 
       CALCUL
@@ -77,13 +99,13 @@
         <ion-row align-items-center>
           <ion-col col-4 offset-1>
             <ion-item>
-              <ion-label>nom</ion-label>
+              <ion-label floating>nom</ion-label>
               <ion-input [(ngModel)]="variousOptionToAdd.label" [readonly]="isQuotationApproved()"></ion-input>
             </ion-item>
           </ion-col>
           <ion-col col-4>
             <ion-item>
-              <ion-label>montant à facturer</ion-label>
+              <ion-label floating>montant à facturer</ion-label>
               <ion-input [(ngModel)]="variousOptionToAdd.amount" [readonly]="isQuotationApproved()"></ion-input>
             </ion-item>
           </ion-col>
@@ -106,24 +128,24 @@
       <div *ngFor="let cat of sortedOptions; index as i">
         <div *ngIf="!cat.isPost">
           <ion-grid>
-            <ion-row>
+            <ion-row align-items-center>
               <ion-col col-8>
                 <h2>{{cat.name}}</h2>
               </ion-col>
-              <ion-col col-1>
+              <ion-col text-center col-1>
                 <h3>prix</h3>
               </ion-col>
-              <ion-col col-1>
+              <ion-col text-center col-1>
                 <h3>coût</h3>
               </ion-col>
-              <ion-col col-1>
+              <ion-col text-center col-1>
                 <h3>marge</h3>
               </ion-col>
             </ion-row>
           </ion-grid>
           <ion-grid *ngFor="let option of cat.options">
             <!-- Config pre-saved options -->
-            <ion-row *ngIf="option.id != 0; else freeOption">
+            <ion-row align-items-center *ngIf="option.id != 0; else freeOption">
               <ion-col col-1 offset-1>
                 <ion-item>
                   <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()">
@@ -133,76 +155,134 @@
               <ion-col col-6>
                 <p>{{option.label}}</p>
               </ion-col>
-              <ion-col col-1>
+              <ion-col text-center col-1>
                 <p>{{option.amount * option.unit}}€</p>
               </ion-col>
-              <ion-col col-1>
+              <ion-col text-center col-1>
                 <p>{{option.cost * option.unit}}€</p>
               </ion-col>
-              <ion-col col-1>
+              <ion-col text-center col-1>
                   <p>{{getBalance(option) * option.unit}}€</p>
                 </ion-col>
               <ion-col col-1>
-                <button block ion-button (click)="removeOption(option)">supprimer</button>
+                <button block clear ion-button (click)="removeOption(option)">supprimer</button>
               </ion-col>
             </ion-row>
             <ng-template #freeOption>
-              <ion-row>
+              <ion-row align-items-center>
                 <ion-col col-7 offset-1>
                   <ion-input [(ngModel)]="option.label" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
                 </ion-col>
-                <ion-col col-1>
+                <ion-col text-center col-1>
                     <ion-input [(ngModel)]="option.amount" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input> 
                   </ion-col>
-                <ion-col col-1>
+                <ion-col text-center col-1>
                     <ion-input [(ngModel)]="option.cost" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
                 </ion-col>
-                <ion-col col-1>
+                <ion-col text-center col-1>
                     <p>{{getBalance(option) * option.unit}}€</p>
                 </ion-col>
                 <ion-col col-1>
-                  <button block ion-button (click)="removeOption(option)">supprimer</button>
+                  <button clear block ion-button (click)="removeOption(option)">supprimer</button>
                 </ion-col>
               </ion-row>
             </ng-template>
           </ion-grid>
           <ion-grid>
-            <ion-row>
+            <ion-row align-items-center>
               <ion-col col-8>
-                <h2 text-right>
-                  Total
-                </h2>
+                <h4 text-right>
+                  Total {{cat.name}} : 
+                </h4>
               </ion-col>
-              <ion-col col-1>
-                <p>{{getCatTotal(i,'amount')}}€</p>
+              <ion-col text-center col-1>
+                <h4>{{getCatTotal(i,'amount')}}€</h4>
               </ion-col>
             </ion-row>
           </ion-grid>
         </div>
       </div>
       <!-- Quotation Total -->
-      <div class="total">
-        <p>Total location avant remise {{quotation.total.amount}}€</p>
-        <p>Remise max : {{quotation.total.amount-quotation.total.cost}}€ - {{((quotation.total.amount-quotation.total.cost)/quotation.total.amount)*100 | round_percent }}</p>
-        <p [ngClass]="checkFinalDiscount()">Remise Appliquée : <input class="discount-input" [(ngModel)]="quotation.discount" size="5" [readonly]="isQuotationApproved()">€ - {{(quotation.discount / quotation.total.amount)*100 | round_percent }}</p>
-        <p>Prix après remise {{quotation.total.amount - quotation.discount}}€ | {{quotation.total.cost}}€ | <span [ngClass]="checkFinalBalance()">{{quotation.total.amount - quotation.discount - quotation.total.cost}}€</span></p>
-        
-        <button ion-button (click)="computeTotal()">calculer</button>
-      </div>
+      <ion-grid padding class="grey-back">
+        <ion-row align-items-center style="border-bottom : solid 1px grey; margin-bottom:20px;">
+          <ion-col col-8 text-right>
+            <h2>TOTAL DEVIS</h2>
+          </ion-col>
+          <ion-col text-center col-1>
+            <h3>prix</h3>
+          </ion-col>
+          <ion-col text-center col-1>
+            <h3>coût</h3>
+          </ion-col>
+          <ion-col text-center col-1>
+            <h3>marge</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row align-items-center>
+          <ion-col col-8 text-right>
+            <h4>Total avant remise : </h4>
+          </ion-col>
+          <ion-col text-center col-1>
+            <h4>{{quotation.total.amount}}€</h4>
+          </ion-col>
+          <ion-col text-center col-1>
+            <h4>{{quotation.total.cost}}€</h4>
+          </ion-col>
+          <ion-col text-center col-1>
+            <h4>{{quotation.total.amount - quotation.total.cost}}€</h4>
+          </ion-col>
+        </ion-row>
+        <ion-row align-items-center>
+          <ion-col col-8 text-right>
+            <h5><em>Remise Max : </em></h5>
+          </ion-col>
+          <ion-col text-center>
+            {{quotation.total.amount-quotation.total.cost}}€
+          </ion-col>
+          <ion-col col-1 text-center>
+            {{((quotation.total.amount-quotation.total.cost)/quotation.total.amount)*100 | round_percent }}
+          </ion-col>
+        </ion-row>
+        <ion-row align-items-center>
+          <ion-col col-8 text-right>
+            <h5 [ngClass]="checkFinalDiscount()">Remise appliquée :</h5>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input text-center [(ngModel)]="quotation.discount" [readonly]="isQuotationApproved()">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col col-1 text-center>
+              {{(quotation.discount / quotation.total.amount)*100 | round_percent }}
+          </ion-col>
+        </ion-row>
+        <ion-row align-items-center>
+            <ion-col col-8 text-right>
+              <h4>Prix après remise : </h4>
+            </ion-col>
+            <ion-col text-center col-1>
+              <h4>{{quotation.total.amount - quotation.discount}}€</h4>
+            </ion-col>
+            <ion-col text-center col-1>
+              <h4>{{quotation.total.cost}}€</h4>
+            </ion-col>
+            <ion-col text-center col-1>
+              <h4><span [ngClass]="checkFinalBalance()">{{quotation.total.amount - quotation.discount - quotation.total.cost}}€</span></h4>
+            </ion-col>
+          </ion-row>
+      </ion-grid>
       <!-- Post Quotation Details -->
-      <div *ngFor="let cat of sortedOptions; index as i">
-        <div *ngIf="cat.isPost">
-          <h2>{{cat.name}}</h2>
-          <p *ngFor="let option of cat.options">
-            <ion-input [(ngModel)]="option.label"></ion-input>
-            <ion-input [(ngModel)]="option.amount"></ion-input>€ | {{option.cost * option.unit}}€ | {{getBalance(option) * option.unit}}€
-            <button ion-button (click)="removeOption(option)">
-              remove
-            </button>
-          </p>
-          <p>Ajouter option sur base des options enregistrées, prévoir de pouvoir choisir le coût</p>
-          <p>Ajouter various option</p>
-          <p>Dans tous les cas, cela créé une various option d'OptionID 0</p>
+      <div margin-top padding class="grey-back" text-right>
+        <h6>Ici se trouve la liste des options hors-devis.<br/>(Pour ajouter une option, rendez-vous simplement dans l'onglet "options")</h6>
+        <div *ngFor="let cat of sortedOptions; index as i">
+          <div padding-top *ngIf="cat.isPost">
+            <h2>{{cat.name}}</h2>
+            <ion-item *ngFor="let option of cat.options">
+              <button ion-button item-end (click)="removeOption(option)">Retirer</button>
+              {{option.label}}
+            </ion-item>
+          </div>
         </div>
       </div>
     </div>
@@ -210,19 +290,17 @@
       3 / RECAP 
     -->
     <div *ngIf="isShown(tabs[2].target)" id="recap" class="tab-panel">
-      <div *ngFor="let chargeType of config.chargesTypes">
-        <h2>{{chargeType.label}} {{chargeType.id}}</h2>
+      <div text-center *ngFor="let chargeType of config.chargesTypes">
+        <h2>{{chargeType.label}} | {{computeCostByChargeType(chargeType.id)}}€</h2>
         <div *ngFor="let options of sortedOptions">
           <div *ngFor="let option of options.options">
-            {{option | json}}
             <p *ngIf="getChargeTypeId(option.chargeId) === chargeType.id && !options.isPost">
-              {{getChargeLabel(option.chargeId)}} {{option.cost * option.unit}}€ / {{getChargeUnits(option.chargeId, option.cost * option.unit)}} * {{getChargeCost(option.chargeId)}}€ pour {{option.label}}
+              {{getChargeLabel(option.chargeId)}} {{option.cost * option.unit}}€ (soit {{getChargeUnits(option.chargeId, option.cost * option.unit)}} x {{getChargeCost(option.chargeId)}}€ pour {{option.label}})
             </p>
           </div>
         </div>
-        <p>Total {{chargeType.label}} = {{computeCostByChargeType(chargeType.id)}}€</p>
       </div>
-      <div>
+      <div text-center padding margin class="grey-back total-recap">
         <p>
           Total : {{quotation.total.cost}}€
         </p>
@@ -238,68 +316,55 @@
       4 / VERBOSE QUOTATION 
     -->
     <div *ngIf="isShown(tabs[3].target)" id="verboseQuotation" class="tab-panel">
-      <div>
-        <ion-item>
-          <ion-select [(ngModel)]="quotation.statusCode">
-            <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
-          </ion-select>
-        </ion-item>
-      </div>
-      <div>
-        <p>
-          <button ion-button (click)="resetVerbose()">Copier</button>
-        </p>
-      </div>
-      <!-- QUOTATION LINES -->
-      <pre>{{quotation.verbose | json}}</pre>
-      <div *ngFor="let cat of quotation.verbose.categories;index as catIndex">
-        <h2>
-          <ion-input [(ngModel)]="cat.label"></ion-input>
-        </h2>
-        <p *ngFor="let line of cat.lines"><input [(ngModel)]="line.label"> - <input [(ngModel)]="line.amount" (ngModelChange)="computeVerboseTotal()">€ | <a (click)="deleteVerboseLine(cat.label, line)">supprimer</a></p>
-        <p>
-          <input type='text' [(ngModel)]="linesToAdd[catIndex].label">
-          <input type='number' width="5" [(ngModel)]="linesToAdd[catIndex].amount">
-          <button (click)="addVerboseLine(cat.label, linesToAdd[catIndex], catIndex)">Ajouter</button>
-          <button (click)="clearLine(catIndex)">clear</button>
-        </p>
-      </div>
-      <!-- QUOTATION TOTAL -->
-      <div>
-        <p>Montant avant remise : {{quotation.verbose.amount}}</p>
-        <p>Remise : <input [(ngModel)]="quotation.verbose.discount" (ngModelChange)="computeVerboseTotal()">€</p>
-        <p>Montant après remise : {{quotation.verbose.amount - quotation.verbose.discount}}</p>
-      </div>
-      <!-- QUOTATION POST EVENT PRICES -->
-      <div class="postDevis">
-        <h2>Frais hors devis</h2>
-        <p *ngFor="let option of getPostQuotationOptions()">{{option.label}} - {{option.amount}}€</p>
-        <p>Pour modifier les frais hors devis, rendez-vous dans l'onglet Calcul</p>
-      </div>
-      <!-- QUOTATION CONTROL-->
-      <div>
-        <p>
-          Total Facturé : {{quotation.verbose.amount - quotation.verbose.discount}}€
-        </p>
-        <p>
-          Total devis : {{quotation.total.amount-quotation.discount}}€
-        </p>
-        <div class="info" *ngIf="!isVerboseCorrect(); else verboseCorrect">
-          <p>
-            Attention, il existe une différence de entre le montant facturé et le montant calculé de <span [ngClass]="checkZero((quotation.verbose.amount - quotation.verbose.discount) - (quotation.total.amount - quotation.discount))">{{(quotation.verbose.amount - quotation.verbose.discount) - (quotation.total.amount - quotation.discount)}}€</span>
-          </p>
-          <button (click)="resetVerbose()">reset</button>
+      <div class="verbose-container">
+        <!-- QUOTATION LINES -->
+        <div class="verbose-lines">
+          <div text-center *ngFor="let cat of quotation.verbose.categories;index as catIndex">
+            <h2>
+              <ion-input text-center [(ngModel)]="cat.label"></ion-input>
+            </h2>
+            <p *ngFor="let line of cat.lines"><input [(ngModel)]="line.label"> - <input [(ngModel)]="line.amount" (ngModelChange)="computeVerboseTotal()">€ | <a (click)="deleteVerboseLine(cat.label, line)">supprimer</a></p>
+            <p>
+              <input type='text' [(ngModel)]="linesToAdd[catIndex].label"> - <input type='number' width="5" [(ngModel)]="linesToAdd[catIndex].amount">
+              <button (click)="addVerboseLine(cat.label, linesToAdd[catIndex], catIndex)">Ajouter</button>
+              <button (click)="clearLine(catIndex)">clear</button>
+            </p>
+          </div>
+          <!-- QUOTATION TOTAL -->
+          <div margin padding text-center class="total-recap grey-back">
+            <p>Montant avant remise : {{quotation.verbose.amount}}€</p>
+            <p>Remise : <input text-center [(ngModel)]="quotation.verbose.discount" (ngModelChange)="computeVerboseTotal()">€</p>
+            <p>Montant après remise : {{quotation.verbose.amount - quotation.verbose.discount}}€</p>
+          </div>
+          <!-- QUOTATION POST EVENT PRICES -->
+          <div text-center class="postDevis" *ngIf="quotation.verbose.postQuotation">
+            <h2>Frais hors devis</h2>
+            <p *ngFor="let option of quotation.verbose.postQuotation">{{option.label}} - {{option.normal_price}}€ (coût de {{option?.cost}}€) facturé à <input [(ngModel)]="option.price"  width="5">€ <button (click)="clearPostLine(option.id)">clear</button></p> 
+          </div>
         </div>
-        <ng-template #verboseCorrect>
-          <p>
-            Tout va bien ! Le montant facturé est égal au devis.
-          </p>
-        </ng-template>
-      </div>
-      <!-- QUOTATION COMMANDS -->
-      <div>
-        <button ion-button (click)="goToPrint()">Imprimer</button>
-      </div>
+        <!-- QUOTATION CONTROL-->
+        <div class="verbose-control grey-back">
+          <button block ion-button (click)="resetVerbose()">Copier le calcul</button>
+          <h4 text-center>
+            Total Facturé : {{quotation.verbose.amount - quotation.verbose.discount}}€
+          </h4>
+          <h4 text-center>
+            Total devis : {{quotation.total.amount-quotation.discount}}€
+          </h4>
+          <div class="info" *ngIf="!isVerboseCorrect(); else verboseCorrect">
+            <p text-center>
+              Attention, il existe une différence de entre le montant facturé au devis et le montant calculé de <span [ngClass]="checkZero((quotation.verbose.amount - quotation.verbose.discount) - (quotation.total.amount - quotation.discount))">{{(quotation.verbose.amount - quotation.verbose.discount) - (quotation.total.amount - quotation.discount)}}€</span>
+            </p>
+            <p text-center>(Modifier les lignes du devis ou cliquez sur copier le calcul pour corriger automatiquement)</p>
+          </div>
+          <ng-template #verboseCorrect>
+            <p text-center>
+              Tout va bien ! Le montant facturé est égal au devis.
+            </p>
+          </ng-template>
+          <button ion-button clear block (click)="goToPrint()">Imprimer</button>
+        </div>
+      </div> 
     </div>
   </div>
 </ion-content>

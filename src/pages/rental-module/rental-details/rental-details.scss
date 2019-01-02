@@ -18,6 +18,14 @@ page-rental-details {
         // overflow: scroll;
     }
 
+    ion-textarea.log > textarea {
+        height: 150px;
+        border: solid grey 1px;
+        padding: 5px;
+        margin: 0px;
+        width: 100%;
+    }
+
     ion-textarea.fixed > textarea {
         // width: 100%;
         max-width: 100%;

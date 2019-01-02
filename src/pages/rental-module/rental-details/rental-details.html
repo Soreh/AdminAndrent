@@ -10,18 +10,16 @@
   </div>
   <div padding class="panel-content">
         <ion-grid>
-          <ion-row>
+          <ion-row align-items-center>
             <ion-col col-6>
-              <button ion-button icon-only outline (click)="deleteRental()">
-                <ion-icon name="trash"></ion-icon>
-              </button>
               <rental-resume [(rental)]="rental"></rental-resume>
             </ion-col>
-            <ion-col col-4>
-              <textarea [(ngModel)]="logMsg"></textarea>
-            </ion-col>
-            <ion-col>
-              <button ion-button (click)="saveAndLog()">Enregistrer</button>
+            <ion-col col>
+              <ion-textarea placeholder="Introduisez un message pour le journal" class="log" [(ngModel)]="logMsg"></ion-textarea>
+              <button block ion-button (click)="saveAndLog()">Enregistrer</button>
+              <button block ion-button icon-only outline (click)="deleteRental()">
+                <ion-icon name="trash"></ion-icon>
+              </button>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -95,7 +93,7 @@
                 <ion-item>
                     <ion-icon name="paper" item-start color="primary"></ion-icon>
                     <ion-label>{{outputContractStatus()}}</ion-label>
-                    <button ion-button icon-only outline item-end (click)="openContractModal()">
+                    <button ion-button icon-only outline item-end (click)="openContractModal()" [disabled]="clientExists">
                       <ion-icon name="cog"></ion-icon>
                     </button>
                 </ion-item>  
@@ -123,7 +121,7 @@
               <ion-item>
                   <ion-icon name="logo-euro" item-start color="primary"></ion-icon>
                   <ion-label>{{outputQuotationStatus()}}</ion-label>
-                  <button ion-button icon-only outline item-end (click)="openQuotationModal()">
+                  <button ion-button icon-only outline item-end (click)="openQuotationModal()" [disabled]="clientExists">
                     <ion-icon name="cog"></ion-icon>
                   </button>
               </ion-item>
@@ -225,31 +223,5 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-        
-        <div id="details">
-          <p>{{rental.name}}</p>
-          <p>{{rental.status}}</p>
-          <p>{{rental.location_id}}</p>
-          <p>{{rental.date_label}}</p>
-          <p *ngIf="rental.client">{{rental.client.name}}</p>
-          <p>Convention de location</p>
-          <p><a (click)="openQuotationModal()">lien vers le devis</a> ({{outputQuotationStatus()}})</p>
-          <p>Facture d'accompte</p>
-          <p>Facture</p>
-          <p>Facture de régulation</p>
-          <button>cacher détails</button>
-          <button>enregistrer modif</button>
-          <div>
-            <div>
-              <p>horaires précis</p>
-            </div>
-            <div>
-              <p>remarques régie ou autres</p>
-            </div>
-            <div>
-              <p>contact</p>
-            </div>
-          </div>
-        </div>
   </div>
 </ion-content>

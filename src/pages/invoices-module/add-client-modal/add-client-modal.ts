@@ -22,7 +22,11 @@ export class AddClientModalPage implements OnInit {
   }
 
   ngOnInit(){
-    this.client = this.navParams.get('client');
+    if (this.navParams.get('client')) {
+      this.client = this.navParams.get('client');
+    } else {
+      this.client = {}
+    }
   }
 
   ionViewDidLoad() {

@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { isType } from '@angular/core/src/type';
 import { Client } from '../../../models/invoices/client.interface';
 import { Invoice } from '../../../models/invoices/invoice.interface';
+import { identifierModuleUrl } from '@angular/compiler';
 
 /**
  * Generated class for the RentalDetailsPage page.
@@ -61,6 +62,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
   public placeholderClient = "Client à définir";
 
+  public clientExists: boolean;
+
   constructor(
     private rentalService: RentalServiceProvider, 
     private navCtrl: NavController, 
@@ -95,6 +98,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
   ionWiewDidLoad() {
     console.log("ionViewDidLoad Rental Details");
+    this.setclientExist();
   }
 
   ionViewWillEnter(){
@@ -212,7 +216,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
       subTitle : "L'effacement de la location est définitive. Êtes-vous sûr.e de vouloir continuer ?",
       buttons : [
         {
-          text : 'Annuler',
+          text : 'Tout bien réfléchi....',
           role : 'cancel',
         },
         {
@@ -296,7 +300,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
     if ( this.quotationArgsExists ) {
       data.quotationArgs = this.rental.quotation_args;
-      console.log(this.rental.quotation_args); 
+      console.log(this.rental.quotation_args);
     }
 
     let modal = this.modalCtrl.create('QuotationModalPage', {
@@ -305,12 +309,26 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
     modal.onDidDismiss((data)=> {
       if(data){
+        if(data.change){
+          this.keepChangesTrack('devis');
+        }
         if(data.dest==="dash") {
-          this.goToQuotationDash()
+          this.goToQuotationDash();
         } else if(data.dest==="see"){
-          this.navCtrl.push('RentalQuotationPrintPage', {
-            quotation: this.rental.quotation_args,
-          } )
+          let clientOk: boolean;
+          if(!this.rental.quotation_args.verbose.client){
+            if (this.rental.client){
+              this.rental.quotation_args.verbose.client = this.rental.client;
+              clientOk = true;
+            } 
+          }
+          if(clientOk){
+            this.navCtrl.push('RentalQuotationPrintPage', {
+              quotation: this.rental.quotation_args,
+            } )
+          } else {
+            alert("Faurait peut-être d'abord indiquer un client...");
+          }
         }
       }
     })
@@ -332,6 +350,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
     modal.onDidDismiss( (data) => {
       if (data) {
+        // this.rental.client = data;
+        this.setclientExist();
         this.keepChangesTrack('client');
       }
     })
@@ -360,10 +380,10 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
             contract: data.contract
           });
         }
-      }
+      } 
     })
 
-    modal.present();
+    modal.present(); 
   }
 
   canOpenInvoice() {
@@ -372,6 +392,14 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
   }
   
+  setclientExist() {
+    if (!this.rental.client){
+      this.clientExists = true;
+    } else {
+      this.clientExists = false;
+    }
+  }
+
   openInvoiceModal() {
     if (!this.rental.invoice){
       let invoice:Invoice = {

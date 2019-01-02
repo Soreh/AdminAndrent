@@ -20,6 +20,7 @@ export class QuotationModalPage {
   public quotation_args: QuotationArgs;
   public quotation_status;
   public destination: string;
+  public change: boolean;
 
   public status = [
     {
@@ -50,7 +51,12 @@ export class QuotationModalPage {
   
 
   close() {
-    this.viewCtrl.dismiss();
+    this.viewCtrl.dismiss({change: this.change});
+  }
+
+  keepchange(){
+    this.change = true;
+    this.canEdit();
   }
 
   canEdit() {
@@ -64,11 +70,11 @@ export class QuotationModalPage {
   
   goToDash(){
     this.destination = "dash";
-    this.viewCtrl.dismiss({dest : this.destination });
+    this.viewCtrl.dismiss({dest : this.destination});
   }
   
   seeVerbose(){
     this.destination = "see";
-    this.viewCtrl.dismiss({dest : this.destination });
+    this.viewCtrl.dismiss({dest : this.destination, change: this.change });
   }
 }

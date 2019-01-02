@@ -81,4 +81,37 @@ page-rental-quotation-dash {
         padding : 5px;
         background-color : lightblue;
     }
+
+    .total {
+        padding: 10px;
+        text-align: right;
+        font-size: 1.3em;
+    }
+
+    .total-recap p {
+        font-size: 1.5em;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin: 2px;
+    }
+
+    .verbose-container{
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: start;
+    }
+
+    .verbose-lines, .verbose-control {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .verbose-lines {
+        width: 40%;
+    }
+
+    .verbose-control {
+        width: 20%;
+    }
 }

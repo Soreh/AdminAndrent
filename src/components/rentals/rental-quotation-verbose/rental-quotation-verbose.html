@@ -15,10 +15,10 @@
     <p>Remise : {{verbose.discount}}</p>
     <p>Montant après remise : {{verbose.amount - verbose.discount}}</p>
   </div>
-  <!-- <div class="postDevis">
-    <h2 *ngIf="emptyPostQuotation()">Frais hors devis</h2>
-    <p *ngFor="let option of quotation.postQuotation">{{option.label}} - {{option.amount}}€</p>
-  </div> -->
+  <div class="postDevis" *ngIf="verbose.postQuotation">
+    <h2>Frais hors devis</h2>
+    <p *ngFor="let option of verbose.postQuotation">{{option.label}} - {{option.price}}€ au lieu de {{option.normal_price}}€</p>
+  </div>
 </div>
 <ng-template #no_data>
   <div>

@@ -106,29 +106,31 @@
         <!-- Existing Categories -->
         <div class="category" *ngFor="let cat of config.categories">
           <ion-grid>
-            <ion-row>
+            <ion-row class="grey-back">
               <ion-col col-3>
-                <h2>{{cat.label}}</h2>
+                <h2 no-margin>{{cat.label}}</h2>
               </ion-col>
-              <ion-col col-5>
-                Coût
+              <ion-col col-1 offset-4 text-center>
+                <h4 no-margin>Coût</h4>
               </ion-col>
-              <ion-col col-2>
-                Prix
+              <ion-col col-1 text-center>
+                <h4 no-margin>Marge</h4>
               </ion-col>
-              <ion-col col-1>
-                Marge
+              <ion-col col-2 text-center>
+                <h4 no-margin>Prix</h4>
               </ion-col>
             </ion-row>
           </ion-grid>
             <!-- Existing option by Category -->
-          <ion-grid *ngFor="let option of config.options">
-            <ion-row *ngIf="option.catId == cat.id">
-              <ion-col col-1>
-                <span *ngIf="option.infos"> <ion-icon *ngIf="option.infos" color="primary" name="ios-help-circle-outline" (click)="displayInfo(option.infos)"></ion-icon></span>
-              </ion-col>
-              <ion-col *ngIf="option.catId == cat.id" col-2>
-                <ion-input class="simple" [(ngModel)]="option.label" type="text"></ion-input>
+          <ion-grid no-padding *ngFor="let option of config.options">
+            <ion-row align-items-center *ngIf="option.catId == cat.id">
+              <!-- <ion-col col-1>
+              </ion-col> -->
+              <ion-col *ngIf="option.catId == cat.id" col-3>
+                <ion-item>
+                  <ion-icon color="primary" name="ios-help-circle-outline" (click)="displayInfo(option)" item-start></ion-icon>
+                  <ion-input [(ngModel)]="option.label" type="text"></ion-input>
+                </ion-item>
               </ion-col>
               <ion-col *ngIf="option.catId == cat.id" col-2>
                 <ion-select [(ngModel)]="option.chargeId" (ngModelChange)="updateCost(option)" style="max-width:100%">
@@ -141,16 +143,16 @@
               <ion-col *ngIf="option.catId == cat.id" col-1>
                 <ion-input class="simple" type="number" [(ngModel)]="option.unit" (ngModelChange)="updateCost(option)"></ion-input>
               </ion-col>
-              <ion-col *ngIf="option.catId == cat.id" col-1>
-                  <ion-item>{{option.cost}}</ion-item>
+              <ion-col  *ngIf="option.catId == cat.id" col-1>
+                  <ion-item text-center>{{option.cost}}</ion-item>
               </ion-col>
-              <ion-col *ngIf="option.catId == cat.id" col-1>
-                  <ion-item>{{option.amount - option.cost}}€</ion-item>
+              <ion-col  *ngIf="option.catId == cat.id" col-1>
+                  <ion-item text-center>{{option.amount - option.cost}}€</ion-item>
               </ion-col>
               <ion-col *ngIf="option.catId == cat.id" col-2>
-                  <ion-input class="simple" [(ngModel)]="option.amount" type="number"></ion-input>
+                  <ion-input text-center class="simple" [(ngModel)]="option.amount" type="number"></ion-input>
               </ion-col>
-              <ion-col *ngIf="option.catId == cat.id" col-1>
+              <ion-col text-center *ngIf="option.catId == cat.id" col-1>
                   <button ion-button block icon-only outline clear [disabled]="config.options.length > 0" (click)="deleteOption()">
                     <ion-icon name="trash"></ion-icon>
                   </button>
@@ -232,11 +234,6 @@
                   <ion-col col-4>Nom</ion-col>
                   <ion-col col-3>Coût unitaire</ion-col>
                   <ion-col col-3>Prix unitaire</ion-col>
-                  <ion-col>
-                    <button ion-button icon-only outline clear (click)="addChargeDetails()">
-                      <ion-icon name="ios-add-circle-outline"></ion-icon>
-                    </button>
-                  </ion-col>
                 </ion-row>
                 <ion-row *ngFor="let charge of config.chargesTypeDetails">
                   <ion-row *ngIf="charge.chargeTypeId == chargeType.id">
@@ -293,4 +290,3 @@
     </ion-col>
   </ion-row>
 </ion-grid>
-<pre>{{config | json}}</pre>

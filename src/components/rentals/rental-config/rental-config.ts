@@ -122,8 +122,31 @@ export class RentalConfigComponent implements OnInit {
   }
 
 
-  displayInfo(msg: string ){
-    alert(msg);
+  displayInfo(option: QuotationOption){
+    // alert(msg);
+    let msg: string = (option.infos)?option.infos:'';
+    let alert = this.alertCtrl.create(
+      {
+        title: option.label,
+        inputs: [
+          {
+            name: 'infos',
+            placeholder: "Détails de l'option",
+            type: 'textarea',
+            value: msg,
+          }
+        ],
+        buttons: [
+          {
+            text: 'Ok !',
+            handler: data => {
+              option.infos = data.infos;     
+            }
+          }
+        ]
+      }
+    );
+    alert.present();
   }
 
   getCost() {
@@ -220,6 +243,7 @@ export class RentalConfigComponent implements OnInit {
    */
 
   addChargeDetails(chargeTypeId: string){
+    console.debug(chargeTypeId);
     let charge: Charge = {
       id : this.db.createPushId(),
       label: this.newChargeDetails.label,
@@ -229,6 +253,9 @@ export class RentalConfigComponent implements OnInit {
     };
     let index = this.config.chargesTypes.findIndex(chargeType => chargeType.id === chargeTypeId);
     if ( index != -1) {
+      if(!this.config.chargesTypes[index].chargesId){
+        this.config.chargesTypes[index].chargesId = [];
+      }
       this.config.chargesTypes[index].chargesId.push(charge.id);
       this.config.chargesTypeDetails.push(charge);
       this;this.newChargeDetails = {
