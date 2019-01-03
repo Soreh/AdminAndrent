@@ -94,11 +94,11 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
   }
 
   ionViewWillLoad() {
+
   }
 
   ionWiewDidLoad() {
     console.log("ionViewDidLoad Rental Details");
-    this.setclientExist();
   }
 
   ionViewWillEnter(){
@@ -198,6 +198,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
           if (rental.quotation_args){
             this.quotationArgsExists = true;
           }
+          this.setclientExist();
         }
         console.debug(this.rental);
         load.dismiss()
@@ -222,8 +223,12 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
         {
           text : "Oui, hein!",
           handler : () => {
-            this.rentalService.deleteRental(this.rentalID);
-            this.navCtrl.setRoot('RentalsPage');
+            this.rentalService.deleteRental(this.rentalID).then(
+              ()=> {
+                this.changeMade = null;
+                this.navCtrl.setRoot('RentalsPage');
+              }
+            );
           }
         }
       ]
@@ -315,20 +320,9 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
         if(data.dest==="dash") {
           this.goToQuotationDash();
         } else if(data.dest==="see"){
-          let clientOk: boolean;
-          if(!this.rental.quotation_args.verbose.client){
-            if (this.rental.client){
-              this.rental.quotation_args.verbose.client = this.rental.client;
-              clientOk = true;
-            } 
-          }
-          if(clientOk){
-            this.navCtrl.push('RentalQuotationPrintPage', {
-              quotation: this.rental.quotation_args,
-            } )
-          } else {
-            alert("Faurait peut-être d'abord indiquer un client...");
-          }
+          this.navCtrl.push('RentalQuotationPrintPage', {
+            quotation: this.rental.quotation_args,
+          } );
         }
       }
     })
@@ -338,9 +332,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
   openClientModal() {
     if (!this.rental.client){
-      let client:Client = {
-        name: "",
-      }
+      let client:Client = { }
       this.rental.client = client;
     }
 
@@ -400,6 +392,10 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  getClientExist() {
+    console.debug(this.clientExists);
+    return this.clientExists;
+  }
   openInvoiceModal() {
     if (!this.rental.invoice){
       let invoice:Invoice = {

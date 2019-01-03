@@ -171,7 +171,7 @@ export class StructureServiceProvider {
     this.currentStructure = structure;
   }
 
-  public async getCurrentStructure(): Promise<AngularFirestoreDocument | void> {
+  public async getCurrentStructure(): Promise<AngularFirestoreDocument> {
     return await this.isStructureLoaded().then(
       (ok) => {
       if (ok) {

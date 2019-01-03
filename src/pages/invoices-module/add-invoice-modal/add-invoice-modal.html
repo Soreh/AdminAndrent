@@ -39,10 +39,14 @@
       <ion-label>Libellé</ion-label>
       <ion-textarea [(ngModel)]="invoice.label"></ion-textarea>
     </ion-item>
+    <ion-item>
+      <ion-label>Date</ion-label>
+      <ion-textarea [(ngModel)]="invoice.date"></ion-textarea>
+    </ion-item>
   </ion-list>
   <ion-buttons end>
     <button ion-button (click)="cancel()" color="greyback">Annuler</button>
-    <button ion-button (click)="viewInvoice()" [disabled]="!invoice?.id && !invoice?.label">Voir la facture</button>
+    <button ion-button (click)="viewInvoice()" [disabled]="!invoice?.id && !invoice?.label && !invoice?.date">Voir la facture</button>
     <button ion-button (click)="submit()">Mettre à jour</button>
   </ion-buttons>
 </ion-content>

@@ -4,20 +4,76 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<h1>Devis</h1>
-<div *ngIf="invoice; else no_data">
-    <button ion-button icon-only (click)="close()" float-right>
-        <ion-icon name="close"></ion-icon>
-      </button>
-    <pre>{{invoice | json }}</pre>
-    <!-- <div class="postDevis">
-      <h2 *ngIf="emptyPostQuotation()">Frais hors devis</h2>
-      <p *ngFor="let option of quotation.postQuotation">{{option.label}} - {{option.amount}}€</p>
-    </div> -->
-</div>
-<ng-template #no_data>
-  <div padding margin>
-    <p>Ooops... Pas de données reçues...</p>
-    <button ion-button (click)="goHome()">Fermer</button>
+<ion-content padding>
+  <button ion-button icon-only (click)="close()" float-right>
+    <ion-icon name="close"></ion-icon>
+  </button>
+  <div *ngIf="invoice; else no_data">
+    <div class="print">
+      <div class="header">
+        <img class="logo" src="assets/imgs/logo-rc.png" height="75px">
+        <p>{{invoice?.date}}</p>
+      </div>
+      <div class="content">
+        <div class="client" *ngIf="invoice.client">
+          <p>{{invoice.client?.name}}</p>
+          <p>{{invoice.client?.address}}</p>
+          <p>{{invoice.client?.enterpriseNumber}}</p>
+          <p>{{invoice.client?.vat}}</p>
+        </div>
+        <ion-grid padding>
+          <ion-row>
+            <ion-col>
+              <ion-row>
+                <ion-col col-12 class="cat grey-back">
+                  <h6>
+                      Déclaration de créance n°{{invoice?.id}}
+                  </h6>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col col-8 offset-1>{{invoice.label}}</ion-col>
+                <ion-col text-center>{{invoice.amount}}€</ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid padding class="total">
+          <ion-row>
+            <ion-col class="grey-back">
+              <h2>Total</h2>
+            </ion-col>
+          </ion-row>
+         
+          
+          <ion-row>
+            <ion-col col-8 offset-1>
+              <h4 text-right>Total</h4>
+            </ion-col>
+            <ion-col text-center>
+              <h4 class="price">{{invoice.amount}}€</h4>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid>
+          <ion-row>
+            <ion-col col-5 text-right>
+              <p><em>Déclaration de créance non soumise à la TVA.</em></p>
+              <p>Le montant de la présente facture est à réglée endéans les trente jours sur le compte {{ structure?.bankAccount[0]?.iban }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <div class="footer">
+        <p>
+            {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }} | {{ structure?.enterpriseNumber }} | {{ structure?.bankAccount[0]?.iban }}
+         </p> 
+      </div>
+    </div>
   </div>
-</ng-template>
+  <ng-template #no_data>
+    <div>
+      <p>Ooops... Pas de données reçues...</p>
+    </div>
+  </ng-template>
+</ion-content>

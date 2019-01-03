@@ -1,3 +1,72 @@
 page-invoice-print {
+    .print {
+        max-width: 180mm;
+    }
 
+    h2, h5, h6 {
+        margin: 2px 0px;
+    }
+
+    ion-grid {
+        border: solid 1px black;
+        margin-top: 5px;
+    }
+
+    .header {
+        height: 80px;
+        margin-bottom: 10px;    
+    }
+
+    .header p {
+        // display:inline-block;
+        text-align: right;
+        padding-top: 50px;
+    }
+
+    .content h1 {
+        text-align: right;
+        border-bottom: 1px solid grey;
+        margin-left: 100mm;
+        font-variant: small-caps;
+        margin-bottom: 50px;
+    }
+
+    img.logo {
+        float:left;
+    }
+
+    .price {
+        font-weight: 600;
+    }
+
+    .total p {
+        margin: 0px;
+    }
+
+    .old-price {
+       text-decoration-line: line-through;
+    }
+
+    .footer {
+        width: 80%;
+        margin: 5px auto 0px auto;
+        border-top: solid 1px grey;
+    }
+
+    .footer p {
+        color: color($colors, 'primary');
+        text-align: center;
+    }
+
+    .client {
+        margin: 25px 10px 15px 150mm;
+        border-top: solid 1px grey;
+        border-bottom: solid 1px grey;
+    }
+
+    .client p {
+        margin: 0px;
+        font-weight: 800;
+        text-align: right;
+    }
 }
