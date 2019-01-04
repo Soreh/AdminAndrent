@@ -1,0 +1,38 @@
+<p *ngIf="!id">{{errorIdMsg}}</p>
+<form [formGroup]="rentalToAdd" *ngIf="id" (ngSubmit)="addNewRental()">
+  <p class="notes">* champs obligatoires. Pour ajouter une salle dans la liste, rendez-vous dans l'onglet de configuration</p>
+  <ion-item-group>
+    <ion-title>Location</ion-title>
+    <ion-item>
+      <ion-label>Nom*</ion-label>
+      <ion-input formControlName="name" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Salle*</ion-label>
+      <ion-select formControlName="location">
+        <ion-option *ngFor="let loc of config?.locations" [value]="loc.id">{{loc.label}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Dates</ion-label>
+      <ion-input formControlName="dates" type="text"></ion-input>
+    </ion-item>
+  </ion-item-group>
+  <p></p>
+  <ion-item-group>
+    <ion-title>Contact</ion-title>
+    <ion-item>
+      <ion-label>Nom*</ion-label>
+      <ion-input formControlName="contact_name" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Téléphone*</ion-label>
+      <ion-input formControlName="contact_tel" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mail*</ion-label>
+      <ion-input formControlName="contact_mail" type="text"></ion-input>
+    </ion-item>
+  </ion-item-group>
+  <button ion-button type="submit" block [disabled]="!rentalToAdd.valid">Ajouter</button>
+</form>

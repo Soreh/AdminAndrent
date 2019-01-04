@@ -2,7 +2,6 @@ import { Quotationverbose } from "./quotation-verbose-interface";
 import { STATUSCODE } from "../global/status.interface";
 import { RentalConfig } from "./rentals-config.interface";
 import { QuotationOption } from "./quotation-option.interface";
-import { splitClasses } from "@angular/compiler";
 
 /**
  * Class that deals with the Quotation
@@ -16,8 +15,8 @@ export class Quotation {
     details     ?: QuotationDetails[];
     verbose     ?: Quotationverbose;
 
-    constructor(private rentalId = null, private args:any = null){
-        this.statusCode = STATUSCODE.toBeSend;
+    constructor(private rentalId = null, private args:QuotationArgs = null){
+        this.statusCode = STATUSCODE.toDO;
         this.discount = 0;
         this.total = {
             amount : 0,
@@ -26,29 +25,57 @@ export class Quotation {
         this.verbose = {
             amount : 0,
             discount : 0,
-            categories : [
+            categories : [ 
                 {
-                    label : 'Salles',
-                    lines : [],
-                },
-                {
-                    label : 'Options',
-                    lines : [],
+                    id: 'none',
+                    label: 'Options',
+                    lines: []
                 }
             ]
         };
         this.details = [];
+
+        //Sets the RentalID (don't know if it's compulsory)
+        if (rentalId) {
+            this.rentalId = rentalId;
+        }
+
         if( args ) {
             this.statusCode = args.statusCode;
-            this.rentalId = args.rentalId;
+            //this.rentalId = args.rentalId;
             this.total.amount = args.total.amount,
             this.total.cost = args.total.cost;
             this.discount = args.discount;
-            for (let index = 0; index < this.verbose.categories.length; index++) {
-                this.verbose.categories[index].lines = args.verbose.categories[index].lines;
+            if (args.verbose ) {
+                this.verbose = args.verbose;
+            } else {
+                for (let index = 0; index < this.verbose.categories.length; index++) {
+                    this.verbose.categories[index].lines = args.verbose.categories[index].lines;
+                }
             }
             this.details = args.details;
         }
+    }
+
+    /**
+     * @returns the values of the Quotation, in a simple object to store in DB
+     */
+    getQuotationArgs() : QuotationArgs {
+        let data: QuotationArgs = {
+            statusCode  : this.statusCode,
+            total       : this.total,
+            discount    : this.discount,
+        }
+
+        if ( this.details ) {
+            data.details = this.details;
+        }
+
+        if ( this.verbose ) {
+            data.verbose = this.verbose;
+        }
+
+        return data;
     }
 
     getSortedOptions( config: RentalConfig ) : any {
@@ -137,4 +164,13 @@ export interface QuotationDetails {
     variousCatID ?: any;
     variousChargeTypeId ?: any;
     variousChargeId ?: any;
+}
+
+export interface QuotationArgs {
+    //rentalId    : any;
+    statusCode  : number;
+    total       : Total;
+    discount    : any;
+    details     ?: QuotationDetails[];
+    verbose     ?: Quotationverbose;
 }

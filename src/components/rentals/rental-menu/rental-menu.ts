@@ -1,9 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, AlertController } from "ionic-angular";
-import { Rental } from '../../../models/rentals/rental.interface';
-import { Quotation } from '../../../models/rentals/quotation.class';
-import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
-import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
+import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 
 /**
  * Generated class for the RentalMenuComponent component.
@@ -23,50 +20,74 @@ export class RentalMenuComponent {
   root:string = 'ConnectPage';
   pages;
 
-  constructor(public navCtrl : NavController, private alertCtrl : AlertController, private structService: StructureServiceProvider, private userService: UserServiceProvider) {
+  constructor(
+    public navCtrl : NavController, 
+    private alertCtrl : AlertController,
+    private auth: AuthServiceProvider) {
     console.log('Hello RentalMenuComponent Component');
-    if ( !this.userService.getConnectedUser() || !this.structService.getLoadedStructureKey()){
-      this.pages = [];
-    } else {
+
       this.pages = [
         {
           label : 'Home',
           page : 'StartPage',
-          data : {
-            user : this.userService.getConnectedUser(),
-          }
+          // data : {
+          //   user : this.userService.getConnectedUser(),
+          // },
         },
         {
-          label : 'Calculer un devis',
+          label : 'Calcul',
           page : 'RentalQuotationDashPage',
           data : {
-            quotation : new Quotation(),
-            config_key : 'config_1', // A récupérer dynamiquement !
-          }
+            //quotation : new Quotation(),
+            //config_key : 'config_1', // A récupérer dynamiquement !
+            push: true,
+          },
+          push : true,
         },
         {
-          label : 'Toutes  les locations',
+          label : 'Locations',
           page : 'RentalsPage',
+          // data : {
+          //   struct_key : this.structService.getLoadedStructureKey(),
+          // }
+        },
+        {
+          label : 'Config',
+          page : 'RentalConfigPage',
           data : {
-            struct_key : this.structService.getLoadedStructureKey(),
-          }
+            push : true,
+          },
+          push: false,
         }
       ];
-    }
+
   }
 
   goBack(): void {
     this.navCtrl.pop();
   }
 
-  goToPage(page, passedData = null) : void {
-    if (passedData != null){
-      console.log(passedData);
-      this.navCtrl.setRoot(page, {
-        data : passedData,
-      })
+  // goToPage(page, passedData = null) : void {
+  //   if (passedData != null){
+  //     console.log(passedData);
+  //     if( passedData.push) {
+  //       this.navCtrl.push(page, {
+  //         data : passedData,
+  //       })
+  //     } else {
+  //       this.navCtrl.setRoot(page, {
+  //         data : passedData,
+  //       })
+  //     }
+  //   } else {
+  //     this.navCtrl.setRoot(page);
+  //   }
+  // }
+  goToPage(page) : void {
+    if(page.push){
+      this.navCtrl.push(page.page);
     } else {
-      this.navCtrl.setRoot(page);
+      this.navCtrl.setRoot(page.page);
     }
   }
 
@@ -82,7 +103,7 @@ export class RentalMenuComponent {
         {
           text : "Je m'en fiche...",
           handler : () => {
-            this.navCtrl.setRoot('ConnectPage');
+            this.auth.logOut().then(() => this.navCtrl.setRoot('ConnectPage'));
           }
         }
       ]

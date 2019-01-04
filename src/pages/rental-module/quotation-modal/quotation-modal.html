@@ -1,0 +1,41 @@
+<!--
+  Generated template for the QuotationModalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+
+<ion-content padding>
+  <div *ngIf="quotation_args">
+    <h2>Le devis</h2>
+    <ion-item>
+      <ion-label>Montant :</ion-label>
+      <div item-content>
+        {{quotation_args.total.amount - quotation_args?.discount}}€
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-label>Etat du devis :</ion-label>
+      <ion-select [(ngModel)]="quotation_args.statusCode" (ngModelChange)="keepchange()">
+        <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-buttons end padding margin>
+      <button ion-button *ngIf="canEdit()" (click)="goToDash()">Modifier</button>
+      <button ion-button *ngIf="!canEdit()" (click)="goToDash()">Voir le calcul</button>
+      <button ion-button (click)="seeVerbose()">Voir</button>
+    </ion-buttons>
+  </div>
+  <div text-center *ngIf="!quotation_args">
+    <h2>Oui, mais hé !</h2>
+    <p>Semblerait qu'il faille encore le faire ce devis...</p>
+    <p>
+        <button block ion-button (click)="goToDash()">Allez d'accord</button>
+    </p>
+  </div>
+  <ion-footer>
+    <ion-buttons end>
+      <button ion-button clear (click)="close()">Ok</button>
+    </ion-buttons>
+  </ion-footer>
+</ion-content>

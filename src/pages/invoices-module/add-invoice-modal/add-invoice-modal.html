@@ -1,0 +1,52 @@
+<!--
+  Generated template for the AddInvoiceModalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Facture</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div text-center>
+    <div margin padding class="destContainer">
+      <h3>{{invoice.client.name}}</h3>
+      <p>{{invoice.client.address}}</p>
+    </div>
+  </div>
+  <ion-list>
+    <ion-item>
+      <ion-label>Statut</ion-label>
+      <ion-select [(ngModel)]="invoice.status">
+        <ion-option *ngFor="let stat of statuses" [value]="stat.code">{{stat.label}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Numéro</ion-label>
+      <ion-input [(ngModel)]="invoice.id"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Montant</ion-label>
+      <ion-input [(ngModel)]="invoice.amount"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Libellé</ion-label>
+      <ion-textarea [(ngModel)]="invoice.label"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-label>Date</ion-label>
+      <ion-textarea [(ngModel)]="invoice.date"></ion-textarea>
+    </ion-item>
+  </ion-list>
+  <ion-buttons end>
+    <button ion-button (click)="cancel()" color="greyback">Annuler</button>
+    <button ion-button (click)="viewInvoice()" [disabled]="!invoice?.id && !invoice?.label && !invoice?.date">Voir la facture</button>
+    <button ion-button (click)="submit()">Mettre à jour</button>
+  </ion-buttons>
+</ion-content>

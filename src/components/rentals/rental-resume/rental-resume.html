@@ -4,14 +4,15 @@
     <ion-col col-4>
       <div class="square-status {{getColorClass(rental.status)}}">
           <span class="option-status">{{getStatusLabel(rental.status)}}</span>
-          <span class="payment-status">en attente de paiement</span>
+          <span *ngIf="!isPaid()" class="payment-status">en attente de paiement</span>
       </div>
     </ion-col>
     <ion-col class="resume">
-      <p class="name">{{rental.name | trim : 30}}</p>
-      <p class="location">{{rental.location.label}}</p>
-      <p class="dates" *ngIf="rental.date_label">{{rental.date_label}}</p>
-      <p class="contact">{{getFirstContact().tel}} | {{getFirstContact().mail}}</p>
+      <p class="name">{{rental?.name | trim : 30}}</p>
+      <p class="location">{{getLocationLabel(rental.location_id)}}</p>
+      <p class="dates">{{rental?.dates}}</p>
+      <p class="contact">{{getContact()?.name}}</p>
+      <p class="contact">{{getContact()?.tel}} | <a href="mailto:{{getContact()?.mail}}">mail</a></p>
     </ion-col>
   </ion-row>
 </ion-grid>

@@ -1,0 +1,292 @@
+<!-- Generated template for the RentalsRentalConfigComponent component -->
+<ion-item>
+  <button ion-button block outline (click)="saveConfig()">Sauvegarder la configuration</button>
+</ion-item>
+<ion-grid>
+  <ion-row>
+    <!-- 
+      Main Dashboard
+    -->
+    <ion-col col-12>
+      <div id="options">
+        <ion-grid padding class="grey-back">
+          <ion-row align-items-center>
+            <ion-col col-1>
+              <button ion-button icon-only *ngIf="!showAddForm" (click)="showAdd()">
+                <ion-icon name="add" ></ion-icon>
+              </button>
+            </ion-col>
+            <ion-col col-4 *ngIf="showAddForm">
+              <ion-item>
+                <ion-label floating>Nom de l'option</ion-label>
+                <ion-input [(ngModel)]="optionToAdd.label"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-4 *ngIf="showAddForm">
+              <ion-item>
+                <ion-label floating>Catégorie</ion-label>
+                <ion-select [(ngModel)]="optionToAdd.catId">
+                  <ion-option *ngFor="let cat of config.categories" [value]="cat.id">{{cat.label}}</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row align-items-center *ngIf="showAddForm">
+            <ion-col col-4 offset-1>
+              <ion-item>
+                <ion-label floating>Type de coût</ion-label>
+                <ion-select [(ngModel)]="optionToAdd.chargeId" (ngModelChange)="getCost()">
+                  <ion-option *ngFor="let charge of config.chargesTypeDetails; index as i" [value]="charge.id">{{charge.label}} (coût unitaire : {{charge.cost}}€)</ion-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col col-1 text-center>
+              <span class="multi">X</span>
+            </ion-col>
+            <ion-col col-2 text-center>
+              <ion-input class="simple" type="number" [(ngModel)]="optionToAdd.unit" (ngModelChange)="getCost()"></ion-input>
+            </ion-col>
+            <ion-col col-1 text-center>
+              <span class="multi">=</span>
+            </ion-col>
+            <ion-col>
+              {{optionToAdd.cost}}€ (prix conseillé : {{suggestedPrice}}€)
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="showAddForm">
+            <ion-col offset-1>
+              <ion-item>
+                <ion-textarea [(ngModel)]="optionToAdd.infos"></ion-textarea>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row align-items-center *ngIf="showAddForm">
+            <ion-col col-1>
+              <button ion-button icon-only (click)="showAdd()">
+                <ion-icon name="close"></ion-icon>
+              </button>
+            </ion-col>
+            <ion-col col-4>
+              <ion-item>
+                <ion-label floating>Prix</ion-label>
+                <ion-input [(ngModel)]="optionToAdd.amount" [placeholder]="getSuggestedPrice()"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-4>
+              <ion-item>
+                <ion-label floating>Marge</ion-label>
+                <ion-input [disabled]="true" [value]="optionToAdd.amount - optionToAdd.cost">
+                </ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <button ion-button outline block (click)="addOption()">Ajouter</button>
+            </ion-col>
+          </ion-row>
+          
+            <!-- <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
+              <span class="multi">X</span>
+            </ion-col>
+            <ion-col col-3 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0">
+              <ion-item>
+                <ion-label floating>Unités</ion-label>
+                <ion-input [(ngModel)]="optionToAdd.units" type="number"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
+              <h3 class="mn">coût</h3>
+              <p class="mn">{{variousChargeTypeToAdd.cost * variousOptionToAdd.units}}€</p>
+            </ion-col>
+            <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
+              <h3 class="mn">prix conseillé</h3>
+              <p class="mn">{{variousChargeTypeToAdd.amount * variousOptionToAdd.units}}€</p>
+            </ion-col> -->
+
+        </ion-grid>
+        <!-- Existing Categories -->
+        <div class="category" *ngFor="let cat of config.categories">
+          <ion-grid>
+            <ion-row class="grey-back">
+              <ion-col col-3>
+                <h2 no-margin>{{cat.label}}</h2>
+              </ion-col>
+              <ion-col col-1 offset-4 text-center>
+                <h4 no-margin>Coût</h4>
+              </ion-col>
+              <ion-col col-1 text-center>
+                <h4 no-margin>Marge</h4>
+              </ion-col>
+              <ion-col col-2 text-center>
+                <h4 no-margin>Prix</h4>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+            <!-- Existing option by Category -->
+          <ion-grid no-padding *ngFor="let option of config.options">
+            <ion-row align-items-center *ngIf="option.catId == cat.id">
+              <!-- <ion-col col-1>
+              </ion-col> -->
+              <ion-col *ngIf="option.catId == cat.id" col-3>
+                <ion-item>
+                  <ion-icon color="primary" name="ios-help-circle-outline" (click)="displayInfo(option)" item-start></ion-icon>
+                  <ion-input [(ngModel)]="option.label" type="text"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col *ngIf="option.catId == cat.id" col-2>
+                <ion-select [(ngModel)]="option.chargeId" (ngModelChange)="updateCost(option)" style="max-width:100%">
+                  <ion-option *ngFor="let type of config.chargesTypeDetails" [value]="type.id">{{type.label}}</ion-option>
+                </ion-select>
+              </ion-col>
+              <ion-col *ngIf="option.catId == cat.id" col-1>
+                <span class="multi">X</span>
+              </ion-col>
+              <ion-col *ngIf="option.catId == cat.id" col-1>
+                <ion-input class="simple" type="number" [(ngModel)]="option.unit" (ngModelChange)="updateCost(option)"></ion-input>
+              </ion-col>
+              <ion-col  *ngIf="option.catId == cat.id" col-1>
+                  <ion-item text-center>{{option.cost}}</ion-item>
+              </ion-col>
+              <ion-col  *ngIf="option.catId == cat.id" col-1>
+                  <ion-item text-center>{{option.amount - option.cost}}€</ion-item>
+              </ion-col>
+              <ion-col *ngIf="option.catId == cat.id" col-2>
+                  <ion-input text-center class="simple" [(ngModel)]="option.amount" type="number"></ion-input>
+              </ion-col>
+              <ion-col text-center *ngIf="option.catId == cat.id" col-1>
+                  <button ion-button block icon-only outline clear [disabled]="config.options.length > 0" (click)="deleteOption()">
+                    <ion-icon name="trash"></ion-icon>
+                  </button>
+                </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </div>
+    </ion-col>
+    <!-- 
+      Lateral Dashboard 
+    -->
+    <ion-col col-12>
+      <div id="board">
+        <!-- Locations -->
+        <div id="Location-board">
+          <h2>Salles</h2>
+          <ion-grid>
+            <ion-row *ngFor="let loc of config.locations">
+              <ion-col col-7>
+                <ion-input class="simple" [(ngModel)]="loc.label"></ion-input>
+              </ion-col>
+              <ion-col>
+                <button ion-button icon-only block outline clear [disabled]="config.locations.length == 1" (click)="deleteLocation()">
+                  <ion-icon name="trash"></ion-icon>
+                </button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-7>
+                <ion-input class="simple" [(ngModel)]="newLoc.label"></ion-input>
+              </ion-col>
+              <ion-col>
+                <button ion-button block icon-only clear outline (click)="addLocation()" [disabled]="newLoc.label.length == 0">
+                  <ion-icon name="ios-add-circle-outline"></ion-icon>
+                </button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div> <!-- End of Locations -->
+        <!-- Categories -->
+        <div id="option-board">
+          <h2>Catégories</h2>
+          <ion-grid>
+            <ion-row *ngFor="let cat of config.categories">
+              <ion-col col-7>
+                <ion-input class="simple" [(ngModel)]="cat.label"></ion-input>
+              </ion-col>
+              <ion-col>
+                <button ion-button block icon-only outline clear [disabled]="config.categories.length <= 2" (click)="deleteCategory()">
+                    <ion-icon name="trash"></ion-icon>
+                  </button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col col-7>
+                <ion-input [(ngModel)]="newCat.label" class="simple"></ion-input>
+              </ion-col>
+              <ion-col>
+                <button ion-button block icon-only clear outline (click)="addCategory()" [disabled]="newCat.label.length == 0">
+                  <ion-icon name="ios-add-circle-outline"></ion-icon>
+                </button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div> <!-- End of Categories-->
+        <!-- Charges -->
+        <div id="cost-board">
+          <!-- Charges Types -->
+          <h2>Types de coûts</h2>
+          <ion-grid>
+            <ion-row *ngFor="let chargeType of config.chargesTypes">
+              <h4>
+                <ion-input  class="simple" type="text" [(ngModel)]="chargeType.label"></ion-input>
+              </h4>
+              <!-- Charge Details by type -->
+              <ion-grid padding margin style="border: solid 1px grey">
+                <ion-row>
+                  <ion-col col-4>Nom</ion-col>
+                  <ion-col col-3 text-center>Coût unitaire</ion-col>
+                  <ion-col col-3 text-center>Prix unitaire</ion-col>
+                </ion-row>
+                <ion-row *ngFor="let charge of config.chargesTypeDetails">
+                  <ion-row style="width:100%" *ngIf="charge.chargeTypeId == chargeType.id">
+                    <ion-col col-4>
+                      <ion-input class="simple" type="text" [(ngModel)]="charge.label"></ion-input>
+                    </ion-col>
+                    <ion-col col-3>
+                      <ion-input class="simple" type="number" [(ngModel)]="charge.cost" (ngModelChange)="updateCostOnChargeTypeCost(charge)"></ion-input>
+                    </ion-col>
+                    <ion-col col-3>
+                      <ion-input  class="simple" type="number" [(ngModel)]="charge.amount"></ion-input>
+                    </ion-col>
+                    <ion-col>
+                      <button ion-button icon-only outline clear [disabled]="config.chargesTypeDetails.length == 1" (click)="deleteChargeDetails()">
+                          <ion-icon name="trash"></ion-icon>
+                      </button>
+                    </ion-col>
+                  </ion-row>
+                </ion-row>
+                <!-- Add charge -->
+                <ion-row>
+                  <ion-col col-4>
+                    <ion-input class="simple"[(ngModel)]="newChargeDetails.label" type="text"></ion-input>
+                  </ion-col>
+                  <ion-col col-3>
+                    <ion-input class="simple" type="number" [(ngModel)]="newChargeDetails.cost">
+                    </ion-input>
+                  </ion-col>
+                  <ion-col col-3>
+                    <ion-input class="simple" type="number" [(ngModel)]="newChargeDetails.amount"></ion-input>
+                  </ion-col>
+                  <ion-col>
+                    <button ion-button icon-only outline clear [disabled]="newChargeDetails.label.length == 0" (click)="addChargeDetails(chargeType.id)">
+                      <ion-icon name ="ios-add-circle-outline"></ion-icon>
+                    </button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-row>
+            <!-- Add Charge Type -->
+            <ion-row>
+              <ion-col col-10>
+                <ion-input [(ngModel)]="newChargeType.label" class="simple"></ion-input>
+              </ion-col>
+              <ion-col>
+                <button ion-button block icon-only clear outline (click)="addchargeType()" [disabled]="newChargeType.label.length == 0">
+                  <ion-icon name="ios-add-circle-outline"></ion-icon>
+                </button>
+              </ion-col>
+            </ion-row> <!-- end of add charge type -->
+          </ion-grid>
+        </div> <!-- end of Charges -->
+      </div>
+    </ion-col>
+  </ion-row>
+</ion-grid>

@@ -1,0 +1,75 @@
+<!--
+  Generated template for the InvoicePrintPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-content padding>
+  <button ion-button icon-only (click)="close()" float-right>
+    <ion-icon name="close"></ion-icon>
+  </button>
+  <div *ngIf="invoice; else no_data">
+    <div class="print">
+      <div class="header">
+        <img class="logo" src="assets/imgs/logo-rc.png" height="75px">
+        <p>{{invoice?.date}}</p>
+      </div>
+      <div class="content">
+        <div class="client" *ngIf="invoice.client">
+          <p>{{invoice.client?.name}}</p>
+          <p>{{invoice.client?.address}}</p>
+          <p>{{invoice.client?.enterpriseNumber}}</p>
+          <p>{{invoice.client?.vat}}</p>
+        </div>
+        <ion-grid padding>
+          <ion-row>
+            <ion-col>
+              <ion-row>
+                <ion-col col-12 class="cat grey-back">
+                  <h6>
+                      Facture n°{{invoice?.id}} pour :
+                  </h6>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col col-10 offset-1>
+                  <p>
+                    {{invoice.label}}
+                  </p>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid padding class="total">
+          <ion-row align-items-center class="grey-back">
+            <ion-col col-10>
+              <h2 text-right class="padding-line">Total</h2>
+            </ion-col>
+            <ion-col text-center>
+              <h4 class="price padding-line">{{invoice.amount}}€</h4>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid>
+          <ion-row>
+            <ion-col col-5 text-right>
+              <p><em>Déclaration de créance non soumise à la TVA.</em></p>
+              <p>Le montant est à régler dès réception de la présente sur le compte<br/>{{ structure?.bankAccount[0]?.iban }}<br/>en mentionnant la référence {{ invoice?.id }} en communication.</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+      <div class="footer">
+        <p>
+            {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }}<br/>Num d'entreprise {{ structure?.enterpriseNumber }} | Compte Bancaire {{ structure?.bankAccount[0]?.iban }}
+         </p> 
+      </div>
+    </div>
+  </div>
+  <ng-template #no_data>
+    <div>
+      <p>Ooops... Pas de données reçues...</p>
+    </div>
+  </ng-template>
+</ion-content>

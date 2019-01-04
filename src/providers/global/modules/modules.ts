@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Structure } from '../../../models/global/structure.interface';
+import { FirebaseDatabase } from 'angularfire2';
+import { AngularFireDatabase } from '@angular/fire/database';
+import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 
 /*
-  Generated class for the ModulesProvider provider.
+  Generated class for the ModulesProvider provider. 
 
   See https://angular.io/guide/dependency-injection for more info on providers
   and Angular DI.
@@ -12,23 +15,98 @@ export class ModulesProvider {
 
   modulesToLoad = [];
 
-  constructor() {
+  constructor(private db : AngularFireDatabase) {
   }
 
-  getModulesToLoadList(structure : Structure)  {
-    this.modulesToLoad = [];
-    structure.modules.forEach(m => {
-      let module = MODULES.filter(module => module.key === m.module_key)[0];
-      module.config_key = m.config_key;
-      this.modulesToLoad.push(module);
-    });
-    return this.modulesToLoad;
+  /**
+   * 
+   * @param structure$ Structure
+   * @returns the modules list
+   */
+  // getModulesToLoadList(structure$ : Structure)  {
+  //   this.modulesToLoad = [];
+  //   structure$.modules.forEach(m => {
+  //     let module = MODULES.filter(module => module.key === m.module_key)[0];
+  //     module.config_key = m.config_key;
+  //     this.modulesToLoad.push(module);
+  //   });
+  //   return this.modulesToLoad;
+  // }
+
+  getModuleName(module_key) : string {
+    return MODULES.filter(mod => mod.key == module_key)[0].name;
+  }
+
+  getModulePage(module_key): string {
+    return MODULES.filter(mod => mod.key === module_key)[0].page;
+  }
+
+  createDefaultRentalConfig(): RentalConfig {
+    const id = this.db.createPushId();
+    const cat1Id = this.db.createPushId();
+    const cat2Id = this.db.createPushId();
+    const option1Id = this.db.createPushId();
+    const option2Id = this.db.createPushId();
+    const chargeType1Id = this.db.createPushId();
+    const chargeDetail1Id = this.db.createPushId();
+    //let data = this.db.list(MODULES_KEYS.rental);
+    return {
+      categories : [
+        {
+            id : cat1Id,
+            label : "Categorie 1",
+        }
+      ],
+      options : [
+        {
+          id : this.db.createPushId(),
+          label : 'Option 1',
+          catId : cat1Id,
+          amount : 0,
+          cost : 0,
+          isCompulsory : true,
+          chargeId : chargeDetail1Id,
+          unit: 0,
+        }
+      ],
+      locations : [
+        {
+          id : 1,
+          label : "Salle 1",
+        }
+      ],
+      chargesTypes : [
+            {
+              isCompulsory : true,  
+              id : chargeType1Id,
+              label : 'Coûts de type 1',
+              chargesId : [chargeDetail1Id], // je reprends ici la liste des coûts, ça redouble l'information, mais ça peut faciliter le tri, mai sbon du coup chargestype et chargesTypeDetails sont interconnectés, pas sur que ce soit une bonne idée.
+            },
+        ],
+      chargesTypeDetails : [
+            {
+                id: chargeDetail1Id,
+                label : "Aucun coût",
+                amount : 0,
+                cost : 0,
+                chargeTypeId : chargeType1Id,
+            }
+        ],
+    }
+
+    // let path = this.db.object(`config/${id}`);
+    // try {
+    //   const data = await path.set(defaultConfig);
+    //   return id;
+    // } catch (error) {
+    //   console.error(error.message);
+    // }
   }
 
 }
 
 export const MODULES_KEYS = {
-  location : 'module_1',
+  rental : 'module_1',
   contracts : 'module_2',
   invoices : 'module_3',
   accountability : 'module_4',
@@ -36,7 +114,7 @@ export const MODULES_KEYS = {
 
 export const MODULES = [
   {
-    key : MODULES_KEYS.location,
+    key : MODULES_KEYS.rental,
     name : 'Locations', // Traduction ?
     page : 'RentalsPage',
     config_key : '',

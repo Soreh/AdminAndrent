@@ -1,8 +1,9 @@
 import { OptionCategory, QuotationOption, ChargeType, Charge } from "./quotation-option.interface";
 import { Location } from "./location.interface";
+import { Moduleconfig } from "../global/module-config.interface";
 
 
-export interface RentalConfig {
+export interface RentalConfig extends Moduleconfig {
     key ?: string;
     name ?: string;
     categories : OptionCategory[];
@@ -10,4 +11,5 @@ export interface RentalConfig {
     locations : Location[];
     chargesTypes : ChargeType[];
     chargesTypeDetails : Charge[];
+     
 }

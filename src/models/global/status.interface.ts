@@ -10,15 +10,15 @@ export class Status {
                 },
                 {
                     code : 2,
-                    label : "Envoyé",
+                    label : "Envoyé(e)",
                 },
                 {
                     code : 3,
-                    label : "Approuvé",
+                    label : "Approuvé(e)",
                 },
                 {
                     code : 4,
-                    label : "Confirmé",
+                    label : "Confirmé(e)",
                     color: 'confirmed_color',
                 },
                 {
@@ -36,7 +36,7 @@ export class Status {
                 },
                 {
                     code : 8,
-                    label : "Payé",
+                    label : "Payé(e)",
                 },
                 {
                     code : 9,
@@ -49,13 +49,17 @@ export class Status {
                 },
                 {
                     code : 11,
-                    label : "Terminé",
+                    label : "Terminé(e)",
                     color : 'over_color',
                 },
                 {
                     code : 12,
-                    label : "Annulé",
+                    label : "Annulé(e)",
                     color : 'canceled_color',
+                },
+                {
+                    code : 13,
+                    label : "En Cours",
                 }
             ];
         } else {
@@ -68,12 +72,12 @@ export class Status {
     }
 
     getColor(code): string {
-        console.log("getColor");
+        //console.log("getColor");
         let colorClass = "";
         if (this.labels.filter(status => status.code === code)[0].color) {
             colorClass = this.labels.filter(status => status.code === code)[0].color;
         } 
-        console.log(colorClass);
+        //console.log(colorClass);
         return colorClass;
     }
 }
@@ -91,6 +95,7 @@ export const STATUSCODE = {
     option : 10,
     over : 11,
     canceled : 12,
+    processing : 13,
 }
 
 export const STATUS = new Status();

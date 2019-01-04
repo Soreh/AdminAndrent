@@ -1,4 +1,5 @@
 export interface Location {
-    id : any;
+    id ?: any; // Do I need that ?
     label : string;
+    isCompulsory?: boolean;
 }

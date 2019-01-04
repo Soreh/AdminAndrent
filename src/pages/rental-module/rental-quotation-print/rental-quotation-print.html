@@ -6,29 +6,5 @@
 -->
 
 <ion-content padding>
-  <button ion-button icon-only (click)="goBack()" float-right>
-    <ion-icon name="close"></ion-icon>
-  </button>
-  <h1>Devis</h1>
-  <div *ngIf="quotation; else no_data">
-    <div *ngFor="let cat of quotation.verbose.categories">
-      {{ cat | json }}
-      <h2 *ngIf="emptyCat(cat)">{{cat.label}}</h2>
-      <p *ngFor="let line of cat.lines">{{line.label}} - {{line.amount}}</p>
-    </div>
-    <div>
-      <p>Montant avant remise : {{quotation.verbose.amount}}</p>
-      <p>Remise : {{quotation.verbose.discount}}</p>
-      <p>Montant après remise : {{quotation.verbose.amount - quotation.verbose.discount}}</p>
-    </div>
-    <div class="postDevis">
-      <h2 *ngIf="emptyPostQuotation()">Frais hors devis</h2>
-      <p *ngFor="let option of quotation.postQuotation">{{option.label}} - {{option.amount}}€</p>
-    </div>
-  </div>
-  <ng-template #no_data>
-    <div>
-      <p>Ooops... Pas de données reçues...</p>
-    </div>
-  </ng-template>
+  <rental-quotation-verbose [verbose]="quotation?.verbose"></rental-quotation-verbose>
 </ion-content>

@@ -1,6 +1,6 @@
-import { User } from "../../models/global/user.interface";
+import { UserProfile } from "../../models/global/user-profile.interface";
 
-const usersList : User[] =
+const usersList : UserProfile[] =
 [
     {
         key : "user_1",
@@ -14,7 +14,8 @@ const usersList : User[] =
                 key : 'struct_2',
             },
         ],
-        email : "sebphone@gmail.com",
+        mail : "sebphone@gmail.com",
+        isConnected : false,
     },
     {
         key : "user_2",
@@ -25,11 +26,13 @@ const usersList : User[] =
                 isDefault : true,
             }
         ],
-        email : "sebphone@gmail.com",
+        mail : "sebphone@gmail.com",
+        isConnected : false,
     },
     {
         key : "user_3",
         name : "new",
+        isConnected : false,
     }
 ]
 

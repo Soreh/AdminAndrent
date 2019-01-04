@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
 /**
  * Generated class for the NewRentalModalPage page.
@@ -17,11 +18,20 @@ export class NewRentalModalPage {
 
   id: any;
 
-  constructor(public viewCtrl : ViewController, public navParams: NavParams) {
+  constructor(
+    public viewCtrl : ViewController, 
+    public navParams: NavParams, 
+    private struct: StructureServiceProvider,
+    private nav: NavController) {
   }
 
   ionViewWillLoad() {
-    this.id = this.navParams.get('id');
+    this.struct.isStructureLoaded().then(()=>{
+      this.struct.getCurrentId().then((id) => {
+        this.id = id;
+        console.log(this.id);
+      });
+    })
   }
   ionViewDidLoad() {
     console.log('ionViewDidLoad NewRentalModalPage');
@@ -29,6 +39,7 @@ export class NewRentalModalPage {
 
   closeModal() {
     this.viewCtrl.dismiss();
+    //this.nav.setRoot('RentalsPage');
   }
 
 }

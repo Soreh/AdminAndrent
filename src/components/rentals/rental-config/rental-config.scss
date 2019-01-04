@@ -1,0 +1,17 @@
+rental-config {
+    ion-input.simple > input {
+            border: 1px solid grey;
+            padding: 10px;
+            margin: 0px;
+    }
+
+    ion-item, .category, h* {
+        font-size:80%;
+    }
+
+    .multi {
+        font-weight: 600;
+        display: block;
+        text-align: center;
+    }
+}

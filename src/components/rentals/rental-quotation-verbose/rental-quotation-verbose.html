@@ -1,0 +1,100 @@
+<!-- Generated template for the RentalQuotationVerboseComponent component -->
+<button class="no-print" ion-button icon-only (click)="goBack()" float-right>
+  <ion-icon name="close"></ion-icon>
+</button>
+<div class="print" *ngIf="verbose; else no_data">
+  <div class="header">
+    <img class="logo" src="assets/imgs/logo-rc.png" height="75px">
+    <p>{{verbose?.date}}</p>
+  </div>
+  <div class="content">
+    <h1>Offre de prix<br/>Location de salle</h1>
+    <ion-grid padding>
+      <ion-row *ngFor="let cat of verbose.categories">
+        <ion-col *ngIf="emptyCat(cat)">
+          <ion-row>
+            <ion-col col-12 class="cat grey-back">
+              <h6>
+                  {{cat.label}}
+              </h6>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let line of cat.lines">
+            <ion-col col-8 offset-1>{{line.label}}</ion-col>
+            <ion-col text-center>{{line.amount}}€</ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid padding class="total">
+      <ion-row>
+        <ion-col class="grey-back">
+          <h2>Total</h2>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="verbose.discount">
+        <ion-col col-8 offset-1>
+          <p text-right>Montant avant remise : </p>
+        </ion-col>
+        <ion-col text-center>
+          <p class="price">{{verbose.amount}}€</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="verbose.discount">
+        <ion-col col-8 offset-1>
+          <p text-right><em>Remise : </em></p>
+        </ion-col>
+        <ion-col text-center>
+          <p class="price"><em>{{verbose.discount}}€</em></p>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-8 offset-1>
+          <h4 text-right>Offre de prix<span *ngIf="verbose.discount"> après remise</span></h4>
+        </ion-col>
+        <ion-col text-center>
+          <h4 class="price"><em>{{verbose.amount - verbose?.discount}}€</em></h4>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="hasPostQuotation()">
+      <ion-row>
+        <ion-col col-5 text-right>
+          <p><em>En cas de dépassement de l’horaire prévu les heures supplémentaires seront facturées au tarif proposé.</em></p>
+        </ion-col>
+        <ion-col>
+          <ion-row class="grey-back">
+            <ion-col>
+              <h5>
+                Frais hors-devis
+              </h5>
+            </ion-col>
+          </ion-row>
+          <ion-row align-items-center *ngFor="let option of verbose.postQuotation">
+            <ion-col col-8>{{option.label}}</ion-col>
+            <ion-col col-2 text-center>
+              <span *ngIf="isPostDiscounted(option)" class="old-price">
+                {{option.normal_price}}€
+              </span>
+            </ion-col>
+            <ion-col col-2 text-center>
+              <span class="price">
+                {{option.price}}€
+              </span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div class="footer">
+      <p>
+          {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }}<br/>Num d'entreprise {{ structure?.enterpriseNumber }} | Compte Bancaire {{ structure?.bankAccount[0]?.iban }}
+       </p> 
+  </div>
+</div>
+<ng-template #no_data>
+  <div>
+    <p>Ooops... Pas de données reçues...</p>
+  </div>
+</ng-template>

@@ -15,7 +15,11 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
-$side_menu_width : 250px;
+$side_menu_width : 130px;
+
+body{
+    min-width: 1200px;
+}
 
 .square-button.small {
     width : 90px;
@@ -43,7 +47,7 @@ $side_menu_width : 250px;
 }
 
 .panel-content {
-    width : calc(100% - 250px - 16px);
+    width : calc(100% - 130px - 16px);
     position: relative;
     left : $side_menu_width + $content-padding;
     min-width: 768px;
@@ -56,6 +60,10 @@ $side_menu_width : 250px;
     background-color : color($colors, greyback)
 }
 
+.grey-back {
+    background-color : color($colors, greyback);
+}
+
 // .panel-content {
 //     max-width: 768px;
 //     margin-left: 250px;
@@ -65,3 +73,45 @@ $side_menu_width : 250px;
 //     width: 250px;
 //     text-align : center;
 // }
+
+.tab-panel {
+    padding: 25px 0px;
+    // border-top : solid black 1px;
+    border-bottom : solid black 1px;
+    margin-bottom: 5px;
+}
+
+.tabs {
+    text-align: center;
+    margin : 0px auto;
+    border-bottom : solid 1px #CBCBCB;
+    width : 90%;
+}
+
+.tabs span {
+    display: inline-block;
+    list-style: none;
+    padding : 10px 10px 5px 10px;
+    border : solid 1px #CBCBCB;
+    margin : 0px 2px;;
+    position : relative;
+    bottom: -1px;
+    font-size: 20px;
+    color : #939393;
+    width: 135px;
+    font-weight: 300;
+    border-radius: 10px 10px 0px 0px; 
+}
+
+.tabs span:hover {
+    cursor: pointer;
+}
+
+.tabs span.active {
+    background-color: white;
+    border-bottom-color: white;
+    font-weight: 400;
+    -webkit-box-shadow: 0px -2px 5px -3px #adadad;
+    -moz-box-shadow: 0px -2px 5px -3px #adadad;
+    box-shadow: 0px -2px 5px -3px #adadad;
+}
