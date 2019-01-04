@@ -4,7 +4,6 @@ import { Contact } from '../../../models/global/contact.interface';
 import { Rental } from '../../../models/rentals/rental.interface';
 import { NavController} from 'ionic-angular';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
-import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 
 /**
  * Generated class for the RentalResumeComponent component.

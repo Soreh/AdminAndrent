@@ -7,7 +7,7 @@
     <!-- 
       Main Dashboard
     -->
-    <ion-col col-8>
+    <ion-col col-12>
       <div id="options">
         <ion-grid padding class="grey-back">
           <ion-row align-items-center>
@@ -165,14 +165,14 @@
     <!-- 
       Lateral Dashboard 
     -->
-    <ion-col>
+    <ion-col col-12>
       <div id="board">
         <!-- Locations -->
         <div id="Location-board">
           <h2>Salles</h2>
           <ion-grid>
             <ion-row *ngFor="let loc of config.locations">
-              <ion-col col-10>
+              <ion-col col-7>
                 <ion-input class="simple" [(ngModel)]="loc.label"></ion-input>
               </ion-col>
               <ion-col>
@@ -182,7 +182,7 @@
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col col-10>
+              <ion-col col-7>
                 <ion-input class="simple" [(ngModel)]="newLoc.label"></ion-input>
               </ion-col>
               <ion-col>
@@ -198,7 +198,7 @@
           <h2>Catégories</h2>
           <ion-grid>
             <ion-row *ngFor="let cat of config.categories">
-              <ion-col col-10>
+              <ion-col col-7>
                 <ion-input class="simple" [(ngModel)]="cat.label"></ion-input>
               </ion-col>
               <ion-col>
@@ -208,7 +208,7 @@
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col col-10>
+              <ion-col col-7>
                 <ion-input [(ngModel)]="newCat.label" class="simple"></ion-input>
               </ion-col>
               <ion-col>
@@ -232,11 +232,11 @@
               <ion-grid padding margin style="border: solid 1px grey">
                 <ion-row>
                   <ion-col col-4>Nom</ion-col>
-                  <ion-col col-3>Coût unitaire</ion-col>
-                  <ion-col col-3>Prix unitaire</ion-col>
+                  <ion-col col-3 text-center>Coût unitaire</ion-col>
+                  <ion-col col-3 text-center>Prix unitaire</ion-col>
                 </ion-row>
                 <ion-row *ngFor="let charge of config.chargesTypeDetails">
-                  <ion-row *ngIf="charge.chargeTypeId == chargeType.id">
+                  <ion-row style="width:100%" *ngIf="charge.chargeTypeId == chargeType.id">
                     <ion-col col-4>
                       <ion-input class="simple" type="text" [(ngModel)]="charge.label"></ion-input>
                     </ion-col>

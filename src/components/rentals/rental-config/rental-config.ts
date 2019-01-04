@@ -4,13 +4,11 @@ import { AlertController, NavController, Alert } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
 
 import { Location } from "../../../models/rentals/location.interface";
-import { CategoryDetail } from '../../../models/rentals/category-detail.interface';
 import { OptionCategory, QuotationOption, ChargeType, Charge } from '../../../models/rentals/quotation-option.interface';
-import { ThrowStmt } from '@angular/compiler';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 
 
-/**
+/** 
  * Generated class for the RentalsRentalConfigComponent component.
  *
  * See https://angular.io/api/core/Component for more info on Angular

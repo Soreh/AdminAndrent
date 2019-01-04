@@ -1,17 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup  } from "@angular/forms";
 import { Rental } from '../../../models/rentals/rental.interface';
-import { Identifiers } from '@angular/compiler';
-import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { Contact } from '../../../models/global/contact.interface';
 import { STATUSCODE } from "../../../models/global/status.interface";
 import { Log } from '../../../models/rentals/log.interface';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { ViewController, NavController } from 'ionic-angular';
-import { ValueTransformer } from '@angular/compiler/src/util';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { ViewController } from 'ionic-angular';
 
 /**
  * Generated class for the RentalAddFormComponent component.
@@ -36,15 +32,13 @@ export class RentalAddFormComponent implements OnInit {
     private user : UserServiceProvider, 
     private rentalService: RentalServiceProvider, 
     private viewCtrl : ViewController, 
-    private formBuilder: FormBuilder,
-    private navCtrl: NavController) {
+    private formBuilder: FormBuilder) {
     console.log('Hello RentalAddFormComponent Component');
     this.rentalToAdd = this.formBuilder.group({
       name : ['', Validators.required],
       location : ['', Validators.required],
       dates : [''],
       contact_name : ['', Validators.required],
-      contact_surname : ['', Validators.required],
       contact_tel :[''],
       contact_mail : ['', Validators.email],
     })
@@ -134,7 +128,6 @@ export class RentalAddFormComponent implements OnInit {
   private _getContact(): Contact {
     const contact = {
       name : this.rentalToAdd.value.contact_name,
-      surname : this.rentalToAdd.value.contact_surname,
       tel : this.rentalToAdd.value.contact_tel,
       mail : this.rentalToAdd.value.contact_mail,
       main : true,

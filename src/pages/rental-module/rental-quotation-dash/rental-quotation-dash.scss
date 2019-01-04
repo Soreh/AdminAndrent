@@ -114,4 +114,7 @@ page-rental-quotation-dash {
     .verbose-control {
         width: 20%;
     }
+    ion-input.simple > input {
+        border: solid 1px grey;
+    }
 }

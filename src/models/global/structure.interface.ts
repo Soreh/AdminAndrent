@@ -1,6 +1,4 @@
 import { Moduleconfig } from "./module-config.interface";
-import { isBlank } from "ionic-angular/umd/util/util";
-import { createPipe } from "@angular/compiler/src/core";
 
 export interface Structure {
     key ?: string;

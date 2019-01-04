@@ -1,9 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, AlertController } from "ionic-angular";
-import { Rental } from '../../../models/rentals/rental.interface';
-import { Quotation } from '../../../models/rentals/quotation.class';
-import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
-import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 
 /**
@@ -26,9 +22,7 @@ export class RentalMenuComponent {
 
   constructor(
     public navCtrl : NavController, 
-    private alertCtrl : AlertController, 
-    private structService: StructureServiceProvider, 
-    private userService: UserServiceProvider,
+    private alertCtrl : AlertController,
     private auth: AuthServiceProvider) {
     console.log('Hello RentalMenuComponent Component');
 
@@ -41,7 +35,7 @@ export class RentalMenuComponent {
           // },
         },
         {
-          label : 'Calculer un devis',
+          label : 'Calcul',
           page : 'RentalQuotationDashPage',
           data : {
             //quotation : new Quotation(),
@@ -51,14 +45,14 @@ export class RentalMenuComponent {
           push : true,
         },
         {
-          label : 'Toutes  les locations',
+          label : 'Locations',
           page : 'RentalsPage',
           // data : {
           //   struct_key : this.structService.getLoadedStructureKey(),
           // }
         },
         {
-          label : 'Configuration',
+          label : 'Config',
           page : 'RentalConfigPage',
           data : {
             push : true,

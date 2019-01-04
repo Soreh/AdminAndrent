@@ -11,7 +11,7 @@
     <h1>Offre de prix<br/>Location de salle</h1>
     <ion-grid padding>
       <ion-row *ngFor="let cat of verbose.categories">
-        <ion-col>
+        <ion-col *ngIf="emptyCat(cat)">
           <ion-row>
             <ion-col col-12 class="cat grey-back">
               <h6>
@@ -32,7 +32,7 @@
           <h2>Total</h2>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <ion-row *ngIf="verbose.discount">
         <ion-col col-8 offset-1>
           <p text-right>Montant avant remise : </p>
         </ion-col>
@@ -50,10 +50,10 @@
       </ion-row>
       <ion-row>
         <ion-col col-8 offset-1>
-          <h4 text-right>Offre de prix après remise</h4>
+          <h4 text-right>Offre de prix<span *ngIf="verbose.discount"> après remise</span></h4>
         </ion-col>
         <ion-col text-center>
-          <h4 class="price"><em>{{verbose.amount - verbose?.discount}}</em></h4>
+          <h4 class="price"><em>{{verbose.amount - verbose?.discount}}€</em></h4>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -88,9 +88,9 @@
     </ion-grid>
   </div>
   <div class="footer">
-    <p>
-        {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }} | {{ structure?.enterpriseNumber }} | {{ structure?.bankAccount[0]?.iban }}
-     </p> 
+      <p>
+          {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }}<br/>Num d'entreprise {{ structure?.enterpriseNumber }} | Compte Bancaire {{ structure?.bankAccount[0]?.iban }}
+       </p> 
   </div>
 </div>
 <ng-template #no_data>

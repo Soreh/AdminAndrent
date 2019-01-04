@@ -3,13 +3,12 @@ import { Quotationverbose } from '../../../models/rentals/quotation-verbose-inte
 import { NavController } from 'ionic-angular';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { Structure } from '../../../models/global/structure.interface';
-import { Observable } from 'rxjs';
 
 /**
  * Generated class for the RentalQuotationVerboseComponent component.
  *
  * See https://angular.io/api/core/Component for more info on Angular
- * Components.     
+ * Components.    
  */
 @Component({
   selector: 'rental-quotation-verbose',
@@ -47,8 +46,10 @@ export class RentalQuotationVerboseComponent implements OnInit {
   }
 
   emptyCat(cat) : boolean {
-    if(cat.lines === []){
-      return true;
+    if(cat.lines){
+      if(cat.lines.length > 0) {
+        return true;
+      }
     }
   }
 

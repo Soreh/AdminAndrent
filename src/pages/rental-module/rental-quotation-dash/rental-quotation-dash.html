@@ -78,20 +78,20 @@
               </ion-select>
             </ion-item>
           </ion-col>
-          <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
+          <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.cost != 0" text-center>
             <span class="multi">X</span>
           </ion-col>
-          <ion-col col-3 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0">
+          <ion-col col-3 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.cost != 0">
             <ion-item>
               <ion-label floating>Unités</ion-label>
               <ion-input [(ngModel)]="variousOptionToAdd.units" [readonly]="isQuotationApproved()" type="number"></ion-input>
             </ion-item>
           </ion-col>
-          <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
+          <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.cost != 0" text-center>
             <h3 class="mn">coût</h3>
             <p class="mn">{{variousChargeTypeToAdd.cost * variousOptionToAdd.units}}€</p>
           </ion-col>
-          <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.amount != 0" text-center>
+          <ion-col col-1 *ngIf="variousChargeTypeToAdd && variousChargeTypeToAdd.cost != 0" text-center>
             <h3 class="mn">prix conseillé</h3>
             <p class="mn">{{variousChargeTypeToAdd.cost * variousOptionToAdd.units * 1.5}}€</p>
           </ion-col>
@@ -171,13 +171,13 @@
             <ng-template #freeOption>
               <ion-row align-items-center>
                 <ion-col col-7 offset-1>
-                  <ion-input [(ngModel)]="option.label" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
+                  <ion-input class="simple" [(ngModel)]="option.label" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
                 </ion-col>
                 <ion-col text-center col-1>
-                    <ion-input [(ngModel)]="option.amount" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input> 
+                    <ion-input text-center class="simple" [(ngModel)]="option.amount" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input> 
                   </ion-col>
                 <ion-col text-center col-1>
-                    <ion-input [(ngModel)]="option.cost" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
+                    <ion-input text-center class="simple" [(ngModel)]="option.cost" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()"></ion-input>
                 </ion-col>
                 <ion-col text-center col-1>
                     <p>{{getBalance(option) * option.unit}}€</p>
@@ -333,7 +333,7 @@
           <!-- QUOTATION TOTAL -->
           <div margin padding text-center class="total-recap grey-back">
             <p>Montant avant remise : {{quotation.verbose.amount}}€</p>
-            <p>Remise : <input text-center [(ngModel)]="quotation.verbose.discount" (ngModelChange)="computeVerboseTotal()">€</p>
+            <p> - <input text-center [(ngModel)]="quotation.verbose.discount" (ngModelChange)="computeVerboseTotal()">€</p>
             <p>Montant après remise : {{quotation.verbose.amount - quotation.verbose.discount}}€</p>
           </div>
           <!-- QUOTATION POST EVENT PRICES -->

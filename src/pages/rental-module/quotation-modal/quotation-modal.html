@@ -21,7 +21,8 @@
       </ion-select>
     </ion-item>
     <ion-buttons end padding margin>
-      <button ion-button *ngIf="canEdit()" (click)="goToDash()">Edit</button>
+      <button ion-button *ngIf="canEdit()" (click)="goToDash()">Modifier</button>
+      <button ion-button *ngIf="!canEdit()" (click)="goToDash()">Voir le calcul</button>
       <button ion-button (click)="seeVerbose()">Voir</button>
     </ion-buttons>
   </div>

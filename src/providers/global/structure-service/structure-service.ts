@@ -14,7 +14,6 @@ import { User } from "firebase/app";
 // import 'firebase/auth';
 // import 'firebase/firestore';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
-import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 import { Moduleconfig } from '../../../models/global/module-config.interface';
 import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
 import { MODULES_KEYS } from '../modules/modules';

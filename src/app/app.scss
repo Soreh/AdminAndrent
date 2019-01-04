@@ -15,10 +15,10 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
-$side_menu_width : 250px;
+$side_menu_width : 130px;
 
 body{
-    min-width: 1500px;
+    min-width: 1200px;
 }
 
 .square-button.small {
@@ -47,7 +47,7 @@ body{
 }
 
 .panel-content {
-    width : calc(100% - 250px - 16px);
+    width : calc(100% - 130px - 16px);
     position: relative;
     left : $side_menu_width + $content-padding;
     min-width: 768px;

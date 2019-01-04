@@ -39,13 +39,7 @@ export class ConfigPage implements OnInit {
           target : 'global',
           show : true,
           class : "active",
-        },
-        {
-          name : 'locations', 
-          target : 'rentals',
-          show : false,
-          class : "",
-        },
+        }
       ]; 
       this.accountToAdd = {
         label: '',

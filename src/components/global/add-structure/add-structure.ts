@@ -4,8 +4,6 @@ import { UserServiceProvider } from '../../../providers/global/user-service/user
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { NavController, LoadingController, Loading, Config } from 'ionic-angular';
 import { MODULES, MODULES_KEYS, ModulesProvider } from '../../../providers/global/modules/modules';
-import { ModuleLoader } from 'ionic-angular/umd/util/module-loader';
-import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
 import { UserProfile } from '../../../models/global/user-profile.interface';
 import { User } from 'firebase';
 import { Subscription } from 'rxjs';

@@ -13,7 +13,6 @@ import { Observable, Subscription } from 'rxjs';
 
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
-import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
 // import { Log } from "../../../models/rentals/log.interface";
 
