@@ -52,6 +52,7 @@ export class StartPage implements OnInit {
   public defaultStructure : Structure;
 
   public dataRetrieved: boolean;
+  public needStructure: boolean = false;
 
   constructor(
     public navCtrl: NavController, 
@@ -120,6 +121,9 @@ export class StartPage implements OnInit {
       if (!this.userProfile) {
         console.debug('Have to create a new profile in db');
         this.user.createUserProfile().then( () => this._getProfile() );
+        // A new user has been created, we need to add or link a structure
+        this.needStructure = true;
+        this.loading.dismiss();
       } else {
         // We have to get the structure list and the defaultStructure
         await this.user.getUserStructures().ref.get()
@@ -228,13 +232,21 @@ export class StartPage implements OnInit {
       }
     ]
     console.warn(this.structKeyToLink);
-    console.warn(this.authUser);
+    // console.warn(this.authUser);
     console.warn(this.userProfile);
+
+    /**TO DO
+     * Vérifier que le pseudo a bien été rentré ? à voir si c'est déjàpas une condition du formulaire
+     * Vérifier que la structure existe bel et bien
+     * Lier la structure à l'utilisateur en base de données.
+     * Mettre à jour le profil PSEUDO + STRUCTURE
+     * Préciser l'erreur le cas échéant
+     */
     
-    if (this.authUser){
-      const result = await this.user.saveProfile(this.authUser.uid, this.userProfile);
-      console.log(result);
-    }
+    // if (this.authUser){
+    //   const result = await this.user.saveProfile(this.authUser.uid, this.userProfile);
+    //   console.log(result);
+    // }
   }
 
   // createStructure(isDefault: boolean = false) : void {
