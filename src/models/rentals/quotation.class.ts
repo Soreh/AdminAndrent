@@ -2,7 +2,6 @@ import { Quotationverbose } from "./quotation-verbose-interface";
 import { STATUSCODE } from "../global/status.interface";
 import { RentalConfig } from "./rentals-config.interface";
 import { QuotationOption } from "./quotation-option.interface";
-import { splitClasses } from "@angular/compiler";
 
 /**
  * Class that deals with the Quotation

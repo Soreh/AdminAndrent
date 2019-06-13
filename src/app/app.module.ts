@@ -1,8 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
+// import { SplashScreen } from '@ionic-native/splash-screen';
+// import { StatusBar } from '@ionic-native/status-bar';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore'; 
@@ -34,7 +34,7 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
     BrowserModule,
     IonicModule.forRoot(MyApp),
     PipesModule,
-    AngularFireModule.initializeApp(FIREBASE_CONFIG), // since I use both AngularFire an Firebase, the databaase has allready been initialize in the app component
+    AngularFireModule.initializeApp(FIREBASE_CONFIG),
     AngularFirestoreModule,
     AngularFireAuthModule,
     AngularFireStorageModule,
@@ -45,8 +45,6 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
     MyApp,
   ],
   providers: [
-    StatusBar,
-    SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     RentalServiceProvider,
     UserServiceProvider,

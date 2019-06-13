@@ -4,5 +4,5 @@
     <button padding block *ngFor="let page of pages" ion-button (click)="goToPage(page)">
       {{page.label}}
     </button>
-    <button ion-button clear block outline (click)="disconnect()">Se déconnecter</button>
+    <button icon-only ion-button clear block outline (click)="disconnect()"><ion-icon name="md-log-out"></ion-icon></button>
   </ion-buttons>

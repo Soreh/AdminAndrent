@@ -27,31 +27,27 @@
               <ion-row>
                 <ion-col col-12 class="cat grey-back">
                   <h6>
-                      Déclaration de créance n°{{invoice?.id}}
+                      Facture n°{{invoice?.id}} pour :
                   </h6>
                 </ion-col>
               </ion-row>
               <ion-row>
-                <ion-col col-8 offset-1>{{invoice.label}}</ion-col>
-                <ion-col text-center>{{invoice.amount}}€</ion-col>
+                <ion-col col-10 offset-1>
+                  <p>
+                    {{invoice.label}}
+                  </p>
+                </ion-col>
               </ion-row>
             </ion-col>
           </ion-row>
         </ion-grid>
         <ion-grid padding class="total">
-          <ion-row>
-            <ion-col class="grey-back">
-              <h2>Total</h2>
-            </ion-col>
-          </ion-row>
-         
-          
-          <ion-row>
-            <ion-col col-8 offset-1>
-              <h4 text-right>Total</h4>
+          <ion-row align-items-center class="grey-back">
+            <ion-col col-10>
+              <h2 text-right class="padding-line">Total</h2>
             </ion-col>
             <ion-col text-center>
-              <h4 class="price">{{invoice.amount}}€</h4>
+              <h4 class="price padding-line">{{invoice.amount}}€</h4>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -59,14 +55,14 @@
           <ion-row>
             <ion-col col-5 text-right>
               <p><em>Déclaration de créance non soumise à la TVA.</em></p>
-              <p>Le montant de la présente facture est à réglée endéans les trente jours sur le compte {{ structure?.bankAccount[0]?.iban }}</p>
+              <p>Le montant est à régler dès réception de la présente sur le compte<br/>{{ structure?.bankAccount[0]?.iban }}<br/>en mentionnant la référence {{ invoice?.id }} en communication.</p>
             </ion-col>
           </ion-row>
         </ion-grid>
       </div>
       <div class="footer">
         <p>
-            {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }} | {{ structure?.enterpriseNumber }} | {{ structure?.bankAccount[0]?.iban }}
+            {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }}<br/>Num d'entreprise {{ structure?.enterpriseNumber }} | Compte Bancaire {{ structure?.bankAccount[0]?.iban }}
          </p> 
       </div>
     </div>

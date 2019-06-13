@@ -104,9 +104,5 @@
       </ion-item>
       <button ion-button block clear outline (click)="addBankAccount()" [disabled]="accountToAddValid()">Ajouter</button>
     </ion-item-group>
-    <pre>{{structure | json}}</pre>
-  </div>
-  <div id="rentals" *ngIf="isShown(tabs[1].target)" class="tab-panel">
-    <rental-config [config]="rentalConfig"></rental-config>
   </div>
 </ion-content>

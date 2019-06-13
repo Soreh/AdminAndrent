@@ -1,22 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular'; 
 import { CategoryDetail } from '../../../models/rentals/category-detail.interface';
 import { RentalConfig } from "../../../models/rentals/rentals-config.interface";
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { QuotationOption, savedOptionByCategory, Charge } from '../../../models/rentals/quotation-option.interface';
 import { Quotation, QuotationDetails, QuotationArgs } from '../../../models/rentals/quotation.class';
 import { QuotationverboseLine } from "../../../models/rentals/quotation-verbose-interface";
-import { STATUSCODE, STATUS, Status } from "../../../models/global/status.interface";
-import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
-import { Console } from '@angular/core/src/console';
+import { STATUSCODE, STATUS } from "../../../models/global/status.interface";
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 import { Rental } from '../../../models/rentals/rental.interface';
-import { convertUrlToSegments } from 'ionic-angular/umd/navigation/url-serializer';
 /**
  * Generated class for the RentalQuotationDashPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
+ * Ionic pages and navigation. 
  */
 
 @IonicPage()
@@ -97,15 +94,14 @@ export class RentalQuotationDashPage implements OnInit {
     private rentalService: RentalServiceProvider, 
     private navCtrl: NavController, 
     private navParams: NavParams, 
-    private alertCtrl : AlertController, 
-    private user : UserServiceProvider,
+    private alertCtrl : AlertController,
     private auth: AuthServiceProvider) {
   }
   
   showHelp() {
     const help = this.alertCtrl.create({
       title: "Ajouter une option",
-      subTitle : 'Pour ajouter une option préenregistrée, rendez-vous dans l’onglet « option ». Pour ajouter une option libre, remplissez le formaulaire et cliquez sur "+" (tous les champs sont obligatoire).',
+      subTitle : 'Pour ajouter une option préenregistrée, rendez-vous dans l’onglet « option ». Pour ajouter une option libre, remplissez le formulaire et cliquez sur "+" (tous les champs sont obligatoires).',
       buttons : ["J'ai compris !"],
     });
     help.present();
@@ -125,7 +121,7 @@ export class RentalQuotationDashPage implements OnInit {
         this.showTab('prices');
         break
       default :
-        this.showTab('recap');
+        this.showTab('verboseQuotation');
     }
   }
 
@@ -233,6 +229,7 @@ export class RentalQuotationDashPage implements OnInit {
             currentArgs = rental.quotation_args;
           }
           // il faut comparer currentArgs et args
+          console.debug(currentArgs);
           rental.quotation_args = args;
           await this.rentalService.updateRental(this.rentalId, rental);
         },
