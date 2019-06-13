@@ -267,7 +267,7 @@ export class StartPage implements OnInit {
     }
     // if (this.authUser){
     //   const result = await this.user.saveProfile(this.authUser.uid, this.userProfile);
-    //   console.log(result);
+    //   console.log(result); 
     // }
   }
 

@@ -14,6 +14,7 @@ import { Observable, Subscription } from 'rxjs';
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
+import { UserProfile } from '../../../models/global/user-profile.interface';
 // import { Log } from "../../../models/rentals/log.interface";
 
 /**

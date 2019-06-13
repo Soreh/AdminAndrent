@@ -63,10 +63,9 @@
                 Ajouter une nouvelle struture
             </span>
            <span *ngIf="structures$?.length > 1"> | Charger une structure existante</span></p>
-          <p (click)="disconnect()">
-            <span>
-                Se déconnecter
-            </span>
+          <p>
+            Bienvenue {{userProfile.name}} !<br/>
+            <span (click)="disconnect()">- Se déconnecter -</span>
           </p>
         </div>
       </ion-col>

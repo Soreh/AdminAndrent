@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController } from "ionic-angular";
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
+import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 
 /**
  * Generated class for the RentalMenuComponent component.
@@ -19,13 +20,21 @@ export class RentalMenuComponent {
 
   root:string = 'ConnectPage';
   pages;
+  username:string;
 
   constructor(
     public navCtrl : NavController, 
     private alertCtrl : AlertController,
-    private auth: AuthServiceProvider) {
+    private auth: AuthServiceProvider,
+    private user: UserServiceProvider) {
     console.log('Hello RentalMenuComponent Component');
 
+      this.user.getUserName().then(
+        (pseudo) => {
+          this.username = pseudo;
+        }
+      )
+      
       this.pages = [
         {
           label : 'Home',
