@@ -198,6 +198,38 @@ export class StructureServiceProvider {
   }
 
   /**
+   * To verify if a structure exists un DB
+   * @param structure_key
+   * @returns true if it does
+   */
+  public async structureExists(structure_key) : Promise<Boolean> {
+    // this.afStore.collection("/structures/").
+    //   let ref = this.afStore.doc(`/structures/${structure_key}`).ref.id;
+    //   console.log(ref);
+    //   if (ref) {
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+
+    return await this.afStore.doc(`/structures/${structure_key}`).ref.get().then(
+      (snap) => {
+        if(snap.exists){
+          console.debug(snap);
+          return true
+        }
+        else {
+          return false
+        }
+      },
+      (error) => {
+        console.error(error);
+        return false
+      }
+    )
+  }
+
+  /**
    * 
    * @param module_key the module key as stored in MODULES_KEY
    * @returns the module config for the loaded structre, or false if it fails

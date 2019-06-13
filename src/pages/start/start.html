@@ -49,7 +49,7 @@
               </ion-item>
               <ion-buttons>
                 <button ion-button clear outline (click)="updatePseudoAndShowAddForm()" [disabled]="!userProfile.name || structKeyToLink">Nouvelle Structure</button>
-                <button ion-button clear outline (click)="createProfileAndLinkStructure()" [disabled]="!userProfile.name || !structKeyToLink">Lier structure</button>
+                <button ion-button clear outline (click)="updatePseudoAndLinkStructure()" [disabled]="!userProfile.name || !structKeyToLink">Lier structure</button>
               </ion-buttons>
             </ion-col>
             <ion-col *ngIf="showAddStruct">

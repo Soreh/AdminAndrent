@@ -31,7 +31,7 @@ export class StartPage implements OnInit {
   public structures$;
   public structure$;
   public structure;
-  public structKeyToLink;
+  public structKeyToLink: string;
   //public loadedStructures;
 
   private authenticatedUSer$ : Subscription;
@@ -223,8 +223,11 @@ export class StartPage implements OnInit {
     this.showAddStruct = true;
   }
 
- async createProfileAndLinkStructure() {
+ async updatePseudoAndLinkStructure() {
     console.warn('Il faut vérifier la présence de la structure en base données');
+
+    this.structKeyToLink = this.structKeyToLink.trim();
+    
     this.userProfile.structures = [
       {
         key : this.structKeyToLink,
@@ -236,13 +239,32 @@ export class StartPage implements OnInit {
     console.warn(this.userProfile);
 
     /**TO DO
-     * Vérifier que le pseudo a bien été rentré ? à voir si c'est déjàpas une condition du formulaire
      * Vérifier que la structure existe bel et bien
      * Lier la structure à l'utilisateur en base de données.
      * Mettre à jour le profil PSEUDO + STRUCTURE
      * Préciser l'erreur le cas échéant
      */
     
+    if ( await this.structService.structureExists(this.structKeyToLink)){
+      await this.user.linkStructure(this.structKeyToLink, true).then(
+        (onfulfilled) => {
+          console.log("structure liée");
+          this.user.updatePseudo(this.userProfile.name).then(
+            () => {
+              this.navCtrl.setRoot('StartPage');
+            },
+            (e) => {
+              console.error(e);
+            }
+          );
+        },
+        (error) => {
+          console.error(error);
+        }
+      )
+    } else {
+      alert("Le lien fourni n'est pas valide.");
+    }
     // if (this.authUser){
     //   const result = await this.user.saveProfile(this.authUser.uid, this.userProfile);
     //   console.log(result);

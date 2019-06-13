@@ -118,6 +118,13 @@ export class UserServiceProvider {
     })
   }
 
+  linkStructure(struct_key, main: boolean): Promise<any> {
+    return this.userStructures.add({
+      isDefault: main,
+      key: struct_key,
+    })
+  }
+
   /**
    * 
    * @param newEmail
