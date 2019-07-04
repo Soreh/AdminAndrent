@@ -40,7 +40,7 @@ export class RentalAddFormComponent implements OnInit {
       dates : [''],
       contact_name : ['', Validators.required],
       contact_tel :[''],
-      contact_mail : ['', Validators.email],
+      contact_mail : [''],
     })
     this.config = this.rentalService.getConfig();
   }
