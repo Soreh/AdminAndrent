@@ -154,6 +154,11 @@ export class RentalsPage implements OnInit, OnDestroy {
             this._sub = await list.valueChanges().subscribe(
               (list) => {
                 console.debug(list.length);
+                list = list.sort((a, b) => {
+                  if(a.status < b.status) return -1;
+                  else if (a.status > b.status) return 1;
+                  else return 0
+                })
                 this.rentalList = list;
                 this.rentalCount = list.length;
                 this.rentalsCharged = true;
@@ -177,6 +182,7 @@ export class RentalsPage implements OnInit, OnDestroy {
   openNewRentalModal() {
     let modal = this.modalCtrl.create('NewRentalModalPage');
     modal.present();
+    modal.onDidDismiss((newId) => this.seeRentalDetails(newId));
   }
   
   // goHome(): void {
