@@ -11,6 +11,8 @@ import { User } from 'firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { RentalServiceProvider } from '../../providers/rentals/rental-service/rental-service';
 
+import { VERSION } from "../../models/global/constances";
+
 /**
  * Generated class for the StartPage page.
  *
@@ -24,6 +26,8 @@ import { RentalServiceProvider } from '../../providers/rentals/rental-service/re
   templateUrl: 'start.html',
 })
 export class StartPage implements OnInit {
+
+  version:String = VERSION;
 
   public structureToCreate : Structure;
   

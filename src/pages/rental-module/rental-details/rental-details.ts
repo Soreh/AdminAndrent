@@ -345,6 +345,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
         // this.rental.client = data;
         this.setclientExist();
         this.keepChangesTrack('client');
+        this.saveAndLog();
       }
     })
 

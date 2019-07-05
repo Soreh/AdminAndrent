@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, AlertController } from "ionic-angular";
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
+import { VERSION } from "../../../models/global/constances";
 
 /**
  * Generated class for the RentalMenuComponent component.
@@ -21,6 +22,7 @@ export class RentalMenuComponent {
   root:string = 'ConnectPage';
   pages;
   username:string;
+  version: string = VERSION;
 
   constructor(
     public navCtrl : NavController, 

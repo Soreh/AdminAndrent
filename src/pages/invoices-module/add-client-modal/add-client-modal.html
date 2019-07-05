@@ -8,11 +8,11 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
-      <ion-label>Nom</ion-label>
+      <ion-label>Nom*</ion-label>
       <ion-input [(ngModel)]="client.name"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label>Adresse</ion-label>
+      <ion-label>Adresse*</ion-label>
       <ion-textarea [(ngModel)]="client.address"></ion-textarea>
     </ion-item>
     <ion-item>
@@ -23,9 +23,12 @@
       <ion-label>Numéro d'entreprise</ion-label>
       <ion-input [(ngModel)]="client.enterpriseNumber"></ion-input>
     </ion-item>
+    <p style="font-size:smaller; text-align: right; color:light-gray">
+      (* : champs obligatoires)
+    </p>
   </ion-list>
   <ion-buttons end>
-    <button ion-button (click)="dismiss()">Cancel</button>
-    <button ion-button (click)="closeModal()">Ok</button>
+    <button ion-button (click)="dismiss()">Annuler</button>
+    <button ion-button (click)="closeModal()" [disabled]="!client.name || !client.address">Vas-y! Sauvegarde !</button>
   </ion-buttons>
 </ion-content>

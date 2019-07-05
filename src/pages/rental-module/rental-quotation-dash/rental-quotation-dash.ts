@@ -388,6 +388,15 @@ export class RentalQuotationDashPage implements OnInit {
     this.updateSortedoption();
     this.computeTotal();
   }
+
+  modifyOption(option) {
+    console.debug(option);
+    this.quotation.details.find((detail)=> detail.optionID === option.id).units = option.unit;
+    console.debug("quotation detail to update :")
+    console.debug(this.quotation.details.find((detail)=> detail.optionID === option.id));
+    this.computeTotal();
+  }
+
   addVariousOption() : void {
      let option:QuotationDetails;
      if( this.variousOptionToAdd.label != ""
@@ -587,10 +596,19 @@ export class RentalQuotationDashPage implements OnInit {
       
       if (option) {
         console.log(option);
+        let label;
+        if (option.unit > 1) {
+          label = option.unit + " x " + option.label;
+        }
+
+        else {
+          label = option.label;
+        }
+
         optionToCompute = {
           catId: option.catId,
-          amount: option.amount,
-          label:option.label
+          amount: option.amount * option.unit,
+          label: label
         }
 
       } else if (quotationOption.optionID === 0) {

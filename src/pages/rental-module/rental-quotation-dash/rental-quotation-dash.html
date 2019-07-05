@@ -148,7 +148,7 @@
             <ion-row align-items-center *ngIf="option.id != 0; else freeOption">
               <ion-col col-1 offset-1>
                 <ion-item>
-                  <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()">
+                  <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="modifyOption(option)" [readonly]="isQuotationApproved()">
                   </ion-input>>
                 </ion-item>
               </ion-col>
