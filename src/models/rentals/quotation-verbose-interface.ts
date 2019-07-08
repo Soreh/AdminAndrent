@@ -14,6 +14,7 @@ export interface Quotationverbose {
         }
     ],
     client?: Client,
+    note?: String,
 }
 
 export interface QuotationverboseLine {

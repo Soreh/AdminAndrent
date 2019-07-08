@@ -9,6 +9,7 @@
   </div>
   <div class="content">
     <h1>Offre de prix<br/>Location de salle</h1>
+    <p class="note" *ngIf="verbose.note">{{verbose.note}}</p>
     <ion-grid padding>
       <ion-row *ngFor="let cat of verbose.categories">
         <ion-col *ngIf="emptyCat(cat)">

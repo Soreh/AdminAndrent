@@ -1,5 +1,21 @@
 page-rental-quotation-dash {
 
+    .cat-title {
+        border-top: solid 2px lightgrey;
+        width: 70%;
+        margin: auto;
+    }
+
+    .add-line {
+        width: 49%;
+        float: right;
+    }
+    textarea {
+        width:50%;
+        margin: 5px auto 0px auto;
+        padding:5px;
+    }
+
     .mn {
         margin: 0px;
     }

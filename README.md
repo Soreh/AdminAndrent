@@ -25,3 +25,5 @@ Ajouts de fonctionnalités & modifications :
     - Après l'ajout d'une nouvelle location, l'utilisateur est directement redirigé vers les détails de cette location
     - Il est possible de lier un nouvel utilisateur avec une structure existante en base de données
     - Modification de l'aspect du journal de log (format date)
+    - Amélioration de l'aspect de la page d'encodage du devis
+    - Ajout de la possibilité d'ajouter une note sur la version imprimée du devis
