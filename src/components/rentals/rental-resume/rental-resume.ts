@@ -41,6 +41,12 @@ export class RentalResumeComponent implements OnInit, OnChanges{
   public status_label: any;
   public contact: Contact;
   public locationName: string;
+
+  public needPayment: boolean;
+  public needQuotation: boolean;
+  public needInvoice: boolean;
+  public quotationInProgress: boolean;
+  public paymentDone: boolean;
   
 
   constructor(private navCtrl:NavController,
@@ -57,6 +63,30 @@ export class RentalResumeComponent implements OnInit, OnChanges{
     // this.status_label = STATUS.getLabel(this.rental.status);
     // this.locationName = this.rentalsProvider.getLocationLabel(this.rental.location_id);
     this.contact = this.rental.contact.find( contact => contact.main );
+    if (this.rental.status === STATUSCODE.confirmed || this.rental.status === STATUSCODE.option || this.rental.status === STATUSCODE.over) {
+      if (!this.rental.quotation_args) {
+        this.needQuotation = true;
+      }
+      if (this.rental.quotation_args) {
+        if (this.rental.quotation_args.statusCode === STATUSCODE.toDO || this.rental.quotation_args.statusCode === STATUSCODE.toBeSend) {
+          this.needQuotation = true;
+        } else {
+          if (this.rental.invoice) {
+            if (this.rental.invoice.status != STATUSCODE.paid) {
+              this.needPayment = true;
+            } else {
+              this.paymentDone = true;
+            }
+          } else {
+            if (this.rental.quotation_args.statusCode === STATUSCODE.approved) {
+              this.needInvoice = true;
+            } else {
+              this.quotationInProgress = true;
+            }
+          }
+        }
+      }
+    }
     
     // this.color_class = STATUS.getLabel(this.rental.status);
     // this.status_label = STATUS.getLabel(this.rental.status); 
@@ -72,14 +102,6 @@ export class RentalResumeComponent implements OnInit, OnChanges{
   // getFirstContact() : Contact {
   //   return this.rental.contact.find( contact => contact.main );
   // }
-
-  isPaid(): boolean {
-    if (this.rental.invoice) {
-      if (this.rental.invoice.status === STATUSCODE.paid) {
-        return true;
-      }
-    }
-  }
 
   getStatusLabel(statusCode): string {
     //console.debug("in get statusLabel...");

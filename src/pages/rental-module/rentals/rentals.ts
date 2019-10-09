@@ -15,6 +15,7 @@ import { AuthServiceProvider } from '../../../providers/auth-service/auth-servic
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { UserProfile } from '../../../models/global/user-profile.interface';
+import { STATUSCODE } from '../../../models/global/status.interface';
 // import { Log } from "../../../models/rentals/log.interface";
 
 /**
@@ -37,6 +38,20 @@ export class RentalsPage implements OnInit, OnDestroy {
   public rentalList$: Observable<Rental[]>; // should I type it ? AngularFirestoreCollection<Rental>
   public rentalCount: number;
   public rentalList: Rental[];
+
+  public rentalListFirstContact: Rental[] = [];
+  public rentalListConfirmed: Rental[] = [];
+  public rentalListOption: Rental[] = [];
+  public rentalListOver: Rental[] = [];
+  public rentalListCanceled: Rental[] = [];
+  public rentalListToBePaid: Rental[] = [];
+
+  public seeFirstContact = false;
+  public seeListConfirmed = false;
+  public seeListOption = true;
+  public seeListOther = false;
+  public seeListDuePayment = false;
+  public seeAll = false;
 
   private _sub: Subscription;
 
@@ -91,29 +106,6 @@ export class RentalsPage implements OnInit, OnDestroy {
 
   ionViewWillLoad() {
     console.log('ionViewWillLoad RentalsPage');
-
-    // this.auth.isConnected().then( (ok) => {
-    //   if (!ok) {
-    //     console.error('Erreur : pas d\'utilisteur connecté');
-    //     this.navCtrl.setRoot('ConnectPage');
-    //   } else {
-    //     this.struct.isStructureLoaded().then( (ok) => {
-    //       if (!ok) {
-    //         console.error('Erreur, aucune structure chargée');
-    //         this.auth.logOut();
-    //         this.navCtrl.setRoot('ConnectPage');
-    //       } else {
-    //         if ( ! this.rentalProvider.isConfigLoaded() ) {
-    //           this.rentalProvider.loadConfig().then( () => 
-    //             this.retrieveRentals()
-    //           );
-    //         } else {
-    //           this.retrieveRentals()
-    //         }
-    //       }
-    //     })
-    //   }
-    // });
   }
 
   // async rentalsExist(): Promise<boolean> {
@@ -144,6 +136,37 @@ export class RentalsPage implements OnInit, OnDestroy {
     
   }
 
+  public switchTab(tab: number) {
+    this.seeFirstContact = false;
+    this.seeListConfirmed = false;
+    this.seeListOption = false;
+    this.seeListOther = false;
+    this.seeListDuePayment = false;
+    this.seeAll = false;
+    switch (tab) {
+      case 1:
+        this.seeListOption = true;
+        break;
+      case 2:
+        this.seeFirstContact = true;
+        break;
+      case 3:
+        this.seeListConfirmed = true;
+        break;
+      case 4:
+        this.seeListOther = true;
+        break;
+      case 5:
+        this.seeListDuePayment = true;
+        break;
+      case 6:
+        this.seeAll = true;
+        break;
+      default:
+        break;
+    }
+  }
+
   async retrieveRentals() {
     const loading = await this.loader.create();
     try {
@@ -158,10 +181,43 @@ export class RentalsPage implements OnInit, OnDestroy {
                   if(a.status < b.status) return -1;
                   else if (a.status > b.status) return 1;
                   else return 0
-                })
+                });
+                this.rentalListFirstContact = [];
+                this.rentalListConfirmed = [];
+                this.rentalListOption = [];
+                this.rentalListOver = [];
+                this.rentalListCanceled = [];
+                this.rentalListToBePaid = [];
                 this.rentalList = list;
                 this.rentalCount = list.length;
                 this.rentalsCharged = true;
+                this.rentalList.forEach(rental => {
+                  switch (rental.status) {
+                    case STATUSCODE.firstContact:
+                      this.rentalListFirstContact.push(rental);
+                      break;
+                    case STATUSCODE.over:
+                      this.rentalListOver.push(rental);
+                      if (this.needPayment(rental)) {
+                        this.rentalListToBePaid.unshift(rental);
+                      }
+                      break;
+                    case STATUSCODE.confirmed:
+                      this.rentalListConfirmed.push(rental);
+                      if (this.needPayment(rental)) {
+                        this.rentalListToBePaid.push(rental);
+                      }
+                      break;
+                    case STATUSCODE.option:
+                      this.rentalListOption.push(rental);
+                      break;
+                    case STATUSCODE.canceled:
+                      this.rentalListCanceled.push(rental);
+                      break;
+                    default:
+                      break;
+                  };
+                })
                 loading.dismiss();
               }
             )
@@ -177,6 +233,16 @@ export class RentalsPage implements OnInit, OnDestroy {
       console.warn("Aucune locations en base de données");
     }
     loading.present();
+  }
+
+  private needPayment(rental: Rental): boolean {
+    if (!rental.invoice) {
+      return true;
+    } else {
+      if (rental.invoice.status != STATUSCODE.paid) {
+        return true;
+      }
+    }
   }
 
   openNewRentalModal() {
