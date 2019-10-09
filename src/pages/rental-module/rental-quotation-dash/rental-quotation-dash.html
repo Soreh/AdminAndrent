@@ -148,7 +148,7 @@
             <ion-row align-items-center *ngIf="option.id != 0; else freeOption">
               <ion-col col-1 offset-1>
                 <ion-item>
-                  <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="computeTotal()" [readonly]="isQuotationApproved()">
+                  <ion-input type="number" [(ngModel)]="option.unit" (ngModelChange)="modifyOption(option)" [readonly]="isQuotationApproved()">
                   </ion-input>>
                 </ion-item>
               </ion-col>
@@ -320,20 +320,32 @@
         <!-- QUOTATION LINES -->
         <div class="verbose-lines">
           <div text-center *ngFor="let cat of quotation.verbose.categories;index as catIndex">
-            <h2>
+            <h2 class="cat-title">
               <ion-input text-center [(ngModel)]="cat.label"></ion-input>
             </h2>
-            <p *ngFor="let line of cat.lines"><input [(ngModel)]="line.label"> - <input [(ngModel)]="line.amount" (ngModelChange)="computeVerboseTotal()">€ | <a (click)="deleteVerboseLine(cat.label, line)">supprimer</a></p>
-            <p>
-              <input type='text' [(ngModel)]="linesToAdd[catIndex].label"> - <input type='number' width="5" [(ngModel)]="linesToAdd[catIndex].amount">
-              <button (click)="addVerboseLine(cat.label, linesToAdd[catIndex], catIndex)">Ajouter</button>
-              <button (click)="clearLine(catIndex)">clear</button>
+            <p style="padding:10px 35px;" *ngFor="let line of cat.lines">
+              <textarea [(ngModel)]="line.label"></textarea>
+              
+              <ion-item class="add-line">
+                  <ion-input type='number' [(ngModel)]="line.amount" (ngModelChange)="computeVerboseTotal()"></ion-input>
+                  <button ion-button item-end outline (click)="deleteVerboseLine(cat.label, line)">Supprimer</button>
+                  <ion-icon name="logo-euro" item-end></ion-icon>
+                </ion-item>
+
+            </p>
+            <p style="padding:10px;">
+              <textarea [(ngModel)]="linesToAdd[catIndex].label"></textarea>
+              <ion-item class="add-line">
+                <ion-input type='number' [(ngModel)]="linesToAdd[catIndex].amount"></ion-input>
+                <button ion-button item-end (click)="addVerboseLine(cat.label, linesToAdd[catIndex], catIndex)">Ajouter</button>
+                <ion-icon name="logo-euro" item-end></ion-icon>
+              </ion-item>
             </p>
           </div>
           <!-- QUOTATION TOTAL -->
           <div margin padding text-center class="total-recap grey-back">
             <p>Montant avant remise : {{quotation.verbose.amount}}€</p>
-            <p> - <input text-center [(ngModel)]="quotation.verbose.discount" (ngModelChange)="computeVerboseTotal()">€</p>
+            <p> - <input text-center [(ngModel)]="quotation.verbose.discount" (ngModelChange)="computeVerboseTotal()"> €</p>
             <p>Montant après remise : {{quotation.verbose.amount - quotation.verbose.discount}}€</p>
           </div>
           <!-- QUOTATION POST EVENT PRICES -->
@@ -355,6 +367,7 @@
             <ion-label>Date du devis</ion-label>
             <ion-input [(ngModel)]="quotation.verbose.date"></ion-input>
           </ion-item>
+          <textarea style="width:100%; margin-top:20px" [(ngModel)]="quotation.verbose.note" placeholder="Remarques éventuelles à ajouter au devis..."></textarea>
           <div class="info" *ngIf="!isVerboseCorrect(); else verboseCorrect">
             <p text-center>
               Attention, il existe une différence de entre le montant facturé au devis et le montant calculé de <span [ngClass]="checkZero((quotation.verbose.amount - quotation.verbose.discount) - (quotation.total.amount - quotation.discount))">{{(quotation.verbose.amount - quotation.verbose.discount) - (quotation.total.amount - quotation.discount)}}€</span>

@@ -34,5 +34,5 @@ export interface Structure {
 export interface Struct_Meta {
     isDefault ?: boolean,
     key : string,
-    name : string;
+    name ?: string;
 }

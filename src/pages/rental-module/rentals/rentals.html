@@ -16,14 +16,74 @@
             <ion-icon name="add"></ion-icon>
           </button>
       </ion-fab>
-      <ion-row *ngFor="let rental of rentalList" align-items-center>
-        <ion-col col-6>
-          <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
-        </ion-col>
-        <ion-col>
-          <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
-        </ion-col>
-      </ion-row>
+      <div>
+          <button ion-button (click)="switchTab(2)" [disabled]="seeFirstContact">Demandes ({{rentalListFirstContact.length}})</button>
+          <button ion-button (click)="switchTab(1)" [disabled]="seeListOption">Options ({{rentalListOption.length}})</button>
+          <button ion-button (click)="switchTab(3)" [disabled]="seeListConfirmed">Confirmées ({{rentalListConfirmed.length}})</button>
+          <button ion-button (click)="switchTab(5)" [disabled]="seeListDuePayment">Payements en attente ({{rentalListToBePaid.length}})</button>
+          <button ion-button (click)="switchTab(4)" [disabled]="seeListOther">Terminées({{rentalListOver.length}})</button>
+          <button ion-button (click)="switchTab(6)" [disabled]="seeAll">Toutes les locations ({{rentalList.length}})</button>
+      </div>
+      <div *ngIf="seeAll">
+        <ion-row *ngFor="let rental of rentalList" align-items-center>
+          <ion-col col-6>
+            <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+          </ion-col>
+          <ion-col>
+            <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="seeListOption">
+        <ion-row *ngFor="let rental of rentalListOption" align-items-center>
+          <ion-col col-6>
+            <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+          </ion-col>
+          <ion-col>
+            <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="seeListConfirmed">
+        <ion-row *ngFor="let rental of rentalListConfirmed" align-items-center>
+          <ion-col col-6>
+            <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+          </ion-col>
+          <ion-col>
+            <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="seeFirstContact">
+        <ion-row *ngFor="let rental of rentalListFirstContact" align-items-center>
+          <ion-col col-6>
+            <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+          </ion-col>
+          <ion-col>
+            <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="seeListOther">
+        <ion-row *ngFor="let rental of rentalListOver" align-items-center>
+          <ion-col col-6>
+            <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+          </ion-col>
+          <ion-col>
+            <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="seeListDuePayment">
+        <ion-row *ngFor="let rental of rentalListToBePaid" align-items-center>
+          <ion-col col-6>
+            <rental-resume [rental]="rental" (click)="seeRentalDetails(rental.id)"></rental-resume>
+          </ion-col>
+          <ion-col>
+            <rental-last-log [lastLog]="rental.log[0]"></rental-last-log>
+          </ion-col>
+        </ion-row>
+      </div>
     </ion-grid>
     <ng-template #noRentals>
       <div text-center padding-top margin-top>

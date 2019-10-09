@@ -121,7 +121,7 @@
               <ion-item>
                   <ion-icon name="logo-euro" item-start color="primary"></ion-icon>
                   <ion-label>{{outputQuotationStatus()}}</ion-label>
-                  <button ion-button icon-only outline item-end (click)="openQuotationModal()" [disabled]="clientExists">
+                  <button ion-button icon-only outline item-end (click)="openQuotationModal()">
                     <ion-icon name="cog"></ion-icon>
                   </button>
               </ion-item>
@@ -192,7 +192,7 @@
             <ion-col>
               <div class="main-option-container">
                 <h2 class="title">remarques</h2>
-                <ion-textarea class="fixed" [(ngModel)]="rental.notes"></ion-textarea>
+                <ion-textarea class="fixed" [(ngModel)]="rental.notes" (ngModelChange)="keepChangesTrack('Remarques')"></ion-textarea>
               </div>
             </ion-col>
             <ion-col>
@@ -207,9 +207,16 @@
                 <div>
                   <div *ngFor="let contact of rental.contact">
                     <ion-list>
-                      <ion-input text-left [(ngModel)]="contact.name" (ngModelChange)="keepChangesTrack('Contact')"></ion-input>
-                      <ion-input text-left [(ngModel)]="contact.mail" (ngModelChange)="keepChangesTrack('Contact')"></ion-input>
-                      <ion-input text-left [(ngModel)]="contact.tel" (ngModelChange)="keepChangesTrack('Contact')"></ion-input>
+                      <ion-item>
+                        <ion-label>Nom :</ion-label>
+                        <ion-input text-left [(ngModel)]="contact.name" (ngModelChange)="keepChangesTrack('Contact')"></ion-input>
+                      </ion-item>
+                      <ion-item>
+                        <ion-label>E-mail :</ion-label><ion-input text-left [(ngModel)]="contact.mail" (ngModelChange)="keepChangesTrack('Contact')"></ion-input>
+                      </ion-item>
+                      <ion-item>
+                        <ion-label>Téléphone :</ion-label><ion-input text-left [(ngModel)]="contact.tel" (ngModelChange)="keepChangesTrack('Contact')"></ion-input>
+                      </ion-item>
                     </ion-list>
                   </div>
                 </div>

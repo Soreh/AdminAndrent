@@ -290,12 +290,12 @@ export class RentalServiceProvider {
    * @param rental : Rental
    * @returns true if everything went fine, false otherwise
    */
-  async addRental(rental: Rental) : Promise<boolean> {
+  async addRental(rental: Rental) : Promise<string | boolean> {
     const newRentalRef: firebase.firestore.DocumentReference = await this.rentalsList.add(rental);
     return newRentalRef.update({
       id: newRentalRef.id,
     }).then(
-        () => {return true},
+        () => {return newRentalRef.id},
       ).catch(
         (e) => {
           console.warn(e);

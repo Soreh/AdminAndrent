@@ -25,26 +25,30 @@ export class LogController {
      * @param msg the msg to print (optionnal)
      */
     async log(rent: Rental, automatedMsg: string, msg: string) : Promise<void> {
-        this._date = new Date(); // TO DO STYLE IT ! LIKE DD/MM/YY à HH.MM
-        console.warn("TO DO : style the date like DD/MM/YY à HH.MM");
-        await this.user.getUserName().then(
-            (name) => {
-                this._author = name;
-                if ( msg == '') {
-                    this._author += ' (auto)';
-                } else {
-                    automatedMsg += '<br>'
+        this._date = new Date();
+        if (automatedMsg != '' || msg != '') {
+
+            await this.user.getUserName().then(
+                (name) => {
+                    this._author = name;
+                    if ( msg == '') {
+                        this._author += ' (auto)';
+                    } else {
+                        if (automatedMsg != '') {
+                            automatedMsg += '<br>';
+                        }
+                    }
+            
+                    this._msg = automatedMsg + msg;
+                    this._log = {
+                        author  : this._author,
+                        date    : Date.now(),
+                        msg     : this._msg,
+                    }
+                    console.debug(this._log);
+                    rent.log.unshift(this._log);
                 }
-        
-                this._msg = msg + automatedMsg;
-                this._log = {
-                    author  : this._author,
-                    date    : Date.now(),
-                    msg     : this._msg,
-                }
-                console.debug(this._log);
-                rent.log.unshift(this._log);
-            }
-        );
+            );
+        }
     }
 }

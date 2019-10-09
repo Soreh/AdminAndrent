@@ -18,8 +18,8 @@ export class Status {
                 },
                 {
                     code : 4,
-                    label : "Confirmé(e)",
-                    color: 'confirmed_color',
+                    label : "Demande",
+                    color : 'ask_color',
                 },
                 {
                     code : 5,
@@ -27,8 +27,8 @@ export class Status {
                 },
                 {
                     code : 6,
-                    label : "Demande",
-                    color : 'ask_color',
+                    label : "Confirmé(e)",
+                    color: 'confirmed_color',
                 },
                 {
                     code : 7,
@@ -86,9 +86,9 @@ export const STATUSCODE = {
     toBeSend : 1,
     send : 2,
     approved : 3,
-    confirmed : 4,
+    firstContact : 4,
     toBePaid : 5,
-    firstContact : 6,
+    confirmed : 6,
     toBeConfirmed : 7,
     paid : 8,
     toDO : 9,

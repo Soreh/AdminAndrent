@@ -7,7 +7,7 @@ import { Log } from '../../../models/rentals/log.interface';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { ViewController } from 'ionic-angular';
+import { ViewController, NavController } from 'ionic-angular';
 
 /**
  * Generated class for the RentalAddFormComponent component.
@@ -40,7 +40,7 @@ export class RentalAddFormComponent implements OnInit {
       dates : [''],
       contact_name : ['', Validators.required],
       contact_tel :[''],
-      contact_mail : ['', Validators.email],
+      contact_mail : [''],
     })
     this.config = this.rentalService.getConfig();
   }
@@ -91,8 +91,10 @@ export class RentalAddFormComponent implements OnInit {
 
     this.rentalService.addRental(rental)
       .then(
-        () => {
-          this.viewCtrl.dismiss();
+        (id) => {
+          if (id) {
+            this.viewCtrl.dismiss(id);
+          }
         },
         (e) => {
           console.warn("Impossible d'ajouter la location : " + e);
