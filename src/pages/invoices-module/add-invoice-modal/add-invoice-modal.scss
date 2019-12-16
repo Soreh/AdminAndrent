@@ -2,4 +2,14 @@ page-add-invoice-modal {
     .destContainer {
         background-color: color($colors, 'greyback');
     }
+
+    .quotationAmount {
+        p {
+            text-align: center;
+            font-size: larger;
+            span {
+                font-weight: bolder;
+            }
+        }
+    }
 }

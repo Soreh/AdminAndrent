@@ -1,11 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { AlertController, NavController, Alert } from 'ionic-angular';
+import { RentalConfig, ContractCondition } from '../../../models/rentals/rentals-config.interface';
+import { AlertController, NavController, Alert, ModalController } from 'ionic-angular';
 import { AngularFireDatabase } from 'angularfire2/database';
 
 import { Location } from "../../../models/rentals/location.interface";
+import { ContractArticle, ContractParagraph, ContractScheme, AbstractArticle } from "../../../models/global/contract-scheme.interface";
+
 import { OptionCategory, QuotationOption, ChargeType, Charge } from '../../../models/rentals/quotation-option.interface';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
+
+import { PARAGRAPHCONDITIONTYPE } from "../../../models/global/constances";
+import { Title } from '@angular/platform-browser';
 
 
 /** 
@@ -29,6 +34,7 @@ export class RentalConfigComponent implements OnInit {
   public suggestedPrice = 0;
   
   public showAddForm: boolean = false;
+  public shownIndexArticle = [];
   
   public newLoc: Location;
   public newCat: OptionCategory;
@@ -36,16 +42,54 @@ export class RentalConfigComponent implements OnInit {
   public newChargeDetails: Charge;
 
   public optionToAdd: QuotationOption;
+  public conditionToAdd: ContractCondition;
+  public articleToAdd: ContractArticle;
+  public paragraphToAdd: ContractParagraph;
+  public conditionTypes = PARAGRAPHCONDITIONTYPE;
 
   private alert: Alert;
   
   text: string;
 
+  public tabs  = [
+    {
+      name : 'Espaces',
+      target : 'locations',
+      show : false,
+      class : "", 
+    },
+    {
+      name : 'Types de coûts',
+      target : 'cost-types',
+      class : '',
+      show : false,
+    },
+    {
+      name : 'Options',
+      target : 'options',
+      show : true,
+      class : "active",
+    },
+    {
+      name : 'Convention',
+      target : 'contract',
+      show : false,
+      class : "",
+    },
+    {
+      name : 'Factures',
+      target : 'invoices',
+      show : false,
+      class : "",
+    }
+  ];
+
   constructor(
     private alertCtrl: AlertController,
     private navCtrl: NavController,
     private db: AngularFireDatabase,
-    private rental: RentalServiceProvider) {
+    private rental: RentalServiceProvider,
+    private modalCtrl: ModalController) {
     console.log('Hello RentalConfigComponent Component');
     this.newLoc = {
       label : '',
@@ -68,6 +112,8 @@ export class RentalConfigComponent implements OnInit {
     }
 
     this._emptyOptionToAdd();
+    this._emptyConditionToAdd();
+    this._emptyArticleToAdd();
   }
 
   showAdd() {
@@ -77,6 +123,23 @@ export class RentalConfigComponent implements OnInit {
       this.showAddForm = true;
     }
     console.log(this.showAddForm);
+  }
+
+  showTab(target) : void {
+    this.tabs.forEach(tab => {
+      tab.show = false;
+      if (tab.class){
+        tab.class="";
+      }
+      if (tab.target === target){
+        tab.show = true;
+        tab.class="active";
+      }
+    });
+  }
+
+  isShown(target) : boolean {
+    return this.tabs.find(tab => tab.target === target).show;
   }
 
   getSuggestedPrice() {
@@ -368,5 +431,157 @@ export class RentalConfigComponent implements OnInit {
   deleteOption(){
     // Warning ! What if a quotation uses that option ?
     this.deleteToimplement();
+  }
+
+  /**
+   * CONTRACT CONDITIONS
+   */
+
+  private _emptyConditionToAdd() {
+    this.conditionToAdd = {
+      id : this.db.createPushId(),
+      label : '',
+      isList : false,
+    }
+  }
+
+  private _emptyArticleToAdd() {
+    this.articleToAdd = {
+      title : '',
+    }
+  }
+
+  addCondition() {
+    if (!this.config.contractConditions) {
+      this.config.contractConditions = [];
+    }
+    this.config.contractConditions.push(this.conditionToAdd);
+    this.saveConfig();
+    this._emptyConditionToAdd();
+  }
+
+  deleteCondition(index) {
+    console.log('condition à effacer d\'index' + index);
+    this.config.contractConditions.splice(index, 1);
+    this.saveConfig();
+  }
+
+  /**
+   * RENTAL CONTRACT SCHEME
+   */
+  addArticle() {
+    if (!this.config.rentalContractScheme) {
+      this.config.rentalContractScheme = {
+        article: [],
+      };
+    }
+    this.config.rentalContractScheme.article.push(this.articleToAdd);
+    this._emptyArticleToAdd();
+  }
+
+  deleteArticle(index) {
+    this.showArticle(index);
+    this.config.rentalContractScheme.article.splice(index, 1);
+  }
+
+  editArticle(art: ContractArticle) {
+    let alert = this.alertCtrl.create({
+      title:"Titre de l'article",
+      inputs: [
+        {
+          name: "title",
+          placeholder: "Titre / texte de l'article",
+        }
+      ],
+      buttons : [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+        },
+        {
+          text: 'Modifier',
+          handler: data => {
+            art.title = data.title;
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  addParagraph(article: AbstractArticle, showIndex = null) {
+    if (showIndex) {
+      if (!this.shownIndexArticle.find(index => index === showIndex)) {
+        this.showArticle(showIndex);
+      }
+    }
+    if (!article.paragraphs) {
+      article.paragraphs = [];
+    }
+    //open Modal
+    const modal = this.modalCtrl.create('AddParagraphModalPage', {
+      config: this.config
+    });
+    modal.onDidDismiss(par => {
+      if (par) {
+        article.paragraphs.push(par);
+      }
+    })
+    modal.present();
+    //Push the new Article
+  }
+
+  deleteParagraph(art: AbstractArticle, index: any) {
+    console.log(index);
+    art.paragraphs.splice(index, 1);
+    console.log(art.paragraphs);
+  }
+
+  editParagraph(para: ContractParagraph) {
+    let parToModify = para;
+    const modal = this.modalCtrl.create('AddParagraphModalPage', {
+      config: this.config,
+      para: parToModify,
+    });
+    modal.onDidDismiss(par => {
+      if (par) {
+        para = par;
+      }
+    })
+    modal.present();
+  }
+
+  showArticle(index) {
+    console.log(this.shownIndexArticle.find(storedIndex => storedIndex === index));
+    if (this.shownIndexArticle.find(storedIndex => storedIndex === index) === undefined) {
+      console.log("push the index !");
+      this.shownIndexArticle.push(index);
+    } else {
+      console.log('index à enlever')
+      this.shownIndexArticle = this.shownIndexArticle.filter(storedIndex => storedIndex != index);
+    }
+  }
+
+  isArticleShown(index) {
+    return (this.shownIndexArticle.find(storedIndex => storedIndex === index) != undefined) ? true : false;
+  }
+
+  getIconCondition(par: ContractParagraph): string {
+    if (par.condition) {
+      switch (par.type) {
+        case this.conditionTypes.show:
+          return "eye";
+        case this.conditionTypes.replacementText:
+          return "swap";
+        case this.conditionTypes.list:
+          return "list";
+        default:
+          break;
+      }
+    } else if (par.listAuto) {
+      return "list";
+    } else {
+      return "checkmark"
+    }
   }
 }

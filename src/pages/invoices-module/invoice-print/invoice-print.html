@@ -5,64 +5,115 @@
   Ionic pages and navigation.
 -->
 <ion-content padding>
-  <button ion-button icon-only (click)="close()" float-right>
-    <ion-icon name="close"></ion-icon>
-  </button>
+  <ion-buttons end>
+    <button ion-button icon-only  (click)="getPdf()">
+      <ion-icon name="cloud-download"></ion-icon>
+    </button>
+    <button ion-button icon-only (click)="close()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+  </ion-buttons>
   <div *ngIf="invoice; else no_data">
     <div class="print">
       <div class="header">
         <img class="logo" src="assets/imgs/logo-rc.png" height="75px">
-        <p>{{invoice?.date}}</p>
       </div>
       <div class="content">
-        <div class="client" *ngIf="invoice.client">
-          <p>{{invoice.client?.name}}</p>
-          <p>{{invoice.client?.address}}</p>
-          <p>{{invoice.client?.enterpriseNumber}}</p>
-          <p>{{invoice.client?.vat}}</p>
-        </div>
-        <ion-grid padding>
+        <div class="infos">
+            <h4>Déclaration de créance | Facture <span *ngIf="invoice.reg">de régularisation</span> N° {{invoice?.id}}</h4>
+            <p>Date d'émission : {{invoice?.date}}</p>
+            <p>Numéro à rappeler lors de votre paiement : {{invoice?.id}}</p>
+            <p style="font-weight:300; font-style: italic; padding-top: 5px" *ngIf="invoice.reg">Régularisation de la facture n° {{invoice?.parentInvoice}}</p>
+          </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <div class="issuer">
+                <p>{{ structure?.name }}</p>
+                <p>{{ structure?.contact?.number }}, {{ structure?.contact?.street }}</p>
+                <p>{{ structure?.contact?.cp }} {{ structure?.contact?.city }}</p>
+                <p>N° Entr. : {{ structure?.enterpriseNumber }}</p>
+                <p>IBAN {{ mainBankAccount?.iban }}</p>
+                <p>{{ structure?.contact?.tel }}</p>
+                <p>{{ structure?.contact?.mail }}</p>
+              </div>
+            </ion-col>
+            <ion-col>
+              <div class="client" *ngIf="invoice.client">
+                <p>{{invoice.client?.name}}</p>
+                <p>{{invoice.client?.address}}</p>
+                <p>N° Entr. : {{invoice.client?.enterpriseNumber}}</p>
+                <p>{{invoice.client?.vat}}</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid padding class="border">
           <ion-row>
             <ion-col>
               <ion-row>
-                <ion-col col-12 class="cat grey-back">
-                  <h6>
-                      Facture n°{{invoice?.id}} pour :
+                <ion-col col-10 class="cat grey-back">
+                  <h6 text-center>
+                      Objet de la Créance
+                  </h6>
+                </ion-col>
+                <ion-col col-2 class="cat grey-back">
+                  <h6 text-center>
+                      Montant
                   </h6>
                 </ion-col>
               </ion-row>
-              <ion-row>
-                <ion-col col-10 offset-1>
+              <ion-row *ngFor="let line of invoice.lines" class="invoiceLines">
+                <ion-col col-10>
                   <p>
-                    {{invoice.label}}
+                    {{line.label}}
+                  </p>
+                </ion-col>
+                <ion-col col-2>
+                  <p text-center>
+                    {{line.amount}}€
                   </p>
                 </ion-col>
               </ion-row>
             </ion-col>
           </ion-row>
         </ion-grid>
-        <ion-grid padding class="total">
+        <ion-grid padding class="total border">
           <ion-row align-items-center class="grey-back">
             <ion-col col-10>
-              <h2 text-right class="padding-line">Total</h2>
+              <p text-right class="padding-line">Total(1)</p>
+              <p text-right style="font-weight: 300;" *ngIf="!invoice.reg">Acompte à verser(2)</p>
+              <p text-right style="font-weight: 300;" *ngIf="!invoice.reg">Solde(3)</p>
             </ion-col>
             <ion-col text-center>
-              <h4 class="price padding-line">{{invoice.amount}}€</h4>
+              <p class="price padding-line">{{invoice.amount}}€</p>
+              <p style="font-weight: 300;" *ngIf="!invoice.reg">{{invoice.amount * (percentage / 100)  | number:'1.0-0' }}€</p>
+              <p style="font-weight: 300;" *ngIf="!invoice.reg">{{invoice.amount - (invoice.amount * (percentage / 100))  | number:'1.0-0' }}€</p>
             </ion-col>
           </ion-row>
         </ion-grid>
         <ion-grid>
+          <ion-row class="conditions">
+            <ion-col>
+              <p>Les conditions de location sont précisées par la convention de location établie entre les Riches-Claires et {{invoice.client.name}}, chaque partie reconnaissant avoir reçu et signé un exemplaire.</p>
+              <p style="font-weight: bolder;" *ngIf="!invoice.reg" >En accord avec la convention de location, la confirmation de la réservation ne sera effective qu'après le versement d'un accompte correspondant à {{percentage}}% du montant total de cette facture, soit {{invoice.amount * (percentage)/100 | number:'1.0-0'}}€.</p>
+            </ion-col>
+            <ion-col>
+              <p *ngIf="!invoice.reg">(2)Merci de verser cet acompte dans les <span class="bold">5 jours ouvrables</span> de la date d'émission de la présente sur le compte <span class="bold">IBAN {{ mainBankAccount?.iban }} </span>en mentionnant en communication le numéro de la déclaration de créance. Le non-respect de ce délai entraîne l’annulation de la location, ainsi que des frais administratifs de 175€.</p>
+              <p *ngIf="!invoice.reg">(3)Le <span>solde</span> est à verser au plus tard pour la <span>veille de l’évènement</span>.</p>
+              <p *ngIf="invoice.reg">Merci de verser le montant total dans les <span class="bold">15 jours ouvrables</span> de la date d'émission de la présente sur le compte <span class="bold">IBAN {{ mainBankAccount?.iban }} </span>en mentionnant en communication le numéro de la déclaration de créance.</p>
+            </ion-col>
+          </ion-row>
           <ion-row>
-            <ion-col col-5 text-right>
-              <p><em>Déclaration de créance non soumise à la TVA.</em></p>
-              <p>Le montant est à régler dès réception de la présente sur le compte<br/>{{ structure?.bankAccount[0]?.iban }}<br/>en mentionnant la référence {{ invoice?.id }} en communication.</p>
+            <ion-col col-8 offset-4 text-right>
+              <p style="font-size: 10px;"><em>(1)Déclaration de créance non soumise à la TVA en vertu de l'article 44§2 8° du code de la TVA..</em></p>
             </ion-col>
           </ion-row>
         </ion-grid>
       </div>
       <div class="footer">
         <p>
-            {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }}<br/>Num d'entreprise {{ structure?.enterpriseNumber }} | Compte Bancaire {{ structure?.bankAccount[0]?.iban }}
+            {{ structure?.name }} | {{ structure?.contact?.number }}, {{ structure?.contact?.street }} {{ structure?.contact?.city }}<br/>Num d'entreprise {{ structure?.enterpriseNumber }} | Compte Bancaire IBAN {{ mainBankAccount?.iban }}
          </p> 
       </div>
     </div>

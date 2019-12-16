@@ -20,16 +20,60 @@
       <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
     </ion-select>
   </ion-item>
-  <ion-item>
-    <ion-label>Clauses particulières</ion-label>
-    <ion-textarea [(ngModel)]="contract.specialClause" (ngModelChange)="setChange()"></ion-textarea>
-  </ion-item>
+  <div class="option-container" *ngIf="contract.options">
+    <div class="option" *ngFor="let option of contract.options">
+      <div class="bool-container" *ngIf="option.isBool">
+        <ion-item>
+          <ion-label style="font-weight: bolder;">{{ option.label }}</ion-label>
+          <ion-toggle color="secondary" [(ngModel)]="option.value" (ngModelChange)="setChange()"></ion-toggle>
+        </ion-item>
+        <div style="margin-left: 25px;">
+            <ion-note text-right>{{ option.desc }}</ion-note>
+        </div>
+      </div>
+      <div class="list-container" *ngIf="!option.isBool">
+        <ion-item>
+          <ion-label style="font-weight: bolder;">{{option.label}}</ion-label>
+          <button color="secondary" ion-button item-end icon-only (click)="addItemToList(option)">
+            <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-item>
+        <div style="margin-left: 25px;">
+          <ion-note text-right>{{ option.desc }}</ion-note>
+        </div>
+        <div style="margin-left: 25px;">
+          <ion-item *ngFor="let listItem of option.list, index as i">
+            <ion-label class="ion-text-wrap">{{listItem}}</ion-label>
+            <button clear ion-button item-start icon-only (click)="removeFromList( option.list, i)">
+              <ion-icon name="trash"></ion-icon>
+            </button>
+          </ion-item>
+        </div>
+      </div>
+      <!-- <div class="list-container" *ngIf="!option.isBool">
+        <ion-item *ngFor="let item of option.list">
+          <ion-input [value]="item" type="text"></ion-input>
+          <button item-end ion-button icon-only clear>
+            <ion-icon name="trash"></ion-icon>
+          </button>
+        </ion-item>
+        <ion-item>
+          <ion-input placeholder="A implementer" type="text"></ion-input>
+          <button item-end ion-button icon-only clear>
+            <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-item>
+      </div> -->
+    </div>
+  </div>
+  <pre> {{contract.options | json }}</pre>
 </ion-content>
 
 <ion-footer>
   <ion-buttons end>
-    <button ion-button (click)="seeContract()">Voir le contrat</button>
-    <button ion-button (click)="update()">Ok !</button>
+    <button ion-button (click)="resetOptions()" [disabled]="!canModify()">Par défaut</button>
+    <button ion-button (click)="generateContract()">Voir le contrat</button>
+    <button ion-button (click)="update()">Sauvegarder</button>
   </ion-buttons>
 
 </ion-footer>

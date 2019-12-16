@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Facture</ion-title>
+    <ion-title>Facture<span *ngIf="invoice.reg"> de régularisation</span></ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -23,30 +23,76 @@
   <ion-list>
     <ion-item>
       <ion-label>Statut</ion-label>
-      <ion-select [(ngModel)]="invoice.status">
+      <ion-select [(ngModel)]="invoice.status" (ionChange)="setChange()">
         <ion-option *ngFor="let stat of statuses" [value]="stat.code">{{stat.label}}</ion-option>
       </ion-select>
     </ion-item>
+    <div margin class="destContainer quotationAmount">
+      <p *ngIf="!invoice.reg">Montant à facturer d'après devis : {{invoice.quotationTotal}}€</p>
+    </div>
     <ion-item>
       <ion-label>Numéro</ion-label>
-      <ion-input [(ngModel)]="invoice.id"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Montant</ion-label>
-      <ion-input [(ngModel)]="invoice.amount"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Libellé</ion-label>
-      <ion-textarea [(ngModel)]="invoice.label"></ion-textarea>
+      <ion-input [(ngModel)]="invoice.id" (ionChange)="setChange()"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Date</ion-label>
-      <ion-textarea [(ngModel)]="invoice.date"></ion-textarea>
+      <ion-input [(ngModel)]="invoice.date" (ionChange)="setChange()"></ion-input>
     </ion-item>
+    <ion-item *ngIf="invoice.reg">
+      <ion-label>Facture liée</ion-label>
+      <ion-input [(ngModel)]="invoice.parentInvoice" disabled></ion-input>
+    </ion-item>
+    <ion-grid>
+      <ion-row *ngFor="let line of invoice.lines, index as i" text-center>
+        <ion-col>
+          <ion-item text-wrap>
+            <ion-input [(ngModel)]="line.label"></ion-input>
+            <button item-start ion-button icon-only clear (click)="deleteLine(i)">
+              <ion-icon name="trash"></ion-icon>
+            </button>
+          </ion-item>
+        </ion-col>
+        <ion-col col-3 text-center>
+          <ion-item>
+            <ion-input type="number" [(ngModel)]="line.amount" (ionChange)="computeTotal()"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row text-center>
+        <ion-col>
+          <ion-item text-wrap>
+            <button item-start ion-button icon-only (click)="addLine()" [disabled]="line.label === ''">
+              <ion-icon name="add"></ion-icon>
+            </button>
+            <ion-input [(ngModel)]="line.label"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col col-3 text-center>
+          <ion-item>
+            <ion-input [(ngModel)]="line.amount" type="number"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col text-right>
+          <p>
+            <span *ngIf="warning">
+              <ion-icon color="danger" name="warning"></ion-icon>
+            </span>
+            TOTAL :</p>
+        </ion-col>
+        <ion-col col-3 text-center>
+          <p>{{ invoice.amount}}</p>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-list>
-  <ion-buttons end>
-    <button ion-button (click)="cancel()" color="greyback">Annuler</button>
-    <button ion-button (click)="viewInvoice()" [disabled]="!invoice?.id && !invoice?.label && !invoice?.date">Voir la facture</button>
-    <button ion-button (click)="submit()">Mettre à jour</button>
-  </ion-buttons>
 </ion-content>
+<ion-footer>
+    <ion-buttons end>
+      <button ion-button (click)="cancel()" color="greyback">Annuler</button>
+      <button ion-button (click)="reset()">Par défaut</button>
+      <button ion-button (click)="viewInvoice()" [disabled]="!canSeeInvoice()">Voir la facture</button>
+      <button ion-button (click)="submit()" [disabled]="!change">Mettre à jour</button>
+    </ion-buttons>
+</ion-footer>

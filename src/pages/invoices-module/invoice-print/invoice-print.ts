@@ -20,6 +20,9 @@ export class InvoicePrintPage implements OnInit {
 
   public invoice: Invoice;
   public structure: Structure;
+  public mainBankAccount;
+
+  public percentage = 25;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public struct: StructureServiceProvider) {
   }
@@ -32,6 +35,11 @@ export class InvoicePrintPage implements OnInit {
           data.valueChanges().subscribe(
             (st) => {
               this.structure = <Structure>st;
+              let bankAccount = this.structure.bankAccount.find(ac => ac.main === true);
+              console.log(bankAccount);
+              this.mainBankAccount= {
+                iban: bankAccount.iban
+              }
             }
           );
         }
@@ -53,6 +61,10 @@ export class InvoicePrintPage implements OnInit {
 
   goHome() {
     this.navCtrl.setRoot('StartPage');
+  }
+
+  getPdf() {
+    alert('To implement !')
   }
 
 }

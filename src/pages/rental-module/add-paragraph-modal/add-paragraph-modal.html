@@ -1,0 +1,76 @@
+<!--
+  Generated template for the AddParagraphModalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Ajouter un paragraphe à l'article</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <p>Working!</p>
+  <pre>{{paragraph | json}}</pre>
+  <ion-item>
+    <ion-label>Texte :</ion-label>
+    <ion-textarea [(ngModel)]="paragraph.text"></ion-textarea>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>
+      Ajouter une condition, ou générer une liste automatique ?
+    </ion-label>
+    <ion-select (ionChange)="applyChoice()" [(ngModel)]="conditionOrList">
+      <ion-option value="non">Non.</ion-option>
+      <ion-option value="condition">Oui, une condition.</ion-option>
+      <ion-option value="list">Oui, une liste automatique.</ion-option>
+    </ion-select>
+  </ion-item>
+  <div *ngIf="paragraph.condition">
+    <ion-item>
+      <ion-label stacked>
+        Si :
+      </ion-label>
+      <ion-select [(ngModel)]="paragraph.conditionID" style="max-width:100%">
+        <ion-option *ngFor="let condition of config.contractConditions" [value]="condition.id">{{condition.label}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>
+        Alors :
+      </ion-label>
+      <ion-select [(ngModel)]="paragraph.type">
+        <ion-option [value]="conditionTypes.show">Afficher le texte.</ion-option>
+        <ion-option [value]="conditionTypes.replacementText">Remplacer le texte par :</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item *ngIf="paragraph.type === conditionTypes.replacementText">
+      <ion-textarea [(ngModel)]="paragraph.replacementText"></ion-textarea>
+    </ion-item>
+  </div>
+  <div *ngIf="paragraph.listAuto">
+    <ion-item>
+      <ion-label stacked>
+        Générer la liste depuis :
+      </ion-label>
+      <ion-select [(ngModel)]="paragraph.listModel">
+        <ion-option value="empty" selected>Liste vide</ion-option>
+        <ion-option value="locations">Les espaces à disposition</ion-option>
+        <ion-option value="dates">Les dates de location</ion-option>
+        <ion-option value="schedule">L'horaire précis</ion-option>
+        <ion-option *ngFor="let condition of listConditions" [value]="condition.id">{{condition.label}}</ion-option>
+      </ion-select>
+    </ion-item>
+  </div>
+  <div *ngIf="!edit" text-right>
+    <button ion-button (click)="cancel()">Annuler</button>
+    <button ion-button (click)="add()" [disabled]="!canAdd()">Ajouter</button>
+  </div>
+  <div *ngIf="edit" text-right>
+    <button ion-button (click)="cancel()">Ok!</button>
+  </div>
+</ion-content>

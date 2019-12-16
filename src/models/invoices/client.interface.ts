@@ -4,4 +4,5 @@ export interface Client {
     vat?: string,
     enterpriseNumber?: string,
     address?: string,
+    contact?: string,
 }

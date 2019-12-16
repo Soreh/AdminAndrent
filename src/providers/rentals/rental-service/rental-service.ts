@@ -341,6 +341,29 @@ export class RentalServiceProvider {
       )
   }
 
+  /**
+   * RENTAL CONTRACTS
+   */
+
+   public prefillContract(rental: Rental): void {
+     // Dates, locations and  schedule ?
+     // Tech ?
+     
+     // Promo ?
+
+     // openToPublic ?
+
+     // receptionStaff ?
+
+     // ticketting ?
+
+     // ticketStaff ?
+
+     // bar ?
+
+     // techList ?
+
+   }
 
   /**
    * 

@@ -9,7 +9,7 @@
         {{lastLog.author}}
         </span><br/>
         <span style="font-weight: bolder">
-            {{lastLog.date | date:"d/MM/yy à h:mm"}}
+            {{lastLog.date | date:"d/MM/yy à H:mm"}}
       </span>
     </ion-col>
     <ion-col class="log">
@@ -18,16 +18,16 @@
   </ion-row>
 </ion-grid>
 <ion-grid *ngIf="logs"class="log-container">
-  <ion-row margin-vertical *ngFor="let log of logs">
+  <ion-row margin-vertical *ngFor="let log of logs, index as i">
     <ion-col col-3 text-right>
       <span>
         {{log.author}}
         </span><br/>
         <span style="font-weight: bolder">
-        {{log.date | date:"d/MM/yy à h:mm"}}
+        {{log.date | date:"d/MM/yy à H:mm"}}
       </span>
     </ion-col>
-    <ion-col class="log">
+    <ion-col class="log" (click)="openModifyTextModal(log.msg, i)">
       <span [innerHtml]="log.msg"></span>
     </ion-col>
   </ion-row>

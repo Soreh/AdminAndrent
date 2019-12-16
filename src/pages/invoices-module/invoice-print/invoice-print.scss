@@ -7,8 +7,11 @@ page-invoice-print {
         margin: 2px 0px;
     }
 
-    ion-grid {
+    ion-grid.border {
         border: solid 1px black;
+        margin-top: 5px;
+    }
+    ion-grid {
         margin-top: 5px;
     }
 
@@ -17,10 +20,15 @@ page-invoice-print {
         margin-bottom: 10px;    
     }
 
-    .header p {
-        // display:inline-block;
+    .infos {
         text-align: right;
-        padding-top: 50px;
+        h4 {
+            text-transform: uppercase;
+        }
+        font-weight: bolder;
+        p {
+            margin: 0px;
+        }
     }
 
     .content h1 {
@@ -41,6 +49,8 @@ page-invoice-print {
 
     .total p {
         margin: 0px;
+        font-weight: bolder;
+        font-size: 13px;
     }
 
     .old-price {
@@ -59,7 +69,7 @@ page-invoice-print {
     }
 
     .client {
-        margin: 25px 10px 15px 100mm;
+        margin: 25px 10px 15px auto;
         border-top: solid 1px grey;
         border-bottom: solid 1px grey;
     }
@@ -69,9 +79,30 @@ page-invoice-print {
         margin: 0px;
     }
 
-    .client p {
+    .client p, .issuer p {
         margin: 0px;
+    }
+    
+    .issuer p {
+        color: grey;
+        font-style: italic;
+    }
+
+    .invoiceLines p {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    
+    .client p {
         font-weight: 800;
         text-align: right;
+    }
+
+    span.bold {
+        font-weight: bolder;
+    }
+
+    .conditions p {
+        font-size: 11px;
     }
 }

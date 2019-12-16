@@ -4,20 +4,70 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<h1>Devis</h1>
-<div *ngIf="contract; else no_data">
-    <button ion-button icon-only (click)="close()" float-right>
-        <ion-icon name="close"></ion-icon>
-      </button>
-    <pre>{{contract | json }}</pre>
-    <!-- <div class="postDevis">
-      <h2 *ngIf="emptyPostQuotation()">Frais hors devis</h2>
-      <p *ngFor="let option of quotation.postQuotation">{{option.label}} - {{option.amount}}€</p>
-    </div> -->
-</div>
-<ng-template #no_data>
-  <div padding margin>
-    <p>Ooops... Pas de données reçues...</p>
-    <button ion-button (click)="goHome()">Fermer</button>
+<ion-content padding>
+  <ion-buttons end>
+    <button ion-button icon-only (click)="getPdf()">
+      <ion-icon name="cloud-download"></ion-icon>
+    </button>
+    <button ion-button icon-only (click)="close()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+  </ion-buttons>
+  <div *ngIf="contractPrint; else no_data" class="contract-container">
+      <div class="header">
+        <img class="logo" src="assets/imgs/logo-rc.png" height="75px">
+      </div>
+      <h1 text-right>Convention de location</h1>
+      <div class="identification">
+        <p>Entre</p>
+        <div class="issuer" *ngIf="structure">
+          <p>{{ structure.name }}</p>
+          <p>{{ structure.contact.number }}, {{ structure.contact.street }} - {{ structure.contact.cp }} {{ structure.contact.city }}</p>
+          <p>N° d'entreprise : {{ structure.enterpriseNumber }}</p>
+          <p>Représenté par Eric De Staercke, directeur ;</p>   
+        </div>
+        <p>Et</p>
+        <div class="issuer" *ngIf="contractPrint.client">
+          <p>{{contractPrint.client.name}}</p>
+          <p>{{contractPrint.client.address}}</p>
+          <p>N° d'entreprise : {{contractPrint.client.enterpriseNumber}}</p>
+          <p>Représenté par {{contractPrint.client?.contact}} ;</p>
+        </div>
+        <p>Il est convenu ce qui suit :</p>
+      </div>
+      <!-- <pre>{{contractPrint | json}}</pre> -->
+      <div class="contract" *ngFor="let art of contractPrint.articles, index as i">
+        <h3>Art.{{i + 1}} - {{art.title}}</h3>
+        <div class="par" *ngFor="let par of art.paragraphs, index as p">
+          <p>§{{p + 1}} - {{par.text}}</p>
+          <div class="alinea" *ngIf="par.alineas">
+            <div *ngFor="let subpar of par.alineas, index as s">
+              <p>{{s + 1}}° {{subpar.text}}</p>
+              <div class="list" *ngIf="subpar.list">
+                <ul>
+                  <li *ngIf="subpar.list.length === 0">Néant</li>
+                  <li *ngFor="let item of subpar.list">{{item}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="list" *ngIf="par.list">
+            <ul>
+              <li *ngIf="par.list.length === 0">Néant</li>
+              <li *ngFor="let item of par.list">{{item}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="postDevis">
+        <h2 *ngIf="emptyPostQuotation()">Frais hors devis</h2>
+        <p *ngFor="let option of quotation.postQuotation">{{option.label}} - {{option.amount}}€</p>
+      </div> -->
   </div>
-</ng-template>
+  <ng-template #no_data>
+    <div padding margin>
+      <p>Ooops... Pas de données reçues...</p>
+      <button ion-button (click)="goHome()">Fermer</button>
+    </div>
+  </ng-template>
+</ion-content>

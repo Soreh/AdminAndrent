@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
-import { Invoice } from '../../../models/invoices/invoice.interface';
+import { Invoice, InvoiceLine } from '../../../models/invoices/invoice.interface';
 import { STATUSCODE, STATUS } from '../../../models/global/status.interface';
 
 /**
@@ -31,7 +31,14 @@ export class AddInvoiceModalPage implements OnInit{
       code: STATUSCODE.paid,
       label: STATUS.getLabel(STATUSCODE.paid),
     },
-  ]
+  ];
+
+  public line: InvoiceLine = {
+    label: '',
+    amount: 0
+  }
+  public warning:boolean;
+  public change: boolean;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private viewCtrl: ViewController) {
   }
@@ -44,19 +51,64 @@ export class AddInvoiceModalPage implements OnInit{
     console.log('ionViewDidLoad AddInvoiceModalPage');
   }
 
+  setChange() {
+    this.change = true;
+  }
+
   cancel() {
     this.viewCtrl.dismiss();
   }
 
   submit() {
     this.viewCtrl.dismiss({
-      change: true,
+      change: this.change,
+    })
+  }
+
+  reset() {
+    this.viewCtrl.dismiss({
+      reset: true,
+      change: true
     })
   }
 
   viewInvoice() {
-    this.viewCtrl.dismiss({view: true});
+    this.viewCtrl.dismiss({view: true, change: this.change});
     console.warn('Allez sur la page de print de la facture'); 
+  }
+
+  addLine() {
+    if (this.line.label != '') {
+      this.invoice.lines.push(this.line);
+      this.line = {
+        label: '',
+        amount: 0
+      }
+      this.computeTotal();
+    } 
+  }
+
+  deleteLine(index) {
+    this.invoice.lines.splice(index, 1);
+    this.computeTotal();
+  }
+
+  computeTotal() {
+    let total = 0;
+    this.invoice.lines.forEach( line => {
+      total += Number(line.amount);
+    })
+    if (total != this.invoice.quotationTotal && !this.invoice.reg) {
+      this.warning = true;
+    } else {
+      this.warning = false;
+    }
+    this.invoice.amount = total;
+    this.setChange();
+  }
+
+  canSeeInvoice() {
+    return (this.invoice.date && this.invoice.id && this.invoice.lines.length > 0) ? true : false;
   }
 
 }

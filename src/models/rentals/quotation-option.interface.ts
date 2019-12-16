@@ -12,6 +12,7 @@ export interface QuotationOption {
     infos ?: string;
     unit ?: number;
     isCompulsory?: boolean;
+    contractConditionID?: any;
 }
 
 export interface Formula {

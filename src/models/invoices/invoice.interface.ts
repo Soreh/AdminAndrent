@@ -8,4 +8,13 @@ export interface Invoice {
     status?: any,
     label?: string,
     date?: string,
+    lines?: InvoiceLine[],
+    quotationTotal?: number,
+    reg?: boolean,
+    parentInvoice?: any
+}
+
+export interface InvoiceLine {
+    label: string,
+    amount: number
 }

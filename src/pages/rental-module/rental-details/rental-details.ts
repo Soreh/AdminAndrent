@@ -180,6 +180,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     this.rentalService.log(this.rental, modif, msg).then(
       ()=> {
         try {
+          console.log(this.rental);
           this.rentalService.updateRental(this.rentalID, this.rental);
         } catch (error) {
           console.error(error);
@@ -361,16 +362,20 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
     let modal = this.modalCtrl.create('ContractModalPage', {
       contract: this.rental.contract,
+      rental: this.rental,
     })
 
     modal.onDidDismiss( (data) => {
       if (data) {
         if(data.change) {
-          this.keepChangesTrack('Convention')
+          this.keepChangesTrack('Convention');
+          this.saveAndLog();
         }
         if(data.dest){
+          console.log(data);
           this.navCtrl.push(data.dest, {
-            contract: data.contract
+            contract: data.contract,
+            rental: data.rental,
           });
         }
       } 
@@ -380,16 +385,22 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
   }
 
   canOpenInvoice() {
-    if (!this.rental.client || !this.rental.quotation_args){
+    if (this.rental.client && this.rental.quotation_args){
+      return true
+    }
+  }
+  
+  canOpenRegInvoice() {
+    if (this.rental.invoice && this.rental.invoice.id){
       return true
     }
   }
   
   setclientExist() {
     if (!this.rental.client){
-      this.clientExists = true;
-    } else {
       this.clientExists = false;
+    } else {
+      this.clientExists = true;
     }
   }
 
@@ -397,19 +408,42 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     console.debug(this.clientExists);
     return this.clientExists;
   }
-  openInvoiceModal() {
-    if (!this.rental.invoice){
-      let invoice:Invoice = {
-        // il faudra générer un id ?
-        client: this.rental.client,
-        amount: this.rental.quotation_args.total.amount,
-        status: STATUSCODE.toBeSend,
-      }
+
+  resetInvoice(reg = false) {
+    let invoice:Invoice = {
+      // il faudra générer un id ?
+      client: this.rental.client,
+      quotationTotal: reg ? 0 : this.rental.quotation_args.total.amount,
+      amount: reg ? 0 : this.rental.quotation_args.total.amount,
+      status: STATUSCODE.toDO,
+      lines: [{
+        amount: reg ? 0 : this.rental.quotation_args.total.amount,
+        label: reg ? 'Régularisation pour frais supplémentaires' : 'Mise à disposition de Salle'
+      }]
+    }
+    if (!reg) {
       this.rental.invoice = invoice;
+    } else {
+      invoice.reg = true;
+      invoice.parentInvoice = this.rental.invoice.id;
+      this.rental.regu_invoice = invoice;
+    }
+  }
+
+  openInvoiceModal(reg = false) {
+    if (!this.rental.invoice){
+      this.resetInvoice();
+    }
+
+
+    if (reg) {
+      if (!this.rental.regu_invoice) {
+        this.resetInvoice(true);
+      }
     }
 
     let modal = this.modalCtrl.create('AddInvoiceModalPage', {
-      invoice: this.rental.invoice,
+      invoice: reg ? this.rental.regu_invoice : this.rental.invoice,
     })
 
     modal.onDidDismiss( (data) => {
@@ -419,8 +453,11 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
         }
         if (data.view) {
           this.navCtrl.push('InvoicePrintPage', {
-            invoice : this.rental.invoice,
+            invoice : reg ? this.rental.regu_invoice : this.rental.invoice,
           })
+        } else if (data.reset) {
+          this.resetInvoice(reg);
+          this.openInvoiceModal(reg);
         }
       }
     })

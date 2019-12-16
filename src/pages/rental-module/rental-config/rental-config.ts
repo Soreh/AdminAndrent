@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';

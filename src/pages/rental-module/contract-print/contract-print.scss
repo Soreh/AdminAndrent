@@ -1,3 +1,47 @@
 page-contract-print {
+    .contract {
+        padding: 25px;
+        .par {
+            padding-left: 15px;
+        }
+        .alinea {
+            padding-left: 25px;
+            p {
+                margin: 0px;
+            }
+        }
+        .list {
+            padding-left: 15px;
+            li {
+                list-style-type: circle;
+            }
+        }
+    }
 
+    .contract-container {
+        width: 80%;
+        margin: auto;
+    }
+
+    .header {
+        height: 80px;
+        margin-bottom: 10px;    
+    }
+
+    .padding-line {
+        padding:15px 0px;
+        margin: 0px;
+    }
+
+    .issuer p {
+        padding-left: 10px;
+        margin: 0px;
+        color: grey;
+        font-style: italic;
+    }
+    
+    .identification p {
+        font-weight: 800;
+    }
+      
 }
