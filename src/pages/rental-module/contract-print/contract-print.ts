@@ -9,6 +9,10 @@ import { STATUSCODE } from '../../../models/global/status.interface';
 import { Structure } from '../../../models/global/structure.interface';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 /**
  * Generated class for the ContractPrintPage page.
  *
@@ -83,6 +87,7 @@ export class ContractPrintPage {
   generateContract() {
     this.contractPrint = {
       client: this.rental.client,
+      date: this.contract.date,
       articles: []
     };
     let rentalConfig = this.rentalService.getConfig();
@@ -169,7 +174,180 @@ export class ContractPrintPage {
 
   getPdf() {
     console.log('A implémenter');
-    alert('To implement !');
+    let date = new Date(this.contract.date);
+    console.log(date);
+    const docDef = {
+      info: {
+        title: `Convention de location - ${this.rental.name}`,
+      },
+      content: [],
+      styles: {
+        identification: {
+          italics: true,
+          fontSize: 11,
+          alignment: 'right',
+          margin: [0, 5, 20, 5]
+        },
+        articleTitle: {
+          bold: true,
+          margin: [0, 15, 0, 15],
+          fontSize: 15,
+        },
+        para: {
+          alignment: 'justify',
+          margin: [15, 5, 0, 5]
+        },
+        alinea: {
+          alignment: 'justify',
+          margin: [35, 0, 0, 0]
+        },
+        list: {
+          alignment: 'justify',
+          margin: [35, 0, 0, 0]
+        },
+        subList: {
+          alignment: 'justify',
+          margin: [50, 0, 0, 0]
+        },
+        between: {
+          bold: true,
+          fontSize: 12,
+          alignment: 'right',
+          margin: [0, 10, 20, 0]
+        },
+        sign: {
+          italics: true,
+          alignment: 'center',
+          margin: [0, 0, 0, 0]
+        },
+        alias: {
+          bold: true,
+          fontSize: 12,
+          alignment: 'right',
+          margin: [0, 0, 20, 0]
+        }
+      }
+    };
+    docDef.content.push({
+      text: 'ENTRE',
+      style: 'between'
+    });
+    docDef.content.push({
+      text: `${this.structure.name}\n${this.structure.contact.number}, ${this.structure.contact.street} - ${this.structure.contact.cp} ${this.structure.contact.city}\nN° d'entreprise : ${this.structure.enterpriseNumber}\nreprésenté par Eric De Staercke, directeur,`,
+      style: 'identification'
+    });
+    docDef.content.push({
+      text: 'çi-après dénommé les R-C ;',
+      style: 'alias'
+    });
+    docDef.content.push({
+      text: 'ET',
+      style: 'between'
+    });
+    docDef.content.push({
+      text: `${this.contractPrint.client.name}\n${this.contractPrint.client.address}\n${this.structure.enterpriseNumber ? `N° d'entreprise : ${this.structure.enterpriseNumber}`: ``}${this.structure.vat ? `\nN° de TVA: ${this.structure.vat}`: ``}\nreprésenté par ${this.contractPrint.client.contact},`,
+      style: 'identification'
+    });
+    docDef.content.push({
+      text: 'çi-après dénommé le preneur ;',
+      style: 'alias'
+    });
+    docDef.content.push({
+      text: 'Il est convenu ce qui suit :',
+      style: 'between'
+    });
+    this.contractPrint.articles.forEach((article, index) => {
+      let artTitle = {
+        text : `Art.${index + 1} - ${article.title.toLocaleUpperCase()}`,
+        style: 'articleTitle',
+      };
+      docDef.content.push(artTitle);
+      if (article.paragraphs) {
+        article.paragraphs.forEach((para, index) => {
+          docDef.content.push({
+            text: `§${index + 1} ${para.text}`,
+            style: 'para'
+          });
+          if (para.alineas) {
+            para.alineas.forEach((alineas, index) => {
+              let alinea = {
+                text: `${index + 1}° ${alineas.text}`,
+                style: 'alinea'
+              }
+              docDef.content.push(alinea);
+              if (alineas.list) {
+                if (alineas.list.length === 0) {
+                  docDef.content.push({
+                    text: '- Néant.',
+                    style: 'subList',
+                  })
+                } else {
+                  alineas.list.forEach( list => {
+                    docDef.content.push({
+                      text: `- ${list}`,
+                      style: 'subList',
+                    })
+                  });
+                }
+              }
+            })
+          }
+          if (para.list) {
+            if (para.list.length === 0) (
+              docDef.content.push({
+                text: '- Néant.',
+                style: 'list',
+              })
+            )
+            para.list.forEach((list, index) => {
+              let listItem = {
+                text: `- ${list}`,
+                style: 'list',
+              }
+              docDef.content.push(listItem);
+            })
+          }
+        });
+      }
+    });
+    docDef.content.push({
+      text: `Fait à Bruxelles, en deux exemplaires le ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}, chaque partie reconnaissant avoir reçu le sien.`,
+      margin: [0, 10, 0, 5],
+    })
+    docDef.content.push({
+      table : {
+        widths: ['*', '*'],
+        body: [
+          [
+            {
+              text: `Pour les R-C :`,
+              border: [false, false, false, false],
+              style: 'sign'
+            },
+            {
+              text: `Pour le preneur :`,
+              border: [false, false, false, false],
+              style: 'sign'
+            }
+          ],
+          [
+            {
+              text: `Eric De Starcke, directeur`,
+              border: [false, false, false, false],
+              style: 'sign'
+            },
+            {
+              text: `${this.contractPrint.client.contact}`,
+              border: [false, false, false, false],
+              style: 'sign'
+            }     
+          ]
+        ]
+      }
+    })
+    console.debug(docDef);
+    let fileName = `Convention de location - ${this.rental.client.name}`;
+    pdfMake.createPdf(docDef).download(fileName);
   }
 
 }

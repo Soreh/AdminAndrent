@@ -4,6 +4,7 @@ export interface Contract {
     id ?: string,
     status_code ?: any,
     type?: any,
+    date?: string,
     // The following are deprecated :
     options ?: ContractOption[],
     specialClause ?: string,
@@ -29,6 +30,7 @@ export interface ContractOption {
 export interface ContractPrint {
     client: Client;
     articles: ContractPrintArticle[];
+    date?: string;
 }
 
 export interface ContractPrintArticle {

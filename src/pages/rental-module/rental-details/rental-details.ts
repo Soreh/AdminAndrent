@@ -360,6 +360,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
       }
     }
 
+    this.rental.contract.date = this.rental.contract.date ? this.rental.contract.date : new Date().toISOString();
+
     let modal = this.modalCtrl.create('ContractModalPage', {
       contract: this.rental.contract,
       rental: this.rental,

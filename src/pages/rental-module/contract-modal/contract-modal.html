@@ -20,6 +20,11 @@
       <ion-option *ngFor="let stat of status" [value]="stat.code">{{stat.label}}</ion-option>
     </ion-select>
   </ion-item>
+  <ion-item>
+    <ion-label>Date du contrat</ion-label>
+      <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="contract.date" (ngModelChange)="setChange()">
+    </ion-datetime>
+  </ion-item>
   <div class="option-container" *ngIf="contract.options">
     <div class="option" *ngFor="let option of contract.options">
       <div class="bool-container" *ngIf="option.isBool">
