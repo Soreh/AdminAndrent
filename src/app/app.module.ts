@@ -23,6 +23,7 @@ import { ModulesProvider } from '../providers/global/modules/modules';
 import { StructureServiceProvider } from '../providers/global/structure-service/structure-service';
 import { LogController } from "../controllers/log.controller";
 import { AuthServiceProvider } from '../providers/auth-service/auth-service';
+import { CalendarServiceProvider } from "../providers/rentals/calendar/calendar-service";
 // import { ComponentsModule } from "../components/components.module";
 // import { RentalComponentsModule } from "../components/rentals/rental.components.module"; 
 
@@ -51,7 +52,8 @@ import { AuthServiceProvider } from '../providers/auth-service/auth-service';
     ModulesProvider,
     StructureServiceProvider,
     LogController,
-    AuthServiceProvider
+    AuthServiceProvider,
+    CalendarServiceProvider
   ]
 })
 export class AppModule {}
