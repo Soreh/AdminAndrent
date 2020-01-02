@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { CalendarServiceProvider } from '../../../providers/rentals/calendar/calendar-service';
+import { Component, OnInit } from '@angular/core';
+import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
 import { Subscription } from 'rxjs';
+// Services needed
+import { CalendarServiceProvider } from '../../../providers/rentals/calendar/calendar-service';
+import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
+import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
 /**
  * Generated class for the RentalCalendarPage page.
@@ -15,7 +18,7 @@ import { Subscription } from 'rxjs';
   selector: 'page-rental-calendar',
   templateUrl: 'rental-calendar.html',
 })
-export class RentalCalendarPage {
+export class RentalCalendarPage implements OnInit {
 
   public months = [
     'Janvier',
@@ -50,7 +53,27 @@ export class RentalCalendarPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
+    private modalCtrl: ModalController,
+    private auth: AuthServiceProvider,
+    private struct: StructureServiceProvider,
     private calendarService: CalendarServiceProvider) {
+  }
+
+  ngOnInit() {
+    this.auth.isConnected().then( (ok) => {
+      if (!ok) {
+        console.error('Erreur : pas d\'utilisteur connecté');
+        this.navCtrl.setRoot('ConnectPage');
+      } else {
+        this.struct.isStructureLoaded().then( (ok) => {
+          if (!ok) {
+            console.error('Erreur, aucune structure chargée');
+            this.auth.logOut();
+            this.navCtrl.setRoot('ConnectPage');
+          }
+        })
+      }
+    });
   }
 
   ionViewWillLoad() {
@@ -73,14 +96,6 @@ export class RentalCalendarPage {
     this.currentLastDayIndex = this.getLastDayOfTheMonthIndex(this.currentYear, this.currentMonth);
     this.currentRowsNeeded = this.getRowsNeeded(this.currentYear, this.currentMonth);
     this.getDaysFromDB();
-  }
-
-  public addRental(day: DayRow) {
-    if (!day.events || day.events.length <= 0) {
-      alert('add rental');
-    } else {
-      alert ('rental list for tha day');
-    }
   }
 
   public showRentalResume(eventId) {
@@ -143,6 +158,42 @@ export class RentalCalendarPage {
         );
       }
     )
+  }
+
+  /****************
+   * Modals and Nav
+   */
+
+  public addRental(day: DayRow) {
+    if (!day.events || day.events.length <= 0) {
+      this._openNewRentalModal();
+    } else {
+      alert ('rental list for tha day');
+    }
+  }
+
+  private _openNewRentalModal() {
+    let modal = this.modalCtrl.create('NewRentalModalPage');
+    modal.present();
+    modal.onDidDismiss((newId) => {
+      if (newId) {
+        this.markDaysAsFree(true);
+        this._openRentalDetails(newId);
+      }});
+  }
+
+  private _openRentalDetails(rentalId) {
+    this.navCtrl.push("RentalDetailsPage", 
+      {
+        id: rentalId, 
+      }
+    );
+  }
+
+  public selectDay(day: DayRow): void {
+    if (!day.events) {
+      day.selected = !day.selected;
+    }
   }
 
   private getDaysFromDB() {

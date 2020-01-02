@@ -248,7 +248,10 @@ export class RentalsPage implements OnInit, OnDestroy {
   openNewRentalModal() {
     let modal = this.modalCtrl.create('NewRentalModalPage');
     modal.present();
-    modal.onDidDismiss((newId) => this.seeRentalDetails(newId));
+    modal.onDidDismiss((newId) => {
+      if (newId) {
+        this.seeRentalDetails(newId);
+      }});
   }
   
   // goHome(): void {

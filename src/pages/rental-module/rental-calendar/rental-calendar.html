@@ -68,7 +68,7 @@
               {{ day.date }}
             </div>
           </div>
-          <div class="day-container" *ngIf="!day.offset" [ngClass]="{taken: !day.freeDay}">
+          <div class="day-container" *ngIf="!day.offset" [ngClass]="{taken: !day.freeDay}" (click)="selectDay(day)">
             <div class="select-box">
               <input [(ngModel)]="day.selected" type="checkbox">
             </div>
