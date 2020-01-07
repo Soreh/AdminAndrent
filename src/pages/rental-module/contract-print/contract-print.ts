@@ -293,7 +293,7 @@ export class ContractPrintPage {
       style: 'between'
     });
     docDef.content.push({
-      text: `${this.contractPrint.client.name}\n${this.contractPrint.client.address}\n${this.structure.enterpriseNumber ? `N° d'entreprise : ${this.structure.enterpriseNumber}`: ``}${this.structure.vat ? `\nN° de TVA: ${this.structure.vat}`: ``}\nreprésenté par ${this.contractPrint.client.contact},`,
+      text: `${this.contractPrint.client.name}\n${this.contractPrint.client.address}\n${this.contractPrint.client.address ? `N° d'entreprise : ${this.contractPrint.client.address}`: ``}${this.contractPrint.client.vat ? `\nN° de TVA: ${this.contractPrint.client.vat}`: ``}\nreprésenté par ${this.contractPrint.client.contact},`,
       style: 'identification'
     });
     docDef.content.push({
