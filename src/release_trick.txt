@@ -1,0 +1,11 @@
+the only suggestions I came across was to remove --prod and use --aot --uglifyjs --minifyjs --minifycss --release instead which does not have the same effect as --prod as far as loading time of startup is concerned and to downgrade firebase to 4.12.1 which is unacceptable since version 4.13.0 has a critical bug fix.
+
+Scripts Json package :
+
+  "scripts": {
+    "start": "ionic-app-scripts serve",
+    "clean": "ionic-app-scripts clean",
+    "build": "ionic-app-scripts build",
+    "lint": "ionic-app-scripts lint",
+    "ionic:build": "node --max-old-space-size=8192 ./node_modules/@ionic/app-scripts/bin/ionic-app-scripts.js build"
+  },
