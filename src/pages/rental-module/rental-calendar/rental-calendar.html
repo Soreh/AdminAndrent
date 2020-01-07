@@ -1,0 +1,100 @@
+<!--
+  Generated template for the RentalCalendarPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-content>
+  <div class="side-menu-container">
+    <rental-menu></rental-menu>
+  </div>
+  <div padding class="panel-content">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <h4 text-center color="primary">Attention, ce calendrier n'est pas synchronisé avec le calendrier Google, il s'agit juste d'une présentation plus pratique des locations présentes en base de données.</h4>
+        </ion-col>
+      </ion-row>
+      <ion-row class="title">
+        <ion-col text-center>
+          <button clear ion-button (click)="loadToday()" [disabled]="!allowBackToToday()">aujourd'hui</button>
+          <h3 text-center>
+            <button clear ion-button icon-only (click)="loadPrevious()">
+              <ion-icon name="arrow-dropleft-circle"></ion-icon>
+            </button>
+            {{ getMonthName(currentMonth)}} {{ currentYear }}
+            <button clear ion-button icon-only (click)="loadNext()">
+              <ion-icon name="arrow-dropright-circle"></ion-icon>
+            </button>
+          </h3>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div class="day-name-container">
+            <p>lundi</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="day-name-container">
+            <p>mardi</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="day-name-container">
+            <p>mercredi</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="day-name-container">
+            <p>jeudi</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="day-name-container">
+            <p>vendredi</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="day-name-container">
+            <p>samedi</p>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="day-name-container">
+            <p>dimanche</p>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let row of populatedRows">
+        <ion-col *ngFor="let day of row">
+          <div class="day-container offset" (click)="changeMonth(day)" *ngIf="day.offset">
+            <div class="day-number" [ngClass]="{on: day.events}">
+              {{ day.date }}
+            </div>
+          </div>
+          <div class="day-container" *ngIf="!day.offset" [ngClass]="{taken: !day.freeDay}" (click)="selectDay(day)">
+            <div class="select-box">
+              <input [(ngModel)]="day.selected" type="checkbox">
+            </div>
+            <div class="day-number" [ngClass]="{on: day.events}" (click)="addRental(day)">
+              {{ day.date }}
+            </div>
+            <div class="event-container" *ngIf="day.events">
+              <p *ngFor="let event of day.events, index as i">
+                <a [ngClass]="{option: event.eventStatusCode === 10, confirmed: event.eventStatusCode === 6, over: event.eventStatusCode === 11, demand: event.eventStatusCode === 4}" *ngIf="i < 3" (click)="showRentalResume(event.eventId)">- {{ event.eventName | slice:0:20}}<span *ngIf="event.eventName.length >= 20">...</span></a>
+                <a class="see-more" (click)="addRental(day)" *ngIf="i === 4">
+                  +{{ getEventsAmount(day) - 3}}
+                </a>
+              </p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div text-right>
+      <p (click)="markDaysAsFree(true)">Marquer tous les jours sélectionnés comme disponibles à la location</p>
+      <p (click)="markDaysAsFree(false)">Marquer tous les jours sélectionnés comme non-disponibles à la location</p>
+    </div>
+  </div>
+</ion-content>

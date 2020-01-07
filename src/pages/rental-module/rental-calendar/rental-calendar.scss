@@ -1,0 +1,114 @@
+page-rental-calendar {
+    .title h3 {
+        font-size: 50px;
+        text-transform: uppercase;
+        font-weight: bolder;
+        button {
+            bottom: 18px;
+            position: relative;
+        }
+    }
+
+    .day-name-container p {
+        text-align: center;
+        font-weight: bolder;
+    }
+    .day-container {
+        background-color: #eff3ed;
+        margin: 3px;
+        border: solid lightgrey 1px;
+        position: relative;
+        width: 100%;
+        height: 125px;
+
+        .select-box {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+    }
+
+    .day-container.taken {
+        background-color: #e9d5d5;
+    }
+
+    .day-container.offset {
+        background-color: lightgrey;
+        cursor: pointer;
+        .day-number {
+            color: grey;
+        }
+        .day-number:hover {
+            border-bottom: none;
+        }
+    }
+
+    .day-number {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        font-weight: bolder;
+        line-height: 28px;
+        //border: solid 1px rgb(109, 109, 109);
+        //color: black;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+    }
+    .day-number:hover {
+        cursor: pointer;
+        border-bottom: solid 1px rgb(101, 34, 34);
+    }
+
+    .day-number.on {
+        border-radius: 15px;
+        border: solid 1px rgb(101, 34, 34);
+        color: rgb(101, 34, 34);
+        background-color: rgb(108, 54, 54);
+        color: white;
+    }
+
+    .day-number.on:hover {
+        // cursor: default;
+        background-color: white;
+        color: rgb(101, 34, 34);
+    }
+
+    .event-container {
+        position: absolute;
+        bottom: 5px;
+        width: 100%;
+        p {
+            text-align: right;
+            padding-right: 10px;
+            margin: 0px;
+            font-weight: bolder;
+            font-size: larger;
+            border-color: light-grey;
+        }
+        p a.option {
+            color: orange;
+        }
+        p a.confirmed {
+            color: green;
+        }
+        p a.over {
+            color: rgb(58, 30, 30);
+        }
+        p a.demand {
+            color: grey;
+            font-style: italic;
+        }
+        p a.see-more {
+            font-size: smaller;
+            font-weight: normal;
+        }
+
+        p a span {
+            font-size: smaller;
+        }
+        p:hover {
+            cursor: pointer;
+        }
+    }
+}

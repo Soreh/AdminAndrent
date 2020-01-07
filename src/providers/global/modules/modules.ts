@@ -116,7 +116,7 @@ export const MODULES = [
   {
     key : MODULES_KEYS.rental,
     name : 'Locations', // Traduction ?
-    page : 'RentalsPage',
+    page : 'RentalCalendarPage',
     config_key : '',
   },
   {

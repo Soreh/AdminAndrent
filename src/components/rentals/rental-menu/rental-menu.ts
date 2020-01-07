@@ -56,6 +56,13 @@ export class RentalMenuComponent {
           push : true,
         },
         {
+          label: 'Calendrier',
+          page: 'RentalCalendarPage',
+          data: {
+            push: true,
+          }
+        },
+        {
           label : 'Locations',
           page : 'RentalsPage',
           // data : {
