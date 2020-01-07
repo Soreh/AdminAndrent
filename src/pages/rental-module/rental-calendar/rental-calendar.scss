@@ -93,7 +93,11 @@ page-rental-calendar {
             color: green;
         }
         p a.over {
+            color: rgb(58, 30, 30);
+        }
+        p a.demand {
             color: grey;
+            font-style: italic;
         }
         p a.see-more {
             font-size: smaller;

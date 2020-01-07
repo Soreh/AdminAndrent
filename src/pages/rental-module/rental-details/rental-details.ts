@@ -11,6 +11,7 @@ import { isType } from '@angular/core/src/type';
 import { Client } from '../../../models/invoices/client.interface';
 import { Invoice } from '../../../models/invoices/invoice.interface';
 import { identifierModuleUrl } from '@angular/compiler';
+import { CalendarServiceProvider } from '../../../providers/rentals/calendar/calendar-service';
 
 /**
  * Generated class for the RentalDetailsPage page.
@@ -71,7 +72,8 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     public structService: StructureServiceProvider, 
     private alertCtrl: AlertController,
     private loader: LoadingController,
-    private modalCtrl: ModalController ) {
+    private modalCtrl: ModalController,
+    private calendar: CalendarServiceProvider ) {
   }
 
   /** LIFE CYCLES
@@ -181,7 +183,14 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
       ()=> {
         try {
           console.log(this.rental);
-          this.rentalService.updateRental(this.rentalID, this.rental);
+          this.rentalService.updateRental(this.rentalID, this.rental).then(
+            (ok) => {
+              if (ok) {
+                this.calendar.addEventFromRental(this.rental, this.rental.id);
+                this.calendar.updateEventStatus(this.rental);
+              }
+            }
+          );
         } catch (error) {
           console.error(error);
         }
@@ -226,6 +235,7 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
           handler : () => {
             this.rentalService.deleteRental(this.rentalID).then(
               ()=> {
+                this.calendar.deleteEventsFromRental(this.rental);
                 this.changeMade = null;
                 this.navCtrl.setRoot('RentalsPage');
               }
@@ -295,6 +305,51 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
 
   toggleDetails(): void {
     this.showDetails = !this.showDetails;
+  }
+
+  public getStringDate(): string {
+    let dates = 'Attention ! Aucune date dans le calendrier';
+    if (this.rental.calendar_dates) {
+      if (this.rental.calendar_dates.length > 0) {
+        dates = '';
+        let index = 0;
+        this.rental.calendar_dates.forEach(
+          (date) => {
+            let dateObj = new Date(date);
+            if (index > 0) {
+              dates += ' et '
+            }
+            dates += this.calendar.dateToString(dateObj);
+            index ++;
+          }
+        )
+      }
+    }
+    return dates
+  }
+
+  public showCalendarDates(): void {
+    if (!this.rental.calendar_dates) {
+      this.rental.calendar_dates = [];
+    }
+    let modal = this.modalCtrl.create('AddDateModalPage', {
+      datesArray: this.rental.calendar_dates,
+      rental: this.rental,
+    }, {
+      enableBackdropDismiss: false,
+    });
+    modal.onDidDismiss(
+      (data) => {
+        if (data) {
+          if( data.changeMade) {
+            console.log(data.dates);
+            this.keepChangesTrack('calendrier');
+            this.saveAndLog();
+          }
+        }
+      }
+    )
+    modal.present();
   }
 
   /** NAVIGATION

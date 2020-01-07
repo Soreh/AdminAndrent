@@ -10,6 +10,11 @@
   </div>
   <div padding class="panel-content">
     <ion-grid>
+      <ion-row>
+        <ion-col>
+          <h4 text-center color="primary">Attention, ce calendrier n'est pas synchronisé avec le calendrier Google, il s'agit juste d'une présentation plus pratique des locations présentes en base de données.</h4>
+        </ion-col>
+      </ion-row>
       <ion-row class="title">
         <ion-col text-center>
           <button clear ion-button (click)="loadToday()" [disabled]="!allowBackToToday()">aujourd'hui</button>
@@ -77,7 +82,7 @@
             </div>
             <div class="event-container" *ngIf="day.events">
               <p *ngFor="let event of day.events, index as i">
-                <a [ngClass]="{option: event.eventStatusCode === 1, confirmed: event.eventStatusCode === 2, over: event.eventStatusCode === 3}" *ngIf="i < 3" (click)="showRentalResume(event.eventId)">{{ event.eventName | slice:0:10}}<span *ngIf="event.eventName.length >= 10">...</span></a>
+                <a [ngClass]="{option: event.eventStatusCode === 10, confirmed: event.eventStatusCode === 6, over: event.eventStatusCode === 11, demand: event.eventStatusCode === 4}" *ngIf="i < 3" (click)="showRentalResume(event.eventId)">- {{ event.eventName | slice:0:20}}<span *ngIf="event.eventName.length >= 20">...</span></a>
                 <a class="see-more" (click)="addRental(day)" *ngIf="i === 4">
                   +{{ getEventsAmount(day) - 3}}
                 </a>
@@ -87,12 +92,9 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <p (click)="markDaysAsFree(true)">Marquer tous les jours sélectionnés comme disponibles à la location</p>
-    <p (click)="markDaysAsFree(false)">Marquer tous les jours sélectionnés comme non-disponibles à la location</p>
-    <p>Nombre de jours dans le mois : {{ currentDaysAmount }}</p>
-    <p>Index du premier jour du mois : {{ currentFirstDayIndex }}</p>
-    <p>Index du dernier jour du mois : {{ currentLastDayIndex }}</p>
-    <p>Nombre de rangées : {{ currentRowsNeeded }}</p>
-    <pre>{{daysInDB | json }}</pre>
+    <div text-right>
+      <p (click)="markDaysAsFree(true)">Marquer tous les jours sélectionnés comme disponibles à la location</p>
+      <p (click)="markDaysAsFree(false)">Marquer tous les jours sélectionnés comme non-disponibles à la location</p>
+    </div>
   </div>
 </ion-content>

@@ -8,6 +8,7 @@ import { UserServiceProvider } from '../../../providers/global/user-service/user
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 import { ViewController, NavController } from 'ionic-angular';
+import { CalendarServiceProvider } from '../../../providers/rentals/calendar/calendar-service';
 
 /**
  * Generated class for the RentalAddFormComponent component.
@@ -22,6 +23,7 @@ import { ViewController, NavController } from 'ionic-angular';
 export class RentalAddFormComponent implements OnInit {
 
   @Input() id;
+  @Input() firstDate;
   rentalToAdd: FormGroup;
   contactToAdd: Contact;
   errorIdMsg: string;
@@ -32,12 +34,12 @@ export class RentalAddFormComponent implements OnInit {
     private user : UserServiceProvider, 
     private rentalService: RentalServiceProvider, 
     private viewCtrl : ViewController, 
-    private formBuilder: FormBuilder) {
+    private formBuilder: FormBuilder,
+    private calendar: CalendarServiceProvider) {
     console.log('Hello RentalAddFormComponent Component');
     this.rentalToAdd = this.formBuilder.group({
       name : ['', Validators.required],
       location : ['', Validators.required],
-      dates : [''],
       contact_name : ['', Validators.required],
       contact_tel :[''],
       contact_mail : [''],
@@ -82,9 +84,15 @@ export class RentalAddFormComponent implements OnInit {
       status : STATUSCODE.firstContact,
       payment_status : STATUSCODE.toBePaid,
       log : [firstLog],
-      dates : this.rentalToAdd.value.dates,
       contact : [mainContact],
       location_id : this.rentalToAdd.value.location,
+    }
+
+    if (this.firstDate) {
+      rental.calendar_dates = [];
+      rental.calendar_dates.push(this.firstDate);
+      let stringDate = this.calendar.dateToString(new Date(this.firstDate));
+      rental.dates = stringDate;
     }
 
     console.debug(`location à ajouter : ${rental}`);
@@ -93,6 +101,7 @@ export class RentalAddFormComponent implements OnInit {
       .then(
         (id) => {
           if (id) {
+            this.calendar.addEventFromRental(rental, id);
             this.viewCtrl.dismiss(id);
           }
         },

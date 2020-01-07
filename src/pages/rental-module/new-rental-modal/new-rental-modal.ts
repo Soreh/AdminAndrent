@@ -17,6 +17,7 @@ import { StructureServiceProvider } from '../../../providers/global/structure-se
 export class NewRentalModalPage {
 
   id: any;
+  firstDate: any;
 
   constructor(
     public viewCtrl : ViewController, 
@@ -26,6 +27,9 @@ export class NewRentalModalPage {
   }
 
   ionViewWillLoad() {
+    if (this.navParams.get('firstDate')) {
+      this.firstDate = this.navParams.get('firstDate');
+    }
     this.struct.isStructureLoaded().then(()=>{
       this.struct.getCurrentId().then((id) => {
         this.id = id;

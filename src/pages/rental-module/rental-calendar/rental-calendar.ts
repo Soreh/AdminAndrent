@@ -38,6 +38,7 @@ export class RentalCalendarPage implements OnInit {
   public populatedRows: [DayRow[]];
  
   public daysub: Subscription;
+  public eventsub: Subscription;
   public daysInDB: DayRow[];
 
   public today:Date = new Date();
@@ -99,7 +100,9 @@ export class RentalCalendarPage implements OnInit {
   }
 
   public showRentalResume(eventId) {
-    alert('rentalResume of id : ' + eventId )
+    this.navCtrl.push('RentalDetailsPage', {
+      id: eventId
+    });
   }
 
   public loadToday() {
@@ -166,14 +169,32 @@ export class RentalCalendarPage implements OnInit {
 
   public addRental(day: DayRow) {
     if (!day.events || day.events.length <= 0) {
-      this._openNewRentalModal();
+      this._openNewRentalModal(day);
     } else {
-      alert ('rental list for tha day');
+      let alert = this.modalCtrl.create('SeeEventsModalPage',
+      {
+        events: day.events
+      });
+      alert.onDidDismiss(
+        (data) => {
+          if (data) {
+            if (data.add) {
+              this._openNewRentalModal(day);
+            }
+            if (data.rentalId) {
+              this._openNewRentalModal(data.rentalId);
+            }
+          }
+        }
+      )
+      alert.present();
     }
   }
 
-  private _openNewRentalModal() {
-    let modal = this.modalCtrl.create('NewRentalModalPage');
+  private _openNewRentalModal(date: DayRow) {
+    let modal = this.modalCtrl.create('NewRentalModalPage',{
+      firstDate: this._parseDay(date),
+    });
     modal.present();
     modal.onDidDismiss((newId) => {
       if (newId) {
@@ -203,9 +224,32 @@ export class RentalCalendarPage implements OnInit {
     this.daysub = this.calendarService.getDatesForCurrentMonth(this.currentYear, this.currentMonth + 1).subscribe(
       (days) => {
         this.daysInDB = days;
+        this.daysInDB.forEach(
+          (day) => {
+            this.getEventsFromDb(day);
+          }
+        )
         this.populateRows();
       }
     )
+  }
+
+  private getEventsFromDb(day: DayRow) {
+    this.eventsub = this.calendarService.getEventsForDay(this.currentYear, this.currentMonth + 1, day.date).subscribe(
+      (events) => {
+        if (events.length > 0) {
+          day.events = events;
+        }
+      }
+    )
+  }
+
+
+  private _parseDay(day: DayRow) {
+    console.log(this.currentYear + ' ' + this.currentMonth + ' ' + day.date);
+    let date = new Date(this.currentYear, this.currentMonth, day.date);
+    console.log(date);
+    return date.toISOString();
   }
 
   private getPreviousMonth(): {month: number, year: number} {
@@ -285,7 +329,7 @@ export class RentalCalendarPage implements OnInit {
         // for the remaining rows
         else {
           // the last one
-          if (dayIndex > this.currentLastDayIndex && rowIndex === this.currentRowsNeeded - 1) {
+          if ((dayIndex > this.currentLastDayIndex || this.currentLastDayIndex === 7) && rowIndex === this.currentRowsNeeded - 1) {
             dayRow.push({
               date: nextDayDate,
               offset: true,

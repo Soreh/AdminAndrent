@@ -29,4 +29,5 @@ export interface Rental {
     advance_invoice ?: Invoice; //Will have to be an Object including an Invoic and its statuses
     invoice     ?: Invoice; //Will have to be later an Object including Invoice and and its statuses 
     regu_invoice ?: Invoice;
+    calendar_dates ?: string[];
 }

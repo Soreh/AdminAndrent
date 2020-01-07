@@ -179,7 +179,7 @@ export class RentalsPage implements OnInit, OnDestroy {
                 console.debug(list.length);
                 list = list.sort((a, b) => {
                   if(a.status < b.status) return -1;
-                  else if (a.status > b.status) return 1;
+                  else if (a.status > b.status ) return 1;
                   else return 0
                 });
                 this.rentalListFirstContact = [];
@@ -218,6 +218,21 @@ export class RentalsPage implements OnInit, OnDestroy {
                       break;
                   };
                 })
+                this.rentalListFirstContact.sort(
+                  (a, b) => {return this._sortOnFirstDate(a,b);}
+                );
+                this.rentalListConfirmed.sort(
+                  (a, b) => {return this._sortOnFirstDate(a,b);}
+                );
+                this.rentalListOption.sort(
+                  (a, b) => {return this._sortOnFirstDate(a,b);}
+                );
+                this.rentalListOver.sort(
+                  (a, b) => {return this._sortOnFirstDate(a,b);}
+                );
+                this.rentalListToBePaid.sort(
+                  (a, b) => {return this._sortOnFirstDate(a,b);}
+                );
                 loading.dismiss();
               }
             )
@@ -233,6 +248,14 @@ export class RentalsPage implements OnInit, OnDestroy {
       console.warn("Aucune locations en base de données");
     }
     loading.present();
+  }
+
+  private _sortOnFirstDate(a: Rental, b: Rental) {
+    let aDate = a.calendar_dates ? a.calendar_dates[0] ? a.calendar_dates[0] : '' : '';
+    let bDate = b.calendar_dates ? b.calendar_dates[0] ? b.calendar_dates[0] : '' : '';
+    if (aDate < bDate) return -1
+    else if (aDate > bDate) return 1
+    else return 0
   }
 
   private needPayment(rental: Rental): boolean {

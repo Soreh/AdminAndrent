@@ -291,6 +291,9 @@ export class RentalServiceProvider {
    * @returns true if everything went fine, false otherwise
    */
   async addRental(rental: Rental) : Promise<string | boolean> {
+    if (!this.rentalsList) {
+      await this._setRentals();
+    }
     const newRentalRef: firebase.firestore.DocumentReference = await this.rentalsList.add(rental);
     return newRentalRef.update({
       id: newRentalRef.id,
@@ -329,6 +332,9 @@ export class RentalServiceProvider {
    * @returns true if everythong went right, false otherwise
    */
   async updateRental(rentalID: string, rentalData: Rental): Promise<boolean> {
+    if (! this.rentalsList ) {
+      await this._setRentals();
+    }
     return this.rentalsList.doc(rentalID).update(rentalData)
       .then(
         () => {return true}
