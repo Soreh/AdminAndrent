@@ -313,6 +313,9 @@ export class RentalServiceProvider {
    * @returns true if everything went fine, false otherwise
    */
   async deleteRental(rentalID: string) : Promise<boolean> {
+    if (!this.rentalsList) {
+      await this._setRentals();
+    }
     return this.rentalsList.doc(rentalID).delete()
       .then(
         () => { return true},
