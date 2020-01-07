@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { Contract, ContractOption, ContractPrint, ContractPrintArticle, ContractPrintPara } from '../../../models/rentals/contract.interface';
 import { Rental } from '../../../models/rentals/rental.interface';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
@@ -35,8 +35,10 @@ export class ContractPrintPage {
   public contractPrint: ContractPrint;
   public mainBankAccount;
 
+  public logoUrl = 'assets/imgs/logo-rc.png';
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    private rentalService: RentalServiceProvider, private struct: StructureServiceProvider) {
+    private rentalService: RentalServiceProvider, private struct: StructureServiceProvider, private loader: LoadingController) {
   }
 
   ngOnInit() {
@@ -82,6 +84,20 @@ export class ContractPrintPage {
 
   goHome() {
     this.navCtrl.setRoot('StartPage');
+  }
+
+  public downloadPdf() {
+    const loader = this.loader.create();
+    loader.present();
+    this.getPdf().then(
+      () => {
+        loader.dismiss();
+      },
+      (e) => {
+        console.log(e);
+        loader.dismiss()
+      }
+    );
   }
 
   generateContract() {
@@ -172,8 +188,27 @@ export class ContractPrintPage {
     }
   }
 
-  getPdf() {
+  /**
+   * Return the dataUrl from a local file as a promise
+   */
+  private _getDataUri(url) {
+    return new Promise( (resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        canvas.getContext('2d').drawImage(image, 0, 0);
+        const uri = canvas.toDataURL('image/png');
+        resolve(uri);
+      };
+      image.src = url;
+    });
+  }
+
+  async getPdf() {
     console.log('A implémenter');
+    const logoUri = await this._getDataUri(this.logoUrl);
     let date = new Date(this.contract.date);
     console.log(date);
     const docDef = {
@@ -187,6 +222,11 @@ export class ContractPrintPage {
           fontSize: 11,
           alignment: 'right',
           margin: [0, 5, 20, 5]
+        },
+        title: {
+          fontSize: 25,
+          alignment: 'right',
+          margin: [0, 15, 20, 5]
         },
         articleTitle: {
           bold: true,
@@ -228,6 +268,14 @@ export class ContractPrintPage {
         }
       }
     };
+    docDef.content.push({
+      image: logoUri,
+      width: 350
+    });
+    docDef.content.push({
+      text: 'CONVENTION DE LOCATION',
+      style:'title'
+    });
     docDef.content.push({
       text: 'ENTRE',
       style: 'between'
