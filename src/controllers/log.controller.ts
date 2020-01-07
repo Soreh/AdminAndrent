@@ -1,8 +1,6 @@
-import { RentalServiceProvider } from "../providers/rentals/rental-service/rental-service";
 import { UserServiceProvider } from "../providers/global/user-service/user-service";
 import { Rental } from "../models/rentals/rental.interface";
 import { Log } from "../models/rentals/log.interface";
-import { ThrowStmt } from "@angular/compiler";
 import { Injectable } from "@angular/core";
 
 @Injectable()
@@ -12,7 +10,6 @@ export class LogController {
     //private _rental : Rental;
     private _msg    : string;
     private _log    : Log;
-    private _date    : Date;
   
     constructor(private user: UserServiceProvider) {
         console.debug('Hello log controller');
@@ -25,7 +22,6 @@ export class LogController {
      * @param msg the msg to print (optionnal)
      */
     async log(rent: Rental, automatedMsg: string, msg: string) : Promise<void> {
-        this._date = new Date();
         if (automatedMsg != '' || msg != '') {
 
             await this.user.getUserName().then(

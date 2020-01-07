@@ -128,7 +128,7 @@ export class Quotation {
         if( optionToDeleteIndex != -1 ){
             this.details.splice(optionToDeleteIndex, 1);
         } else {
-            console.log("No index found in removeSortedOption");
+            console.error("No index found in removeSortedOption");
         }
     }
 

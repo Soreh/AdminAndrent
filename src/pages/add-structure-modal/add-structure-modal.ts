@@ -19,7 +19,7 @@ export class AddStructureModalPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AddStructureModalPage');
+
   }
 
   closeModal() {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { ContractParagraph } from '../../../models/global/contract-scheme.interface';
 import { PARAGRAPHCONDITIONTYPE } from "../../../models/global/constances";
@@ -41,8 +41,6 @@ export class AddParagraphModalPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AddParagraphModalPage');
-    console.log(this.config);
     this.conditionOrList = this.paragraph.condition ? 'condition' : this.paragraph.listAuto ? 'list' : 'non';
   }
   cancel() {

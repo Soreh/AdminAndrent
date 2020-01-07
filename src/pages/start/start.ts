@@ -6,7 +6,6 @@ import { ModulesProvider } from '../../providers/global/modules/modules';
 import { StructureServiceProvider } from '../../providers/global/structure-service/structure-service';
 import { Structure, Struct_Meta } from '../../models/global/structure.interface';
 import { UserServiceProvider } from '../../providers/global/user-service/user-service';
-import { Subscription, Observable } from 'rxjs';
 import { User } from 'firebase';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 import { RentalServiceProvider } from '../../providers/rentals/rental-service/rental-service';
@@ -36,13 +35,9 @@ export class StartPage implements OnInit {
   public structure$;
   public structure;
   public structKeyToLink: string;
-  //public loadedStructures;
-
-  private authenticatedUSer$ : Subscription;
   public authUser : User;
 
   public profileExists : boolean;
-  private userProfile$ : Subscription;
   public userProfile : UserProfile;
   public otherStructures : any;
 
@@ -138,11 +133,9 @@ export class StartPage implements OnInit {
               let defaultKey: string;
               snap.docs.forEach( (doc) => {
                 let structureToPush = <Struct_Meta>doc.data();
-                console.log(structureToPush);
                 if ( structureToPush.isDefault ) {
                   defaultKey = structureToPush.key;
-                }
-                console.log(defaultKey);
+                };
                 this.structuresList.push(<Struct_Meta>doc.data());
                 //this.loading.dismiss();
               });
@@ -185,13 +178,6 @@ export class StartPage implements OnInit {
   }
 
   ionViewWillLoad() {
-    console.log('ionViewWillLoad StartPage');
-    // if(!this.userProfile){
-    //   console.error('No user connected');
-    //   this.navCtrl.setRoot('ConnectPage');
-    // } else {
-    //   console.debug(this.userProfile);
-    // }
     this.auth.isConnected().then( ok => {
       if(!ok) {
         console.debug('No user');
@@ -212,15 +198,12 @@ export class StartPage implements OnInit {
     // Creer le compte utilisateur en DB !
     if (this.authUser ) {
       await this.user.saveProfile(this.authUser.uid, this.userProfile).then((fulfilled) => {
-        console.log(fulfilled);
         this.showAddForm();
       }, (error) => {
         console.error(error);
       }
       );
     }
-    // Afficher le formulaire pour ajotuer une structure
-    //this.showAddStruct = true;
   }
   
   showAddForm(){
@@ -252,7 +235,6 @@ export class StartPage implements OnInit {
     if ( await this.structService.structureExists(this.structKeyToLink)){
       await this.user.linkStructure(this.structKeyToLink, true).then(
         (onfulfilled) => {
-          console.log("structure liée");
           this.user.updatePseudo(this.userProfile.name).then(
             () => {
               this.navCtrl.setRoot('StartPage');
@@ -269,67 +251,10 @@ export class StartPage implements OnInit {
     } else {
       alert("Le lien fourni n'est pas valide.");
     }
-    // if (this.authUser){
-    //   const result = await this.user.saveProfile(this.authUser.uid, this.userProfile);
-    //   console.log(result); 
-    // }
-  }
-
-  // createStructure(isDefault: boolean = false) : void {
-  //   console.log("In create structure");
-  //   // Create the Structure in the DataBase
-  //   this.structService.addStructure({
-  //     key : 'new_struct',
-  //     users : [
-  //       {
-  //         user_key : this.userProfile.key,
-  //         isAdmin : true,
-  //       }
-  //     ],
-  //     name : 'Nouvelle Structure',
-  //     contact : {
-  //       street : 'rue',
-  //       number : 0,
-  //       city : 'ville',
-  //     },
-  //     modules : [
-  //       {
-  //         module_key : 'module_1',
-  //         config_key : 'config_1',
-  //       },
-  //     ]
-  //   }, isDefault);
-  //   this.navCtrl.setRoot('StartPage');
-  // }
-
-  private _refreshStructures() : void {
-    //console.log(this.user.getConnectedUser().structures);
-    //this.structure$ = this.structService.getDefaultStructure();
-    console.log(this.structure$);
-    this.structures$ = this.structService.getStructures();
-
-    // this.structService.getStructuresByKeys(this.user.getConnectedUser().structures).subscribe(data => 
-    //   this.loadedStructure$ = data);
-
-    //this.modules = this.modulesService.getModulesToLoadList(this.structure$);
-
-    console.log(this.modules);
   }
 
   goTo(moduleKey: string): void {
-    console.log(this.modulesService.getModulePage(moduleKey));
     this.navCtrl.setRoot(this.modulesService.getModulePage(moduleKey));
-    // console.log(this.structure$.modules);
-    // let configKey = this.structure$.modules.filter(mod =>
-    //   mod.module_key === module.key)[0].config_key;
-    //   console.log(configKey);
-    // this.navCtrl.setRoot(module.page, {
-    //   data : {
-    //     struct_key : this.structService.getLoadedStructureKey(),
-    //     config_key : configKey,
-    //   }
-    //   // config_key : this.defaultStructure$.modules.filter(mod => mod.module_key === module.key)[0].config_key,
-    // });
   }
 
   disconnect() {

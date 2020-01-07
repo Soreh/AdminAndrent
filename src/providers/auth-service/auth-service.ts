@@ -1,11 +1,5 @@
-//import { HttpClient } from '@angular/common/http'; 
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth'
-
-//import * as firebase from 'firebase/app';
-
-import { StructureServiceProvider } from '../global/structure-service/structure-service';
-//import { UserCredential } from 'firebase/auth';
 
 /*
   Generated class for the AuthServiceProvider provider.
@@ -17,9 +11,7 @@ import { StructureServiceProvider } from '../global/structure-service/structure-
 export class AuthServiceProvider {
 
   constructor( 
-    private structService: StructureServiceProvider,
     private afAuth: AngularFireAuth ) {
-    console.log('Hello AuthServiceProvider Provider');
   }
 
   /**
@@ -40,14 +32,6 @@ export class AuthServiceProvider {
 
   isConnected(): Promise<boolean>{
     return new Promise((resolve, reject) => { 
-      // firebase.auth().onAuthStateChanged((user: firebase.User) => {
-      //   if (user) {
-      //     resolve(true);
-      //   } else {
-      //     console.debug('User is not logged in');
-      //     resolve(false)
-      //   }
-      // });
       this.afAuth.auth.onAuthStateChanged((user: firebase.User) => {
         if (user) {
           resolve(true);

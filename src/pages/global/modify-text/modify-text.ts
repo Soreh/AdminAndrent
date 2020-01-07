@@ -26,7 +26,6 @@ export class ModifyTextPage {
     }
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ModifyTextPage');
   }
 
   close() {

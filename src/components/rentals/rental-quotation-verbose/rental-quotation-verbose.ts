@@ -21,8 +21,6 @@ export class RentalQuotationVerboseComponent implements OnInit {
   structure: Structure;
 
   constructor(private navCtrl: NavController, private struct: StructureServiceProvider) {
-    console.log('Hello RentalQuotationVerboseComponent Component');
-    
   }
 
   ngOnInit(){

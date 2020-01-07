@@ -3,8 +3,6 @@ import { IonicPage, NavController, NavParams, LoadingController, AlertController
 
 import { UserProfile } from "../../models/global/user-profile.interface";
 import { UserServiceProvider } from '../../providers/global/user-service/user-service';
-import { Observable } from 'rxjs/Observable';
-import { LoginResponse } from '../../models/global/login-response.interface';
 import { AuthServiceProvider } from '../../providers/auth-service/auth-service';
 
 /**

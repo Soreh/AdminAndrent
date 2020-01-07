@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Log } from '../../../models/rentals/log.interface';
 import { ModalController } from 'ionic-angular';
 
@@ -18,7 +18,6 @@ export class RentalLastLogComponent {
   @Input() logs    : Log[];
 
   constructor(private modalCtrl: ModalController) {
-    console.log('Hello RentalLastLogComponent Component');
   }
 
   openModifyTextModal(textToModify: string, index) {

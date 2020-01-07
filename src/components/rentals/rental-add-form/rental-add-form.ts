@@ -7,7 +7,7 @@ import { Log } from '../../../models/rentals/log.interface';
 import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { ViewController, NavController } from 'ionic-angular';
+import { ViewController } from 'ionic-angular';
 import { CalendarServiceProvider } from '../../../providers/rentals/calendar/calendar-service';
 
 /**
@@ -36,7 +36,6 @@ export class RentalAddFormComponent implements OnInit {
     private viewCtrl : ViewController, 
     private formBuilder: FormBuilder,
     private calendar: CalendarServiceProvider) {
-    console.log('Hello RentalAddFormComponent Component');
     this.rentalToAdd = this.formBuilder.group({
       name : ['', Validators.required],
       location : ['', Validators.required],

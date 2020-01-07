@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
-import { ContractPrintPage } from '../contract-print/contract-print';
 import { Contract, ContractOption } from '../../../models/rentals/contract.interface';
 import { STATUSCODE, STATUS } from '../../../models/global/status.interface';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
@@ -58,7 +57,6 @@ export class ContractModalPage implements OnInit {
       this.config = this.rentalService.getConfig();
       if (this.navParams.get('rental')) {
         this.rental = this.navParams.get('rental');
-        console.log(this.rental);
       }
       if (!this.contract.options) {
         this.resetOptions();
@@ -67,7 +65,6 @@ export class ContractModalPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ContractModalPage');
   }
 
   setChange() {
@@ -171,7 +168,6 @@ export class ContractModalPage implements OnInit {
             });
           }
         })
-        console.log(optionsThatMeetCondition);
         if (this.rental.quotation_args) {
           this.rental.quotation_args.details.forEach(detail => {
             let optionIsPresent = optionsThatMeetCondition.findIndex(optionTMC => optionTMC.id === detail.optionID);
@@ -211,7 +207,6 @@ export class ContractModalPage implements OnInit {
         {
           text : 'Ok',
           handler: ((data)=>{
-            console.log('champ modifié');
             listItem = data.label;
             this.setChange();
           })

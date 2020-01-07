@@ -1,23 +1,12 @@
 import { Injectable } from '@angular/core';
-
-import { MOCK_STRUCTURES } from "../../../mock_data/global/structures_mock";
-import { Observable } from 'rxjs/Observable';
 import { Structure } from '../../../models/global/structure.interface';
 import { UserServiceProvider } from '../user-service/user-service';
 import { UserProfile } from '../../../models/global/user-profile.interface';
 
 import { AngularFireAuth } from '@angular/fire/auth'
-import { AngularFireDatabase, AngularFireObject } from "@angular/fire/database";
-import { User } from "firebase/app";
+import { AngularFireDatabase } from "@angular/fire/database";
 
-// import * as firebase from 'firebase/app';
-// import 'firebase/auth';
-// import 'firebase/firestore';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { Moduleconfig } from '../../../models/global/module-config.interface';
-import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
-import { MODULES_KEYS } from '../modules/modules';
-import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 
 import{
   AngularFirestore,
@@ -54,8 +43,6 @@ export class StructureServiceProvider {
     private db: AngularFireDatabase,
     private afAuth: AngularFireAuth,
     private afStore: AngularFirestore) {
-    console.log('Hello StructureServiceProvider Provider');
-    // this.setUser();
     this.afAuth.auth.onAuthStateChanged( user => {
       if ( user ) {
         this.structuresList = this.afStore.collection('/structures');
@@ -92,7 +79,7 @@ export class StructureServiceProvider {
           console.warn('Could not add the structure :(');
         }
       },
-      ( error ) => errorMsg += ` Could not add the structure :( `,
+      ( error ) => errorMsg += ` ${error} : Could not add the object in the structure collection :( `,
     )
     .then( () => {
       return new Promise((resolve, reject) => {
@@ -120,14 +107,6 @@ export class StructureServiceProvider {
   public async getStructureDetails(structKey: string): Promise<Structure> {
     console.debug();
     this.activeStructure = this.afStore.doc(`/structures/${structKey}`);
-    // await this.activeStructure.valueChanges().subscribe(
-    //   (structure) => {
-    //     if (structure) {
-    //       this.currentStructureId = structure.key;
-    //       this.currentStructure = structure;
-    //     }
-    //   }
-    // )
     return await this.activeStructure.ref.get().then(
       (snap) => {
         let struct = <Structure>snap.data();
@@ -137,33 +116,6 @@ export class StructureServiceProvider {
         return this.currentStructure;
       } 
     )
-    // return await this.activeStructure.valueChanges().subscribe(
-    //   (structure) => return {
-    //     if (structure) {
-    //       this.currentStructureId = structure.key;
-    //       this.currentStructure = structure;
-    //       return this.currentStructure;
-    //     } else {
-    //       return false
-    //     }
-    //   },
-    //   () => {return false},
-    //   () => {return false}
-    // )
-
-    // return this.currentStructure;
-
-    // return await this.afStore.doc(`/structures/${structKey}`).get()
-    // .then( (struct) => {
-    //     if (struct) {
-    //       // console.log(struct.data());
-    //       //this.setCurrentStructure(<Structure>struct.data());
-    //       this.currentStructureId = struct.id; // Could be structKey ?
-    //       return <Structure>struct.data();
-    //     } else {
-    //       return false
-    //     }
-    // });
   }
 
   public setCurrentStructure(structure: Structure): void {
@@ -202,15 +154,6 @@ export class StructureServiceProvider {
    * @returns true if it does
    */
   public async structureExists(structure_key) : Promise<Boolean> {
-    // this.afStore.collection("/structures/").
-    //   let ref = this.afStore.doc(`/structures/${structure_key}`).ref.id;
-    //   console.log(ref);
-    //   if (ref) {
-    //     return true
-    //   } else {
-    //     return false
-    //   }
-
     return await this.afStore.doc(`/structures/${structure_key}`).ref.get().then(
       (snap) => {
         if(snap.exists){
@@ -266,8 +209,6 @@ export class StructureServiceProvider {
           await doc.ref.get().then(
             async (snap) => {
               let struct = await <Structure>snap.data();
-              console.log(struct);
-              console.log(config);
               struct.modules.find(mod => mod.module_key === module_key).config = config;
               doc.set(struct);
             }
@@ -285,43 +226,11 @@ export class StructureServiceProvider {
    * Setters
    */
 
-  private setUser() : void {
-    this.connectedUser = this.userService.getConnectedUser();
-  }
-
   private setStructures() : void {
-    this.structures = [];
-    if(this.userService.getConnectedUser().structures){
-      this.userService.getConnectedUser().structures.forEach(structure => {
-        this.structures.push(MOCK_STRUCTURES.filter( struct => 
-          struct.key === structure.key)[0]);
-      });
-      console.log(this.structures);
-    } else {
-      console.error('No user...')
-    }
 
   }
   
   private setActiveStructure() : void {
-    // if(this.userService.getConnectedUser()){
-    //   if(this.userService.getConnectedUser().structures){
-    //     let default_struct_key = this.userService.getConnectedUser().structures.find(struct => struct.isDefault).key;
-    //     console.log(default_struct_key);
-    //     // We fetch the data
-    //     const struct_data = this.db.object(`structures/${default_struct_key}`);
-    //     console.log(struct_data);
-    //     Observable.of(MOCK_STRUCTURES.filter(struct => struct.key === default_struct_key)[0]).subscribe( structure =>
-    //       this.activeStructure$ = structure,
-    //     )
-    //     console.log(this.activeStructure$);
-    //   }
-    // } else {
-    //   console.error('No user...')
-    // }
-  }
-
-  private setActiveModules() : void {
 
   }
 
@@ -345,26 +254,6 @@ export class StructureServiceProvider {
     this.setStructures();
     return this.structures;
   }
-
-  /**
-   * Deprecated ?
-   * @param key 
-   */
-  // getStructureByKey(key) : Observable<Structure> {
-  //   this.activeStructure$ = MOCK_STRUCTURES.filter(struct => struct.key === key)[0];
-  //   return Observable.of(this.activeStructure$);
-  // }
-
-  /**
-   * Deprecated ?
-   * @param keys
-   */
-  // getStructuresByKeys(keys : Array<any>) : Observable<Structure[]> {
-  //   keys.forEach(key => {
-  //     this.structures.push(MOCK_STRUCTURES.filter(struct => struct.key === key.key)[0]);
-  //   });
-  //   return Observable.of(this.structures);
-  // }
   
   /**
    * Deprecated ?
@@ -391,8 +280,6 @@ export class StructureServiceProvider {
     // this.db.
     try {
       const id = this.db.createPushId();
-      console.log("pushid : " + id);
-      console.log(structure);
       await data.set(id, structure);
       //await data.set(structure);
       return id;
@@ -400,33 +287,5 @@ export class StructureServiceProvider {
       console.error(e.message);
     }
   }
-
-//   addStructure(structure: Structure, isDefault = false) : void {
-//     // if (!this.structures){
-//     //   this.structures = [];
-//     // }
-//     // this.structures.push(structure);
-//     // Adding the structure in the DataBase
-
-//     // create a DefaultConfig pour chaque module
-//     // recupérer la clef et la stocker dans la structure
-
-   
-//     // ajouter la structure dans la DB
-//     MOCK_STRUCTURES.push(structure);
-
-//     // récupérer la clef et la stocker ajouter la structure à la liste des structures de l'utilisateur connecté.
-//     this.userService.addStructure(structure.key, isDefault);
-//     // if (!this.userService.getConnectedUser().structures){
-//     //   this.userService.getConnectedUser().structures = [];
-//     // }
-//     // this.userService.getConnectedUser().structures.push(
-//     //   {
-//     //     key : structure.key,
-//     //     isDefault : isDefault
-//     //   }
-//     // );
-//     // console.log(this.userService.getConnectedUser());
-//   }
 
 }

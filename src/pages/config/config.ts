@@ -4,7 +4,6 @@ import { Structure } from '../../models/global/structure.interface';
 import { RentalConfig } from '../../models/rentals/rentals-config.interface';
 import { StructureServiceProvider } from '../../providers/global/structure-service/structure-service';
 import { RentalServiceProvider } from '../../providers/rentals/rental-service/rental-service';
-import { MODULES_KEYS } from "../../providers/global/modules/modules";
 
 /**
  * Generated class for the ConfigPage page.
@@ -71,11 +70,10 @@ export class ConfigPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ConfigPage');
   }
 
   update() {
-    console.log('Il faut mettre à jour les options de config');
+    console.debug('Il faut mettre à jour les options de config');
     try {
       this.structService.updateCurrentStructure(this.structure);
     } catch (error) {
@@ -84,7 +82,6 @@ export class ConfigPage implements OnInit {
   }
 
   switchMainAccount(account: any, revert = true) {
-    console.log(account.main);
     let main = account.main;
     if (revert){
       main = !main
@@ -100,7 +97,6 @@ export class ConfigPage implements OnInit {
   }
 
   addBankAccount(){
-    console.log(this.accountToAdd);
     if( !this.structure.bankAccount ) {
       this.structure.bankAccount = [
         this.accountToAdd,

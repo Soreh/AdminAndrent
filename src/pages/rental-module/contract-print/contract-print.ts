@@ -5,7 +5,6 @@ import { Rental } from '../../../models/rentals/rental.interface';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 import { PARAGRAPHCONDITIONTYPE } from '../../../models/global/constances';
 import { ContractParagraph } from '../../../models/global/contract-scheme.interface';
-import { STATUSCODE } from '../../../models/global/status.interface';
 import { Structure } from '../../../models/global/structure.interface';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
@@ -49,7 +48,6 @@ export class ContractPrintPage {
             (st) => {
               this.structure = <Structure>st;
               let bankAccount = this.structure.bankAccount.find(ac => ac.main === true);
-              console.log(bankAccount);
               this.mainBankAccount= {
                 iban: bankAccount.iban
               }
@@ -62,7 +60,6 @@ export class ContractPrintPage {
 
   ionViewWillEnter() {
     this.rental = this.navParams.get('rental');
-    console.log(this.rental);
     if (this.rental) {
       this.contract = this.rental.contract;
       this.contractOptions = this.rental.contract.options;
@@ -71,7 +68,6 @@ export class ContractPrintPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ContractPrintPage');
   }
 
   close() {
@@ -94,7 +90,7 @@ export class ContractPrintPage {
         loader.dismiss();
       },
       (e) => {
-        console.log(e);
+        console.error(e);
         loader.dismiss()
       }
     );
@@ -207,10 +203,8 @@ export class ContractPrintPage {
   }
 
   async getPdf() {
-    console.log('A implémenter');
     const logoUri = await this._getDataUri(this.logoUrl);
     let date = new Date(this.contract.date);
-    console.log(date);
     const docDef = {
       info: {
         title: `Convention de location - ${this.rental.name}`,

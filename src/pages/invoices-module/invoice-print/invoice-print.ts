@@ -36,7 +36,6 @@ export class InvoicePrintPage implements OnInit {
             (st) => {
               this.structure = <Structure>st;
               let bankAccount = this.structure.bankAccount.find(ac => ac.main === true);
-              console.log(bankAccount);
               this.mainBankAccount= {
                 iban: bankAccount.iban
               }
@@ -48,7 +47,6 @@ export class InvoicePrintPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad InvoicePrintPage');
   }
 
   close() {

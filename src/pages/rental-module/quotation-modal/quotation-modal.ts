@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
-import { Quotation, QuotationArgs } from '../../../models/rentals/quotation.class';
+import { QuotationArgs } from '../../../models/rentals/quotation.class';
 import { STATUS, STATUSCODE} from '../../../models/global/status.interface'
 
 /**
@@ -46,7 +46,6 @@ export class QuotationModalPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad QuotationModalPage');
   }
   
 

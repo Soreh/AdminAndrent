@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Structure } from '../../../models/global/structure.interface';
-import { FirebaseDatabase } from 'angularfire2';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 
@@ -42,11 +40,7 @@ export class ModulesProvider {
   }
 
   createDefaultRentalConfig(): RentalConfig {
-    const id = this.db.createPushId();
     const cat1Id = this.db.createPushId();
-    const cat2Id = this.db.createPushId();
-    const option1Id = this.db.createPushId();
-    const option2Id = this.db.createPushId();
     const chargeType1Id = this.db.createPushId();
     const chargeDetail1Id = this.db.createPushId();
     //let data = this.db.list(MODULES_KEYS.rental);

@@ -1,6 +1,5 @@
 import { Quotation } from "./quotation.class";
 import { Log } from "./log.interface";
-import { Location } from "./location.interface";
 import { Contact } from "../global/contact.interface";
 import { QuotationArgs } from "../rentals/quotation.class";
 

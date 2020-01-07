@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, NavParams, ViewController } from 'ionic-angular';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
 /**
@@ -22,8 +22,7 @@ export class NewRentalModalPage {
   constructor(
     public viewCtrl : ViewController, 
     public navParams: NavParams, 
-    private struct: StructureServiceProvider,
-    private nav: NavController) {
+    private struct: StructureServiceProvider) {
   }
 
   ionViewWillLoad() {
@@ -33,12 +32,10 @@ export class NewRentalModalPage {
     this.struct.isStructureLoaded().then(()=>{
       this.struct.getCurrentId().then((id) => {
         this.id = id;
-        console.log(this.id);
       });
     })
   }
   ionViewDidLoad() {
-    console.log('ionViewDidLoad NewRentalModalPage');
   }
 
   closeModal() {

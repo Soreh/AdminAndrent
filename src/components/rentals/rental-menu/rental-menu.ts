@@ -29,7 +29,6 @@ export class RentalMenuComponent {
     private alertCtrl : AlertController,
     private auth: AuthServiceProvider,
     private user: UserServiceProvider) {
-    console.log('Hello RentalMenuComponent Component');
 
       this.user.getUserName().then(
         (pseudo) => {

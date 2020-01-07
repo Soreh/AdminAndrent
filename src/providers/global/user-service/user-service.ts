@@ -1,10 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UserProfile } from '../../../models/global/user-profile.interface';
 import { Observable } from 'rxjs/Observable';
-
-import { MOCK_USERS_LIST } from "../../../mock_data/global/users_mock";
-import { Structure } from '../../../models/global/structure.interface';
 
 //Angularfire2
 import{
@@ -14,18 +10,8 @@ import{
 } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth'
 
-import { AngularFireDatabase, AngularFireObject } from "@angular/fire/database";
-import { User } from "firebase/app";
-
-//import "rxjs/add/operator/take";
-import { NULL_EXPR } from '@angular/compiler/src/output/output_ast';
-import { LoginResponse } from '../../../models/global/login-response.interface';
+import { AngularFireDatabase } from "@angular/fire/database";
 import { Subscription } from 'rxjs';
-
-
-//import * as firebase from 'firebase/app';
-//import 'firebase/auth';
-//import 'firebase/firestore';
 
 /*
   Generated class for the UserServiceProvider provider. 
@@ -229,21 +215,16 @@ export class UserServiceProvider {
     //   this.connectedUser$ = await this.db.object(`profiles${uid}`).valueChanges();
     // }
     this.connectedUser$ = this.db.object(`profiles/${uid}`).valueChanges();
-    console.log(this.connectedUser$);
     return this.connectedUser$;
   }
 
   async getProfileOLD(uid: string) : Promise<UserProfile> {
     if (!this.connectedUser) {
-      console.log("ConnectedUser does not exists");
       const saved = await this._setProfile(uid);
       if ( saved ) {
-        console.log(this.connectedUser);
         return this.connectedUser
       };
     } else {
-      console.log('connecterUser does exist');
-      console.log(this.connectedUser);
       return this.connectedUser;
     }
   }
@@ -253,9 +234,7 @@ export class UserServiceProvider {
       this.connectedUser$ = this.db.object(`profiles/${uid}`).valueChanges();
       this.connectedUser$.subscribe(res => 
         {
-          console.log(res);
           this.connectedUser = res;
-          console.log(this.connectedUser);
           return true
         });
     } catch(e) {
@@ -365,7 +344,7 @@ export class UserServiceProvider {
         }
       });
     }
-    console.log("Structure added");
+    console.debug("Structure added");
   }
 
   // addStructure(key, isDefault) : void {

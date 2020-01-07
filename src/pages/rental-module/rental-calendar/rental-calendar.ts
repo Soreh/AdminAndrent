@@ -82,7 +82,6 @@ export class RentalCalendarPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad RentalCalendarPage');
   }
 
   public getMonthName(month: number) {
@@ -151,12 +150,11 @@ export class RentalCalendarPage implements OnInit {
         )
       }
     );
-    console.log(selectedDays);
     // save in DB
     selectedDays.forEach(
       (day) => {
         this.calendarService.addDate(day, this.currentYear, this.currentMonth + 1).then(
-          () => console.log('Ok !'),
+          () => console.debug('Date added !'),
           () => console.error('Oops, something went wrong...')
         );
       }
@@ -246,9 +244,7 @@ export class RentalCalendarPage implements OnInit {
 
 
   private _parseDay(day: DayRow) {
-    console.log(this.currentYear + ' ' + this.currentMonth + ' ' + day.date);
     let date = new Date(this.currentYear, this.currentMonth, day.date);
-    console.log(date);
     return date.toISOString();
   }
 

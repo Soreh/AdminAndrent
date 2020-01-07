@@ -112,7 +112,6 @@ export class RentalQuotationDashPage implements OnInit {
   }
 
   selectTabUponStatus() : void {
-    console.log(this.quotation.statusCode);
     switch(this.quotation.statusCode) {
       case STATUSCODE.processing :
         this.showTab('compute');
@@ -137,8 +136,6 @@ export class RentalQuotationDashPage implements OnInit {
           this.config = this.rentalService.getConfig();
           this.priceList = this.rentalService.getSortedByCategoryPriceList();
           if(this.navParams.get('data')) { // if some data is passed
-            let data = this.navParams.get('data');
-            console.log(data);
             let args = this.navParams.get('data').quotationArgs;
             let id = this.navParams.get('data').rentalID;
             if(id) { // If a rental id is passed
@@ -212,12 +209,9 @@ export class RentalQuotationDashPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    console.log('ionview will leave');
-    console.log(this.rentalId);
     if(this.rentalId){ // If a rentalId exists, we are modifying a rental, we thus have to persists the changes in that specific rental
       // Get the args
       let args: QuotationArgs = this.quotation.getQuotationArgs();
-      console.log(args);
       let currentArgs:  QuotationArgs;
       // Retrieve the rental
       let rental:Rental;
@@ -304,7 +298,6 @@ export class RentalQuotationDashPage implements OnInit {
   }
 
   printOutQuotation(){
-    console.log(this.quotation);
   }
 
   checkZero(number: number) {
@@ -585,17 +578,14 @@ export class RentalQuotationDashPage implements OnInit {
       options = options.concat(this.config.options.filter(option => option.catId === id));
       // options.push(this.config.options.filter(option => option.catId === id));
     })
-    console.log(options);
 
     // Je vérifie si le devis en cours contient l'une ou l'autre de ces options
     this.quotation.details.forEach(quotationOption => {
-      console.log(quotationOption);
       let optionToCompute: any;
       
       let option = options.find(option => option.id === quotationOption.optionID);
       
       if (option) {
-        console.log(option);
         let label;
         if (option.unit > 1) {
           label = option.unit + " x " + option.label;
@@ -612,15 +602,12 @@ export class RentalQuotationDashPage implements OnInit {
         }
 
       } else if (quotationOption.optionID === 0) {
-        console.log('il faut gérer un customOption');
         optionToCompute = {
           catId: quotationOption.variousCatID,
           amount: quotationOption.variousAmount,
           label: quotationOption.variousLabel,
         }
       } else {
-        console.log("C'est une option hors devis - ne rien faire");
-        console.log(quotationOption);
         let postOptionStored = this.config.options.find(opt => opt.id === quotationOption.optionID);
         let postOption = {
           id: quotationOption.optionID,
@@ -641,7 +628,6 @@ export class RentalQuotationDashPage implements OnInit {
 
       if (optionToCompute) {
         if( catIdsList.findIndex(id => id === optionToCompute.catId) === -1 ) {
-          console.log(this.getCatLabel(optionToCompute.catId));
           this.linesToAdd.push({label:"",amount:0});
           this.quotation.verbose.categories.push({
             id: optionToCompute.catId,
@@ -654,7 +640,6 @@ export class RentalQuotationDashPage implements OnInit {
             ]
           })
           catIdsList.push(optionToCompute.catId);
-          console.log(catIdsList);
         } else {
           this.quotation.verbose.categories.find(cat => cat.id === optionToCompute.catId).lines.push({
             amount: optionToCompute.amount,

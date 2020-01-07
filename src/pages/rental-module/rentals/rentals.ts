@@ -3,8 +3,6 @@ import { IonicPage, NavController, NavParams, ModalController, LoadingController
 
 
 import { Rental } from "../../../models/rentals/rental.interface";
-import { Quotation } from '../../../models/rentals/quotation.class';
-import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 
 
 import { RentalServiceProvider } from "../../../providers/rentals/rental-service/rental-service";
@@ -13,10 +11,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { AuthServiceProvider } from '../../../providers/auth-service/auth-service';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
-import { AngularFirestoreCollection } from '@angular/fire/firestore';
-import { UserProfile } from '../../../models/global/user-profile.interface';
 import { STATUSCODE } from '../../../models/global/status.interface';
-// import { Log } from "../../../models/rentals/log.interface";
 
 /**
  * Generated class for the RentalsPage page.
@@ -61,12 +56,10 @@ export class RentalsPage implements OnInit, OnDestroy {
     private rentalProvider: RentalServiceProvider, 
     private navCtrl: NavController, 
     public navParams: NavParams, 
-    public modalCtrl: ModalController, 
-    private user : UserServiceProvider,
+    public modalCtrl: ModalController,
     private auth: AuthServiceProvider,
     private struct: StructureServiceProvider,
     private loader: LoadingController) {
-      console.debug('rentals page');
   }
 
   /**
@@ -78,7 +71,6 @@ export class RentalsPage implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    console.log('RentalsPage OnInit !');
     this.auth.isConnected().then( (ok) => {
       if (!ok) {
         console.error('Erreur : pas d\'utilisteur connecté');
@@ -105,7 +97,6 @@ export class RentalsPage implements OnInit, OnDestroy {
   }
 
   ionViewWillLoad() {
-    console.log('ionViewWillLoad RentalsPage');
   }
 
   // async rentalsExist(): Promise<boolean> {
@@ -276,22 +267,6 @@ export class RentalsPage implements OnInit, OnDestroy {
         this.seeRentalDetails(newId);
       }});
   }
-  
-  // goHome(): void {
-  //   this.navCtrl.popToRoot();
-  // }
-
-  // seeRentalDetails(rentalID): void {
-  //   this.navCtrl.push("RentalDetailsPage", {id: rentalID});
-  // }
-
-  // goCalculateQuotation(): void {
-  //   let quotation = new Quotation();
-  //   this.navCtrl.push('RentalQuotationDashPage', {
-  //     data : quotation,
-  //   })
-  //   console.log(quotation);
-  // }
   
   seeRentalDetails(rentalID): void {
     this.navCtrl.push("RentalDetailsPage", 

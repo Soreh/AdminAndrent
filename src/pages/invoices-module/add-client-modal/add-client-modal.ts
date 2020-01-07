@@ -30,7 +30,6 @@ export class AddClientModalPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AddClientModalPage');
   }
 
   dismiss() {

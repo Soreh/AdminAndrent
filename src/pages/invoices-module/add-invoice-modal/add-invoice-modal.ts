@@ -48,7 +48,6 @@ export class AddInvoiceModalPage implements OnInit{
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AddInvoiceModalPage');
   }
 
   setChange() {

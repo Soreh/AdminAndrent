@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
-import { UserServiceProvider } from '../../../providers/global/user-service/user-service';
 import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
-import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 
 /**
  * Generated class for the RentalConfigPage page.
@@ -23,10 +21,8 @@ export class RentalConfigPage {
 
   constructor(
     private rentalService : RentalServiceProvider, 
-    private user: UserServiceProvider, 
     public navCtrl: NavController, 
-    public navParams: NavParams,
-    private struct: StructureServiceProvider) {
+    public navParams: NavParams) {
       this.config = this.rentalService.getConfig();
       // this.rentalService.getConfig().then( (data) => {
       //   this.config = data;
@@ -35,7 +31,6 @@ export class RentalConfigPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad RentalConfigPage');
   }
 
   ionViewWillLoad() {

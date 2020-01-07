@@ -7,10 +7,8 @@ import { RentalConfig } from '../../../models/rentals/rentals-config.interface';
 import { StructureServiceProvider } from '../../../providers/global/structure-service/structure-service';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs';
-import { isType } from '@angular/core/src/type';
 import { Client } from '../../../models/invoices/client.interface';
 import { Invoice } from '../../../models/invoices/invoice.interface';
-import { identifierModuleUrl } from '@angular/compiler';
 import { CalendarServiceProvider } from '../../../providers/rentals/calendar/calendar-service';
 
 /**
@@ -80,7 +78,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
    *************************************/
 
   ngOnInit() {
-    console.log("OnInit Rental Details");
     if (!this.navParams.get('id')){
       console.error('No rental ID received');
       this.navCtrl.setRoot('ConnectPage');
@@ -100,7 +97,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
   }
 
   ionWiewDidLoad() {
-    console.log("ionViewDidLoad Rental Details");
   }
 
   ionViewWillEnter(){
@@ -182,7 +178,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     this.rentalService.log(this.rental, modif, msg).then(
       ()=> {
         try {
-          console.log(this.rental);
           this.rentalService.updateRental(this.rentalID, this.rental).then(
             (ok) => {
               if (ok) {
@@ -342,7 +337,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
       (data) => {
         if (data) {
           if( data.changeMade) {
-            console.log(data.dates);
             this.keepChangesTrack('calendrier');
             this.saveAndLog();
           }
@@ -361,7 +355,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
     if ( this.quotationArgsExists ) {
       data.quotationArgs = this.rental.quotation_args;
-      console.log(this.rental.quotation_args);
     }
 
     let modal = this.modalCtrl.create('QuotationModalPage', {
@@ -429,7 +422,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
           this.saveAndLog();
         }
         if(data.dest){
-          console.log(data);
           this.navCtrl.push(data.dest, {
             contract: data.contract,
             rental: data.rental,
@@ -529,7 +521,6 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
     }
     if ( this.quotationArgsExists ) {
       data.quotationArgs = this.rental.quotation_args;
-      console.log(this.rental.quotation_args); 
     }
 
     console.warn(data);

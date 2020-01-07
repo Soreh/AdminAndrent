@@ -1,6 +1,5 @@
 // Classes needed 
 import { Injectable } from '@angular/core';
-import { Observable } from "rxjs/Observable";
 
 // Interfaces
 import { RentalConfig } from "../../../models/rentals/rentals-config.interface";
@@ -40,7 +39,6 @@ export class CalendarServiceProvider {
     private struct : StructureServiceProvider,
     private afAuth: AngularFireAuth,
     private angularFirestore: AngularFirestore ) {
-    console.log('Hello RentalServiceProvider Provider');
 
   }
   
@@ -169,7 +167,7 @@ export class CalendarServiceProvider {
             eventStatusCode: rental.status
           };
           this.day.update({date: dayDate}).then(
-            () => console.log('ok'),
+            () => console.debug('Day updated - ok'),
             () => this.day.set({
               date: dayDate,
               freeDay: false,
@@ -184,7 +182,7 @@ export class CalendarServiceProvider {
     this._setDayFromIso(isoDate);
     let date = new Date(isoDate).getDate();
     this.day.update({date: date}).then(
-      () => console.log('ok, date exists'),
+      () => console.debug('ok, date exists'),
       () => this.day.set({
         date: date,
         freeDay: false,

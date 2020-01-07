@@ -4,13 +4,12 @@ import { AlertController, NavController, Alert, ModalController } from 'ionic-an
 import { AngularFireDatabase } from 'angularfire2/database';
 
 import { Location } from "../../../models/rentals/location.interface";
-import { ContractArticle, ContractParagraph, ContractScheme, AbstractArticle } from "../../../models/global/contract-scheme.interface";
+import { ContractArticle, ContractParagraph, AbstractArticle } from "../../../models/global/contract-scheme.interface";
 
 import { OptionCategory, QuotationOption, ChargeType, Charge } from '../../../models/rentals/quotation-option.interface';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 
 import { PARAGRAPHCONDITIONTYPE } from "../../../models/global/constances";
-import { Title } from '@angular/platform-browser';
 
 
 /** 
@@ -90,7 +89,6 @@ export class RentalConfigComponent implements OnInit {
     private db: AngularFireDatabase,
     private rental: RentalServiceProvider,
     private modalCtrl: ModalController) {
-    console.log('Hello RentalConfigComponent Component');
     this.newLoc = {
       label : '',
       id: 0,
@@ -122,7 +120,6 @@ export class RentalConfigComponent implements OnInit {
     } else {
       this.showAddForm = true;
     }
-    console.log(this.showAddForm);
   }
 
   showTab(target) : void {
@@ -161,8 +158,6 @@ export class RentalConfigComponent implements OnInit {
   //ngOnInit() {}
 
   ngOnInit() {
-    console.log('Hello ! RentalconfigComponent');
-    console.log(this.config);
     if(!this.config) {
       let alert = this.alertCtrl.create(
         {
@@ -214,12 +209,10 @@ export class RentalConfigComponent implements OnInit {
     let price = 0;
     if ( this.optionToAdd.chargeId ) {
       price = this.config.chargesTypeDetails.find(charge => charge.id === this.optionToAdd.chargeId ).cost;
-      console.log(price);
     }
     this.optionToAdd.cost = price * this.optionToAdd.unit;
     this.suggestedPrice = price * this.optionToAdd.unit * 1.5;
     this.optionToAdd.amount = this.suggestedPrice;
-    console.log("newCost");
   }
 
   updateCost(option: QuotationOption) {
@@ -240,7 +233,7 @@ export class RentalConfigComponent implements OnInit {
 
   saveConfig() {
     this.rental.updateConfig(this.config).then(
-      () => { console.log("Ok !")},
+      () => { console.debug("Config updated")},
       (error) => { console.warn(error)} 
     );
   }
@@ -398,7 +391,6 @@ export class RentalConfigComponent implements OnInit {
           this.optionToAdd.amount != 0 &&
           this.optionToAdd.catId &&
           this.optionToAdd.chargeId) {
-            console.log(this.optionToAdd);
             let option: QuotationOption = {
               id : this.db.createPushId(),
               label : this.optionToAdd.label,
@@ -461,7 +453,6 @@ export class RentalConfigComponent implements OnInit {
   }
 
   deleteCondition(index) {
-    console.log('condition à effacer d\'index' + index);
     this.config.contractConditions.splice(index, 1);
     this.saveConfig();
   }
@@ -532,9 +523,7 @@ export class RentalConfigComponent implements OnInit {
   }
 
   deleteParagraph(art: AbstractArticle, index: any) {
-    console.log(index);
     art.paragraphs.splice(index, 1);
-    console.log(art.paragraphs);
   }
 
   editParagraph(para: ContractParagraph) {
@@ -552,12 +541,9 @@ export class RentalConfigComponent implements OnInit {
   }
 
   showArticle(index) {
-    console.log(this.shownIndexArticle.find(storedIndex => storedIndex === index));
     if (this.shownIndexArticle.find(storedIndex => storedIndex === index) === undefined) {
-      console.log("push the index !");
       this.shownIndexArticle.push(index);
     } else {
-      console.log('index à enlever')
       this.shownIndexArticle = this.shownIndexArticle.filter(storedIndex => storedIndex != index);
     }
   }

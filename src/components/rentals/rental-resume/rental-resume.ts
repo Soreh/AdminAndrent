@@ -1,8 +1,7 @@
-import { Component, Input, OnInit, EventEmitter, Output, OnChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { STATUS, STATUSCODE } from '../../../models/global/status.interface';
 import { Contact } from '../../../models/global/contact.interface';
 import { Rental } from '../../../models/rentals/rental.interface';
-import { NavController} from 'ionic-angular';
 import { RentalServiceProvider } from '../../../providers/rentals/rental-service/rental-service';
 
 /**
@@ -17,25 +16,10 @@ import { RentalServiceProvider } from '../../../providers/rentals/rental-service
   selector: 'rental-resume',
   templateUrl: 'rental-resume.html'
 })
-export class RentalResumeComponent implements OnInit, OnChanges{
-
-  // rentalValue: Rental;
-
-  // @Output() rentalChange = new EventEmitter();
+export class RentalResumeComponent implements OnInit {
 
   @Input() rental:Rental;
-  // get rental(){
-  //   this.status_label = this.getStatusLabel(this.rentalValue.status);
-  //   this.color_class = this.getColorClass(this.rentalValue.status);
-  //   return this.rentalValue;
-  // }
-  // set rental(rental: Rental){
-  //   this.rentalValue = rental;
-  //   // this.status_label = this.getStatusLabel(rental.status);
-  //   // this.color_class = this.getColorClass(rental.status)
-  //   this.getColorClass(rental.status);
-  //   this.rentalChange.emit(this.rental);
-  // }
+
 
   public color_class: any;
   public status_label: any;
@@ -49,19 +33,11 @@ export class RentalResumeComponent implements OnInit, OnChanges{
   public paymentDone: boolean;
   
 
-  constructor(private navCtrl:NavController,
+  constructor(
     private rentalsProvider: RentalServiceProvider) {
   }
-  
-  ngOnChanges(){
-    console.debug("Changes made !");
-    // this.getStatusLabel(this.rental.status);
-    // this.getColorClass(this.rental.status);
-  }
+
   ngOnInit(){
-    // this.color_class = STATUS.getColor(this.rental.status);
-    // this.status_label = STATUS.getLabel(this.rental.status);
-    // this.locationName = this.rentalsProvider.getLocationLabel(this.rental.location_id);
     this.contact = this.rental.contact.find( contact => contact.main );
     if (this.rental.status === STATUSCODE.confirmed || this.rental.status === STATUSCODE.option || this.rental.status === STATUSCODE.over) {
       if (!this.rental.quotation_args) {

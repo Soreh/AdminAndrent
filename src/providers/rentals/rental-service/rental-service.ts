@@ -7,16 +7,11 @@ import { Observable } from "rxjs/Observable";
 import { Rental } from "../../../models/rentals/rental.interface";
 import { RentalConfig } from "../../../models/rentals/rentals-config.interface";
 import { CategoryDetail } from "../../../models/rentals/category-detail.interface";
-//import { Quotation } from "../../../models/rentals/quotation.class";
-import { RENTALS_MOCK } from "../../../mock_data/rentals/rentals_mock";
-import { MOCK_RENTAL_CONFIG } from "../../../mock_data/rentals/config-rental_mock";
-//import { User } from '../../../models/global/user.interface';
-//import { UserServiceProvider } from '../../global/user-service/user-service';
+
 import { StructureServiceProvider } from '../../global/structure-service/structure-service';
 import { MODULES_KEYS } from '../../global/modules/modules';
 import { LogController } from '../../../controllers/log.controller';
 import { QuotationArgs } from '../../../models/rentals/quotation.class';
-//import { RentalLastLogComponent } from '../../../components/rentals/rental-last-log/rental-last-log';
 
 //Angularfire2
 import{
@@ -25,11 +20,6 @@ import{
   AngularFirestoreDocument
 } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth'
-
-// import * as firebase from 'firebase/app';
-// import 'firebase/auth';
-// import 'firebase/firestore';
-import { Moduleconfig } from '../../../models/global/module-config.interface';
 
 /*
   Generated class for the RentalServiceProvider provider.
@@ -61,27 +51,6 @@ export class RentalServiceProvider {
     private logCtrl : LogController,
     private afAuth: AngularFireAuth,
     private angularFirestore: AngularFirestore ) {
-    console.log('Hello RentalServiceProvider Provider');
-      // this.afAuth.authState.subscribe( user => {
-      //   if ( user ) {
-      //     this._setRentals().then(
-      //       () => console.debug('list de location chargée'),
-      //       (e) => console.debug('listes de locations non chargée : ' + e)
-      //     )
-      //   }
-      // })
-
-
-    // firebase.auth().onAuthStateChanged( (user) => {
-    //   if (user) {
-    //     this._setConfig().then(() => {
-    //       if (this.config) {
-    //         console.debug(`config chargée : ${this.config}`);
-    //         // this.rentalsPath = firebase.firestore().collection(`/rentals/`);
-    //       }
-    //     });
-    //   }
-    // })
   }
 
   // CONFIG

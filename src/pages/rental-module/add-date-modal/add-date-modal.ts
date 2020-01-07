@@ -36,7 +36,6 @@ export class AddDateModalPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AddDateModalPage');
   }
 
   public outputDate(isoDate: string): string{
