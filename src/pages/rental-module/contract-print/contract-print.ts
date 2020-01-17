@@ -279,7 +279,7 @@ export class ContractPrintPage {
       style: 'identification'
     });
     docDef.content.push({
-      text: 'çi-après dénommé les R-C ;',
+      text: 'çi-après dénommées les R-C ;',
       style: 'alias'
     });
     docDef.content.push({
@@ -287,11 +287,11 @@ export class ContractPrintPage {
       style: 'between'
     });
     docDef.content.push({
-      text: `${this.contractPrint.client.name}\n${this.contractPrint.client.address}\n${this.contractPrint.client.address ? `N° d'entreprise : ${this.contractPrint.client.address}`: ``}${this.contractPrint.client.vat ? `\nN° de TVA: ${this.contractPrint.client.vat}`: ``}\nreprésenté par ${this.contractPrint.client.contact},`,
+      text: `${this.contractPrint.client.name}\n${this.contractPrint.client.address}\n${this.contractPrint.client.enterpriseNumber ? `N° d'entreprise : ${this.contractPrint.client.enterpriseNumber}`: ``}${this.contractPrint.client.vat ? `\nN° de TVA: ${this.contractPrint.client.vat}`: ``}\nreprésenté par ${this.contractPrint.client.contact},`,
       style: 'identification'
     });
     docDef.content.push({
-      text: 'çi-après dénommé le preneur ;',
+      text: 'çi-après dénommé le.la preneur.euse ;',
       style: 'alias'
     });
     docDef.content.push({
@@ -367,7 +367,7 @@ export class ContractPrintPage {
               style: 'sign'
             },
             {
-              text: `Pour le preneur :`,
+              text: `Pour le.la preneur.euse :`,
               border: [false, false, false, false],
               style: 'sign'
             }
