@@ -459,14 +459,15 @@ export class RentalDetailsPage implements OnInit, OnDestroy {
   }
 
   resetInvoice(reg = false) {
+    let discount = this.rental.quotation_args.discount ? this.rental.quotation_args.discount : 0;
     let invoice:Invoice = {
       // il faudra générer un id ?
       client: this.rental.client,
-      quotationTotal: reg ? 0 : this.rental.quotation_args.total.amount,
-      amount: reg ? 0 : this.rental.quotation_args.total.amount,
+      quotationTotal: reg ? 0 : this.rental.quotation_args.total.amount - discount,
+      amount: reg ? 0 : this.rental.quotation_args.total.amount - discount,
       status: STATUSCODE.toDO,
       lines: [{
-        amount: reg ? 0 : this.rental.quotation_args.total.amount,
+        amount: reg ? 0 : this.rental.quotation_args.total.amount - discount,
         label: reg ? 'Régularisation pour frais supplémentaires' : 'Mise à disposition de Salle'
       }]
     }
